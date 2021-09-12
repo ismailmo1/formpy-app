@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <h1>
+            Current Templates
+        </h1>
+    </div>
+    {% if img %}
+    <img src="data:image/png;base64,{{img}}" class="img-fluid">
+    {% endif %}
+
+</div>
+{% endblock %}
