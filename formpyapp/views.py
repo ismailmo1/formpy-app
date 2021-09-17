@@ -1,9 +1,6 @@
-import numpy as np
-from flask import Flask, render_template, request
-from flask.helpers import url_for
-from werkzeug.utils import redirect
+from flask import Flask, jsonify, render_template, request
 
-from .api import read_img, thresh_img
+from .api import img_to_str, mark_spots, process_img, str_to_img
 
 app = Flask(__name__)
 
@@ -21,9 +18,14 @@ def create_template():
 @app.route("/create", methods=["POST"])
 def handle_template():
     img_str = request.files["uploadedImg"].read()
-    img = read_img(img_str)
-    img_processed = thresh_img(img)
-    return render_template("view_template.html", img=img_processed)
+    img = str_to_img(img_str)
+    img_processed = process_img(img)
+    spot_coords, marked_img = mark_spots(img_processed)
+    marked_img_str = img_to_str(marked_img)
+    num_spots = len(spot_coords)
+    return render_template(
+        "view_template.html", img=marked_img_str, num_spots=num_spots
+    )
 
 
 @app.get("/view")
