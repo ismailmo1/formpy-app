@@ -35,29 +35,24 @@ def mark_spots(img: np.array) -> Tuple[list[list[int]], np.array]:
     Returns:
         np.array: img with bounding boxes around detected spots
     """
-    processed_img = process_img(img)
+    processed_img = ip.process_img(img)
     spot_coords = find_spots(processed_img)
     color_img = cv2.cvtColor(processed_img, cv2.COLOR_GRAY2BGR)
-    for x, y in spot_coords:
+    for i, (x, y) in enumerate(spot_coords):
+        cv2.putText(
+            color_img,
+            str(i),
+            (x, y),
+            cv2.FONT_HERSHEY_COMPLEX,
+            0.7,
+            (255, 0, 0),
+            1,
+        )
         cv2.rectangle(
             color_img, (x - 13, y - 13), (x + 13, y + 13), (255, 0, 0), 2
         )
 
     return spot_coords, color_img
-
-
-def process_img(img: np.ndarray):
-    """align and threshold image
-
-    Args:
-        img (np.ndarray): original scan of page
-
-    Returns:
-        np.ndarray: img with applied threshold and alignment
-    """
-    thresh_img = ip.thresh_img(img)
-    aligned_img = ip.align_page(thresh_img)
-    return aligned_img
 
 
 def str_to_img(img_str: str) -> np.array:
