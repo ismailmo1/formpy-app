@@ -25,9 +25,6 @@ def find_spots():
     return jsonify(
         {"img": marked_img_str, "num_spots": num_spots, "coords": spot_coords}
     )
-    # return render_template(
-    #     "view_template.html", img=marked_img_str, num_spots=num_spots
-    # )
 
 
 @app.get("/view")

@@ -60,3 +60,7 @@ def str_to_img(img_str: str) -> np.array:
     img_arr = np.fromstring(img_str, np.uint8)
     img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
     return img
+
+
+def assign_questions(spot_coords: list[list[int]]):
+    pass
