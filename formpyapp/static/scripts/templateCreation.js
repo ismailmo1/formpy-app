@@ -1,11 +1,13 @@
 const form = document.getElementById("uploadImgForm");
 const container = document.getElementById("mainContainer");
+// make spots public
+let spots ={};
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   console.log("sending form");
   showLoading();
-  let spots = await findSpots(form);
+  spots = await findSpots(form);
   addSpotCount(spots["num_spots"]);
   addAssignButton();
   addImage(spots["img"]);
@@ -48,63 +50,99 @@ function addAssignButton() {
 }
 
 function addAssignForm(coords) {
-    questionDiv = document.createElement("div");
+  // parent form element- contains all questiondivs
+  let questionForm = document.createElement("form")
+  questionForm.id = "templateDefForm"
+  questionForm.setAttribute("method", "POST")
+  questionForm.setAttribute("action", "/define-template")
+  questionForm.setAttribute("name", "templateForm")
+
+  let submitBtn = document.createElement("button");
+  submitBtn.classList.add("btn", "btn-success");
+  submitBtn.innerHTML="Submit Template";
+  questionForm.appendChild(submitBtn)
+  // assign number of questions 
+    let questionDiv = document.createElement("div");
     questionDiv.classList.add("row")
     questionDiv.id = "assignqns"
     questionDiv.innerHTML = "<h1 class='mt-5'>How many questions are on this template?</h1>"
     
-    questionAssignments = document.createElement("input")
-    questionAssignments.classList.add("col-3")
-    questionAssignments.setAttribute("type", "number")
-    questionAssignments.setAttribute("min", "1")
-    questionAssignments.setAttribute("max", coords.length)
-    
-    questionForm = document.createElement("form")
-
-    questionDiv.appendChild(questionAssignments)
-    questionDiv.appendChild(questionForm)
-    container.appendChild(questionDiv)
+    let questionCountInput = document.createElement("input")
+    questionCountInput.classList.add("col-3")
+    questionCountInput.setAttribute("type", "number")
+    questionCountInput.setAttribute("min", "1")
+    questionCountInput.setAttribute("max", coords.length)
     
 
-
-    questionAssignments.addEventListener("input", function(e){
-      questionGroups = document.querySelectorAll(".questionGroup")
-      if (parseInt(this.value)>questionGroups.length) {
+    questionDiv.appendChild(questionCountInput)
+    questionForm.insertBefore(questionDiv, submitBtn)
+    container.appendChild(questionForm)
+    
+// add or remove questions when questionCount changes
+    questionCountInput.addEventListener("input", function(e){
+      let questionGroups = document.querySelectorAll(".questionGroup")
+      let numQuestions = questionGroups.length
+      if (parseInt(this.value)>numQuestions) {
         // add question
-        console.log("adding")
-        questionGroup=document.createElement("div")
-        questionGroup.classList.add("questionGroup", "mt-4")
-        questionGroup.innerHTML = `<h5>Question No. ${this.value}</h5>`
-        
-        answerGroup=document.createElement("div")
-        answerGroup.classList.add("answerGroup","row")
-        answerGroup.innerHTML = `<h6>Answer</h6>`
-        
-        answerVal = document.createElement("input")
-        answerCoords = document.createElement("select")
-        coords.forEach((coord)=>{
-          answerCoord = document.createElement("option")
-          answerCoord.setAttribute("value", coord)
-          answerCoord.innerHTML = coord
-          answerCoords.appendChild(answerCoord)
-        })
-        answerGroup.appendChild(answerVal)
-        answerGroup.appendChild(answerCoords)
-
-        questionGroup.appendChild(answerGroup)
-        questionDiv.appendChild(questionGroup)
+        // keep adding questions until input value met
+        for(let i = numQuestions; this.value > i; i++){
+          let questionGroup = createQuestionGroup(i+1);
+          questionDiv.appendChild(questionGroup)
+        }
         
       }else{
-        // remove question
-        console.log("removing")
-        questionDiv.removeChild(questionGroups[questionGroups.length-1])
+        // keep removing questions until input value met
+        for(let i = numQuestions; this.value < i; i--){
+          console.log(this.value, i)
+          questionDiv.removeChild(questionGroups[i-1])
+        }
       }
     })
     
 }
 
-questionGroup = document.createElement("div")
-questionGroup.classList.add("questionGroup", "row")
-//create answer inputs : value and location (x,y)
-coordSelect = document.createElement("select")
+function createAnswerGroup(coords){
+  let answerGroup=document.createElement("div");
+  answerGroup.classList.add("answerGroup","row", "my-2");
+  answerGroup.innerHTML = `<h6>Answer</h6>`;
+  
+  let answerVal = document.createElement("input");
+  answerVal.classList.add("col-3");
+  let answerCoordSelect = document.createElement("select");
+  
+  // wrapper for answer coord select
+  let answerCoordDiv = document.createElement("div");
+  answerCoordDiv.classList.add("col-2");
 
+  coords.forEach((coord)=>{
+    let answerCoord = document.createElement("option")
+    answerCoord.setAttribute("value", coord)
+    answerCoord.innerHTML = coord
+    answerCoordSelect.appendChild(answerCoord)
+  })
+  answerCoordDiv.appendChild(answerCoordSelect)
+  answerGroup.appendChild(answerCoordDiv)
+  answerGroup.appendChild(answerVal)
+  return answerGroup  
+}
+
+function createQuestionGroup(questionNum){
+ 
+  let questionGroup=document.createElement("div");
+  questionGroup.classList.add("questionGroup", "mt-4");
+  questionGroup.innerHTML = `<h5>Question No. ${questionNum}</h5>`;
+  
+  // create add answer button
+  let addAnsBtn = document.createElement("button");
+  addAnsBtn.innerHTML = "Add Answer";
+  addAnsBtn.classList.add("btn", "btn-primary");
+  addAnsBtn.addEventListener("click", (e)=>{
+    e.preventDefault();
+    answerGroup = createAnswerGroup(spots["coords"]);
+    let currQuestionGroup = e.target.parentElement;
+    currQuestionGroup.appendChild(answerGroup);  
+  })
+
+  questionGroup.appendChild(addAnsBtn);
+  return questionGroup;
+}

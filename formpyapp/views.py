@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, render_template, request
+from flask.helpers import url_for
 
 from .api import img_to_str, mark_spots, str_to_img
 
@@ -15,7 +16,7 @@ def create_template():
     return render_template("create_template.html")
 
 
-@app.route("/find-spots", methods=["POST"])
+@app.post("/find-spots")
 def find_spots():
     img_str = request.files["uploadedImg"].read()
     img = str_to_img(img_str)
@@ -25,6 +26,12 @@ def find_spots():
     return jsonify(
         {"img": marked_img_str, "num_spots": num_spots, "coords": spot_coords}
     )
+
+
+@app.post("/define-template")
+def define_template():
+    question_data = request.form
+    return render_template(url_for("home"))
 
 
 @app.get("/view")
