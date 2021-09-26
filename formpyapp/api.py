@@ -1,10 +1,12 @@
 import base64
 import io
+from collections import defaultdict
 from typing import Tuple
 
 import cv2
 import formpy.utils.img_processing as ip
 import numpy as np
+from formpy.questions import Answer, Question, Template
 from formpy.utils.template_definition import find_spots
 from PIL import Image
 
@@ -62,5 +64,22 @@ def str_to_img(img_str: str) -> np.array:
     return img
 
 
-def assign_questions(spot_coords: list[list[int]]):
-    pass
+def parse_template_form(form: dict):
+    # initialise empty questions dict to populate with question:answers[]
+    # question_config in form {question_id:{multiple:bool, answers:list[answer_coords:tuple, answer_val:str]}, question_id2}
+    questions = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
+    for data in form.items():
+        name, att = data
+        question_num, answer_details = name.split("-", maxsplit=1)
+        ans_index, ans_type = answer_details.split("-")
+        # TODO sepaarte coords and index, then assing answercoords/val to correct ans in list of answers
+        if ans_type == "index":
+            questions[question_num]["answers"][ans_index][
+                "answer_coords"
+            ] = att
+        elif ans_type == "value":
+            questions[question_num]["answers"][ans_index]["answer_val"] = att
+        elif ans_type == "multipleFlag":
+            questions[question_num]["multiple"] = att
+
+    return Template.from_dict(None, questions)

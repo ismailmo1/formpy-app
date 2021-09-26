@@ -101,14 +101,19 @@ function addAssignForm(coords) {
     
 }
 
-function createAnswerGroup(coords){
+function createAnswerGroup(coords, questionId){
+  let questionGroup = document.querySelector(`#${questionId}`);
+  let ansNum = questionGroup.querySelectorAll(".answerGroup").length+1;
   let answerGroup=document.createElement("div");
+
   answerGroup.classList.add("answerGroup","row", "my-2");
-  answerGroup.innerHTML = `<h6>Answer</h6>`;
+  answerGroup.innerHTML = `<h6>Answer${ansNum}</h6>`;
   
   let answerVal = document.createElement("input");
   answerVal.classList.add("col-3");
+  answerVal.name = `${questionId}-answer${ansNum}-value`
   let answerCoordSelect = document.createElement("select");
+  answerCoordSelect.name = `${questionId}-answer${ansNum}-index`
   
   // wrapper for answer coord select
   let answerCoordDiv = document.createElement("div");
@@ -116,8 +121,8 @@ function createAnswerGroup(coords){
 
   coords.forEach((coord)=>{
     let answerCoord = document.createElement("option")
-    answerCoord.setAttribute("value", coord)
-    answerCoord.innerHTML = coord
+    answerCoord.setAttribute("value", coords.indexOf(coord))
+    answerCoord.innerHTML = `${coords.indexOf(coord)}: ${coord}`
     answerCoordSelect.appendChild(answerCoord)
   })
   answerCoordDiv.appendChild(answerCoordSelect)
@@ -129,16 +134,40 @@ function createAnswerGroup(coords){
 function createQuestionGroup(questionNum){
  
   let questionGroup=document.createElement("div");
+  let questionGroupId = `question${questionNum}`
   questionGroup.classList.add("questionGroup", "mt-4");
   questionGroup.innerHTML = `<h5>Question No. ${questionNum}</h5>`;
+  questionGroup.id = questionGroupId
   
+  // create toggle swtich for multple qns
+  let multipleFlagSwitchDiv = document.createElement("div")
+  multipleFlagSwitchDiv.classList.add("form-check","form-switch")
+  let multipleFlagSwitch = document.createElement("input")
+  multipleFlagSwitch.setAttribute("type", "checkbox")
+  multipleFlagSwitch.value ="True"
+  // keep naming convention consistent with other form fields for easy parsing
+  // i.e. delimit with - for qn-ans-inputType
+  let multipleFlagSwitchName = `question${questionNum}-answerAll-multipleFlag`
+  multipleFlagSwitch.name = multipleFlagSwitchName
+  multipleFlagSwitch.id = multipleFlagSwitchName
+  multipleFlagSwitch.classList.add("form-check-input")
+  let switchLabel = document.createElement("label")
+  switchLabel.innerHTML = "Multiple Answers"
+  switchLabel.setAttribute("for", multipleFlagSwitchName)
+  switchLabel.classList.add("form-check-label")
+  multipleFlagSwitchDiv.appendChild(switchLabel);
+  multipleFlagSwitchDiv.appendChild(multipleFlagSwitch);
+
+  questionGroup.appendChild(multipleFlagSwitchDiv);
+
   // create add answer button
   let addAnsBtn = document.createElement("button");
   addAnsBtn.innerHTML = "Add Answer";
-  addAnsBtn.classList.add("btn", "btn-primary");
+  addAnsBtn.classList.add("btn", "btn-primary", "col-3");  
   addAnsBtn.addEventListener("click", (e)=>{
     e.preventDefault();
-    answerGroup = createAnswerGroup(spots["coords"]);
+    // create answer group with sequential naming convention i.e. question1-answer1/2/3...
+    answerGroup = createAnswerGroup(spots["coords"], questionGroupId);
     let currQuestionGroup = e.target.parentElement;
     currQuestionGroup.appendChild(answerGroup);  
   })

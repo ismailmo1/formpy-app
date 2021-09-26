@@ -1,7 +1,7 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request
 from flask.helpers import url_for
 
-from .api import img_to_str, mark_spots, str_to_img
+from .api import img_to_str, mark_spots, parse_template_form, str_to_img
 
 app = Flask(__name__)
 
@@ -31,7 +31,8 @@ def find_spots():
 @app.post("/define-template")
 def define_template():
     question_data = request.form
-    return render_template(url_for("home"))
+    parse_template_form(question_data)
+    return redirect(url_for("view_template"))
 
 
 @app.get("/view")
