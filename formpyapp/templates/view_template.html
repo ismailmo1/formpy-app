@@ -7,10 +7,20 @@
             Current Templates
         </h1>
     </div>
-    {% if img %}
-    {{num_spots}} spots detected in template.
-    <img src="data:image/png;base64,{{img}}" class="img-fluid">
-    {% endif %}
+    <div class="row row-cols-sm-2 row-cols-md-3">
 
+        {% for template in templates %}
+        <div class="col">
+            <div class="card" >
+                <img src={{url_for('static', filename = "image_storage/template_images/")}}{{template['_id']}}.jpeg alt="template-image" class="card-img-top">
+                <div class="card-body">
+                    <p class="card-text"> <small>{{template.keys()|length-1}} questions</p></small>
+                </div>
+                <div class="card-footer">{{template['_id']}}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
 </div>
 {% endblock %}

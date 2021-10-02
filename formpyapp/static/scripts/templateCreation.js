@@ -4,9 +4,12 @@ const container = document.getElementById("mainContainer");
 // make spots public
 let spots ={};
 
+// image upload events
 imgForm.addEventListener("submit", async (e) => {
+  // prevent form post request
   e.preventDefault();
   console.log("sending form");
+  // save image upload field to add as hidden field to new question definition form
   const photoUpload = document.querySelector("#photoUpload");
   hideForm();
   const spots = await findSpots(imgForm);
@@ -16,11 +19,13 @@ imgForm.addEventListener("submit", async (e) => {
   addAssignForm(spots["coords"], photoUpload);
 });
 
+// remove original image upload form to find spots 
 function hideForm() {
   let formRow = document.getElementById("formRow");
   container.removeChild(formRow);
 }
 
+// ajax form post to find spots on template
 async function findSpots(form) {
   let formData = new FormData(form);
   res = await fetch("/find-spots", { method: "POST", body: formData });
@@ -28,6 +33,7 @@ async function findSpots(form) {
   return spots;
 }
 
+// add image with spots annotated
 function addImage(imgData) {
   let imgContainer = document.createElement("img");
   imgContainer.id = "templateImg";
@@ -35,6 +41,7 @@ function addImage(imgData) {
   imgContainer.src = `data:image/png;base64,${imgData}`;
   container.appendChild(imgContainer);
 }
+
 
 function addSpotCount(numSpots) {
   let spotCounter = document.createElement("h3");
@@ -53,20 +60,22 @@ function addAssignButton() {
 
 function addAssignForm(coords, photoUpload) {  
   // parent form element- contains all questiondivs
-  let questionForm = document.createElement("form")
-  questionForm.id = "templateDefForm"
-  questionForm.setAttribute("method", "POST")
-  questionForm.setAttribute("action", "/define-template")
-  questionForm.setAttribute("name", "templateForm")
-  questionForm.setAttribute("enctype", "multipart/form-data")
-
-
-  questionForm.appendChild(photoUpload);
-
+  let templateForm = document.createElement("form")
+  templateForm.id = "templateDefForm"
+  templateForm.setAttribute("method", "POST")
+  templateForm.setAttribute("action", "/define-template")
+  templateForm.setAttribute("name", "templateForm")
+  templateForm.setAttribute("enctype", "multipart/form-data")
+  
+  let templateNameInput = createTemplateName();
+  photoUpload.hidden = true;
+  templateForm.appendChild(photoUpload);
+  templateForm.appendChild(templateNameInput);
+  
   let submitBtn = document.createElement("button");
   submitBtn.classList.add("btn", "btn-success");
   submitBtn.innerHTML="Submit Template";
-  questionForm.appendChild(submitBtn)
+  templateForm.appendChild(submitBtn)
   // assign number of questions 
     let questionDiv = document.createElement("div");
     questionDiv.classList.add("row")
@@ -81,8 +90,10 @@ function addAssignForm(coords, photoUpload) {
     
 
     questionDiv.appendChild(questionCountInput)
-    questionForm.insertBefore(questionDiv, submitBtn)
-    container.appendChild(questionForm)
+
+
+    templateForm.insertBefore(questionDiv, submitBtn)
+    container.appendChild(templateForm)
     
 // add or remove questions when questionCount changes
     questionCountInput.addEventListener("input", function(e){
@@ -180,4 +191,19 @@ function createQuestionGroup(questionNum){
 
   questionGroup.appendChild(addAnsBtn);
   return questionGroup;
+}
+
+function createTemplateName(){
+  let questionNameDiv = document.createElement("div");
+  questionNameDiv.classList.add("row")
+  questionNameDiv.id = "questionName"
+  questionNameDiv.innerHTML = "<h3 class='mt-5'>Give your template a name:</h1>"
+  
+  let questionNameInput = document.createElement("input")
+  questionNameInput.classList.add("col-3")
+  questionNameInput.name="templateName"
+  questionNameDiv.appendChild(questionNameInput)
+
+  return questionNameDiv;
+
 }

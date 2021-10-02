@@ -1,9 +1,20 @@
+import os
+
 from flask import Flask, jsonify, redirect, render_template, request
 from flask.helpers import url_for
 
-from .api import img_to_str, mark_spots, parse_template_form, str_to_img
+from .api import (
+    IMG_STORAGE_PATH,
+    img_to_str,
+    mark_spots,
+    parse_template_form,
+    save_image,
+    str_to_img,
+)
 
 app = Flask(__name__)
+
+from .db import get_all_templates, save_template
 
 
 @app.route("/")
@@ -31,12 +42,16 @@ def find_spots():
 @app.post("/define-template")
 def define_template():
     question_data = request.form
+    template_name = request.form["templateName"]
     img_str = request.files["uploadedImg"].read()
     img = str_to_img(img_str)
     template = parse_template_form(question_data, img)
-    return jsonify(template.to_json())
+    temp_id = save_template(template_name, template.to_dict())
+    print(save_image(img, temp_id))
+    return redirect(url_for("view_template"))
 
 
 @app.get("/view")
 def view_template():
-    return render_template("view_template.html")
+    templates = get_all_templates()
+    return render_template("view_template.html", templates=templates)
