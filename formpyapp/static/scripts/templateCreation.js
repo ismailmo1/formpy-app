@@ -1,20 +1,22 @@
-const form = document.getElementById("uploadImgForm");
+const imgForm = document.getElementById("uploadImgForm");
+
 const container = document.getElementById("mainContainer");
 // make spots public
 let spots ={};
 
-form.addEventListener("submit", async (e) => {
+imgForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   console.log("sending form");
-  showLoading();
-  spots = await findSpots(form);
+  const photoUpload = document.querySelector("#photoUpload");
+  hideForm();
+  const spots = await findSpots(imgForm);
   addSpotCount(spots["num_spots"]);
   addAssignButton();
   addImage(spots["img"]);
-  addAssignForm(spots["coords"]);
+  addAssignForm(spots["coords"], photoUpload);
 });
 
-function showLoading() {
+function hideForm() {
   let formRow = document.getElementById("formRow");
   container.removeChild(formRow);
 }
@@ -35,27 +37,31 @@ function addImage(imgData) {
 }
 
 function addSpotCount(numSpots) {
-  spotCounter = document.createElement("h3");
+  let spotCounter = document.createElement("h3");
   spotCounter.classList.add("mb-2");
   spotCounter.innerHTML = `${numSpots} spots detected`;
   container.appendChild(spotCounter);
 }
 
 function addAssignButton() {
-  button = document.createElement("a");
+  let button = document.createElement("a");
   button.classList.add("btn", "btn-primary", "mb-2");
   button.setAttribute("href", "#assignqns");
   button.innerHTML = "Assign Questions";
   container.appendChild(button);
 }
 
-function addAssignForm(coords) {
+function addAssignForm(coords, photoUpload) {  
   // parent form element- contains all questiondivs
   let questionForm = document.createElement("form")
   questionForm.id = "templateDefForm"
   questionForm.setAttribute("method", "POST")
   questionForm.setAttribute("action", "/define-template")
   questionForm.setAttribute("name", "templateForm")
+  questionForm.setAttribute("enctype", "multipart/form-data")
+
+
+  questionForm.appendChild(photoUpload);
 
   let submitBtn = document.createElement("button");
   submitBtn.classList.add("btn", "btn-success");
@@ -121,7 +127,7 @@ function createAnswerGroup(coords, questionId){
 
   coords.forEach((coord)=>{
     let answerCoord = document.createElement("option")
-    answerCoord.setAttribute("value", coords.indexOf(coord))
+    answerCoord.setAttribute("value", coord)
     answerCoord.innerHTML = `${coords.indexOf(coord)}: ${coord}`
     answerCoordSelect.appendChild(answerCoord)
   })

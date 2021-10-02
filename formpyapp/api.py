@@ -64,7 +64,7 @@ def str_to_img(img_str: str) -> np.array:
     return img
 
 
-def parse_template_form(form: dict):
+def parse_template_form(form: dict, img: np.ndarray) -> Template:
     # initialise empty questions dict to populate with question:answers[]
     # question_config in form {question_id:{multiple:bool, answers:list[answer_coords:tuple, answer_val:str]}, question_id2}
     questions = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
@@ -82,4 +82,4 @@ def parse_template_form(form: dict):
         elif ans_type == "multipleFlag":
             questions[question_num]["multiple"] = att
 
-    return Template.from_dict(None, questions)
+    return Template.from_dict(img, questions)

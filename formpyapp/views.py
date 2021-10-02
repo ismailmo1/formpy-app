@@ -31,8 +31,10 @@ def find_spots():
 @app.post("/define-template")
 def define_template():
     question_data = request.form
-    parse_template_form(question_data)
-    return redirect(url_for("view_template"))
+    img_str = request.files["uploadedImg"].read()
+    img = str_to_img(img_str)
+    template = parse_template_form(question_data, img)
+    return jsonify(template.to_json())
 
 
 @app.get("/view")
