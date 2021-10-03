@@ -68,7 +68,20 @@ function addAssignForm(coords, photoUpload) {
   templateForm.setAttribute("enctype", "multipart/form-data")
   
   let templateNameInput = createTemplateName();
+  // hide orig image and submit as part of define template form
   photoUpload.hidden = true;
+  // add coords as hidden input to define template form
+  let coordsInput = document.createElement("input");
+  coordsInput.setAttribute("type", "text");
+  coordsInput.setAttribute("name", "coords");
+  let coords_vals = [];
+// add brackets around each coord (otherwise just a long string of comma sep vals)
+  coords.forEach((coord)=>{
+    coords_vals.push(`[${coord}]`)});
+  coordsInput.value = coords_vals;
+  coordsInput.hidden=true;
+  templateForm.appendChild(coordsInput);
+
   templateForm.appendChild(photoUpload);
   templateForm.appendChild(templateNameInput);
   
@@ -136,6 +149,7 @@ function createAnswerGroup(coords, questionId){
   let answerCoordDiv = document.createElement("div");
   answerCoordDiv.classList.add("col-2");
 
+  // add all coords to dropdown 
   coords.forEach((coord)=>{
     let answerCoord = document.createElement("option")
     answerCoord.setAttribute("value", coord)

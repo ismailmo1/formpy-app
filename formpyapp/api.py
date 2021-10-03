@@ -12,7 +12,7 @@ from formpy.questions import Answer, Question, Template
 from formpy.utils.template_definition import find_spots
 from PIL import Image
 
-IMG_STORAGE_PATH = "/home/ismail/Projects/python_projects/formpyapp/image_storage/template_images"
+IMG_STORAGE_PATH = "/home/ismail/projects/python_projects/formpyapp/image_storage/template_images"
 
 
 def img_to_str(img: np.array) -> str:
@@ -74,11 +74,10 @@ def parse_template_form(form: dict, img: np.ndarray) -> Template:
     questions = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
     for data in form.items():
         name, att = data
-        if name == "templateName":
+        if name == "templateName" or name == "coords":
             continue
         question_num, answer_details = name.split("-", maxsplit=1)
         ans_index, ans_type = answer_details.split("-")
-        # TODO separate coords and index, then assing answercoords/val to correct ans in list of answers
         if ans_type == "index":
             questions[question_num]["answers"][ans_index][
                 "answer_coords"
@@ -103,6 +102,8 @@ def save_image(
     Returns:
         str: path of saved image
     """
-    save_img_path = os.path.join(f"static/{img_path}", f"{img_id}.jpeg")
+    save_img_path = os.path.join(
+        f"formpyapp/static/{img_path}", f"{img_id}.jpeg"
+    )
     cv2.imwrite(save_img_path, img)
     return save_img_path

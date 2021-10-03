@@ -1,0 +1,903 @@
+{% extends "layout.html" %} {% block content %}
+
+<div class="row">
+  <h1>Edit Template: {{template["name"]}}</h1>
+</div>
+
+<a href="http://localhost:5000/create#assignqns"
+  >Edit Questions</a
+>
+<img id="templateImg" class="img-fluid" src="" />
+<form
+  id="templateDefForm"
+  method="POST"
+  action="http://localhost:5000/define-template"
+  name="templateForm"
+  enctype="multipart/form-data"
+>
+  <input
+    type="file"
+    name="uploadedImg"
+    id="photoUpload"
+    hidden=""
+  />
+  <div class="row" id="questionName">
+    <h3 class="mt-5">
+      Give your template a name:
+    </h3>
+    <input class="col-3" name="templateName"
+    value={{template['name']}}>
+  </div>
+  <div class="row" id="assignqns">
+    <h1 class="mt-5">
+      How many questions are on this template?
+    </h1>
+    <input
+      class="col-3"
+      type="number"
+      min="1"
+      max="64"
+    />
+    <div
+      class="questionGroup mt-4"
+      id="question1"
+    >
+      <h5>Question No. 1</h5>
+      <div class="form-check form-switch">
+        <label
+          for="question1-answerAll-multipleFlag"
+          class="form-check-label"
+          >Multiple Answers</label
+        ><input
+          type="checkbox"
+          value="True"
+          name="question1-answerAll-multipleFlag"
+          id="question1-answerAll-multipleFlag"
+          class="form-check-input"
+        />
+      </div>
+      <button class="btn btn-primary col-3">
+        Add Answer
+      </button>
+      <div class="answerGroup row my-2">
+        <h6>Answer1</h6>
+        <div class="col-2">
+          <select name="question1-answer1-index">
+            <option value="555,628">
+              0: 555,628
+            </option>
+            <option value="557,464">
+              1: 557,464
+            </option>
+            <option value="558,958">
+              2: 558,958
+            </option>
+            <option value="560,793">
+              3: 560,793
+            </option>
+            <option value="609,627">
+              4: 609,627
+            </option>
+            <option value="611,464">
+              5: 611,464
+            </option>
+            <option value="612,958">
+              6: 612,958
+            </option>
+            <option value="614,794">
+              7: 614,794
+            </option>
+            <option value="660,628">
+              8: 660,628
+            </option>
+            <option value="662,464">
+              9: 662,464
+            </option>
+            <option value="663,958">
+              10: 663,958
+            </option>
+            <option value="665,794">
+              11: 665,794
+            </option>
+            <option value="714,628">
+              12: 714,628
+            </option>
+            <option value="716,464">
+              13: 716,464
+            </option>
+            <option value="716,958">
+              14: 716,958
+            </option>
+            <option value="719,794">
+              15: 719,794
+            </option>
+            <option value="759,629">
+              16: 759,629
+            </option>
+            <option value="761,465">
+              17: 761,465
+            </option>
+            <option value="761,960">
+              18: 761,960
+            </option>
+            <option value="764,795">
+              19: 764,795
+            </option>
+            <option value="813,629">
+              20: 813,629
+            </option>
+            <option value="815,465">
+              21: 815,465
+            </option>
+            <option value="815,960">
+              22: 815,960
+            </option>
+            <option value="818,796">
+              23: 818,796
+            </option>
+            <option value="864,630">
+              24: 864,630
+            </option>
+            <option value="866,465">
+              25: 866,465
+            </option>
+            <option value="866,960">
+              26: 866,960
+            </option>
+            <option value="868,796">
+              27: 868,796
+            </option>
+            <option value="918,630">
+              28: 918,630
+            </option>
+            <option value="920,466">
+              29: 920,466
+            </option>
+            <option value="920,960">
+              30: 920,960
+            </option>
+            <option value="922,796">
+              31: 922,796
+            </option>
+            <option value="1460,610">
+              32: 1460,610
+            </option>
+            <option value="1462,445">
+              33: 1462,445
+            </option>
+            <option value="1462,970">
+              34: 1462,970
+            </option>
+            <option value="1464,806">
+              35: 1464,806
+            </option>
+            <option value="1514,610">
+              36: 1514,610
+            </option>
+            <option value="1516,446">
+              37: 1516,446
+            </option>
+            <option value="1516,971">
+              38: 1516,971
+            </option>
+            <option value="1518,806">
+              39: 1518,806
+            </option>
+            <option value="1565,610">
+              40: 1565,610
+            </option>
+            <option value="1567,446">
+              41: 1567,446
+            </option>
+            <option value="1567,971">
+              42: 1567,971
+            </option>
+            <option value="1569,805">
+              43: 1569,805
+            </option>
+            <option value="1619,610">
+              44: 1619,610
+            </option>
+            <option value="1621,446">
+              45: 1621,446
+            </option>
+            <option value="1621,971">
+              46: 1621,971
+            </option>
+            <option value="1623,806">
+              47: 1623,806
+            </option>
+            <option value="1664,611">
+              48: 1664,611
+            </option>
+            <option value="1666,447">
+              49: 1666,447
+            </option>
+            <option value="1666,972">
+              50: 1666,972
+            </option>
+            <option value="1668,808">
+              51: 1668,808
+            </option>
+            <option value="1718,611">
+              52: 1718,611
+            </option>
+            <option value="1720,447">
+              53: 1720,447
+            </option>
+            <option value="1720,972">
+              54: 1720,972
+            </option>
+            <option value="1722,808">
+              55: 1722,808
+            </option>
+            <option value="1769,611">
+              56: 1769,611
+            </option>
+            <option value="1771,447">
+              57: 1771,447
+            </option>
+            <option value="1771,972">
+              58: 1771,972
+            </option>
+            <option value="1773,808">
+              59: 1773,808
+            </option>
+            <option value="1823,611">
+              60: 1823,611
+            </option>
+            <option value="1825,447">
+              61: 1825,447
+            </option>
+            <option value="1825,972">
+              62: 1825,972
+            </option>
+            <option value="1827,808">
+              63: 1827,808
+            </option>
+          </select>
+        </div>
+        <input
+          class="col-3"
+          name="question1-answer1-value"
+        />
+      </div>
+      <div class="answerGroup row my-2">
+        <h6>Answer2</h6>
+        <div class="col-2">
+          <select name="question1-answer2-index">
+            <option value="555,628">
+              0: 555,628
+            </option>
+            <option value="557,464">
+              1: 557,464
+            </option>
+            <option value="558,958">
+              2: 558,958
+            </option>
+            <option value="560,793">
+              3: 560,793
+            </option>
+            <option value="609,627">
+              4: 609,627
+            </option>
+            <option value="611,464">
+              5: 611,464
+            </option>
+            <option value="612,958">
+              6: 612,958
+            </option>
+            <option value="614,794">
+              7: 614,794
+            </option>
+            <option value="660,628">
+              8: 660,628
+            </option>
+            <option value="662,464">
+              9: 662,464
+            </option>
+            <option value="663,958">
+              10: 663,958
+            </option>
+            <option value="665,794">
+              11: 665,794
+            </option>
+            <option value="714,628">
+              12: 714,628
+            </option>
+            <option value="716,464">
+              13: 716,464
+            </option>
+            <option value="716,958">
+              14: 716,958
+            </option>
+            <option value="719,794">
+              15: 719,794
+            </option>
+            <option value="759,629">
+              16: 759,629
+            </option>
+            <option value="761,465">
+              17: 761,465
+            </option>
+            <option value="761,960">
+              18: 761,960
+            </option>
+            <option value="764,795">
+              19: 764,795
+            </option>
+            <option value="813,629">
+              20: 813,629
+            </option>
+            <option value="815,465">
+              21: 815,465
+            </option>
+            <option value="815,960">
+              22: 815,960
+            </option>
+            <option value="818,796">
+              23: 818,796
+            </option>
+            <option value="864,630">
+              24: 864,630
+            </option>
+            <option value="866,465">
+              25: 866,465
+            </option>
+            <option value="866,960">
+              26: 866,960
+            </option>
+            <option value="868,796">
+              27: 868,796
+            </option>
+            <option value="918,630">
+              28: 918,630
+            </option>
+            <option value="920,466">
+              29: 920,466
+            </option>
+            <option value="920,960">
+              30: 920,960
+            </option>
+            <option value="922,796">
+              31: 922,796
+            </option>
+            <option value="1460,610">
+              32: 1460,610
+            </option>
+            <option value="1462,445">
+              33: 1462,445
+            </option>
+            <option value="1462,970">
+              34: 1462,970
+            </option>
+            <option value="1464,806">
+              35: 1464,806
+            </option>
+            <option value="1514,610">
+              36: 1514,610
+            </option>
+            <option value="1516,446">
+              37: 1516,446
+            </option>
+            <option value="1516,971">
+              38: 1516,971
+            </option>
+            <option value="1518,806">
+              39: 1518,806
+            </option>
+            <option value="1565,610">
+              40: 1565,610
+            </option>
+            <option value="1567,446">
+              41: 1567,446
+            </option>
+            <option value="1567,971">
+              42: 1567,971
+            </option>
+            <option value="1569,805">
+              43: 1569,805
+            </option>
+            <option value="1619,610">
+              44: 1619,610
+            </option>
+            <option value="1621,446">
+              45: 1621,446
+            </option>
+            <option value="1621,971">
+              46: 1621,971
+            </option>
+            <option value="1623,806">
+              47: 1623,806
+            </option>
+            <option value="1664,611">
+              48: 1664,611
+            </option>
+            <option value="1666,447">
+              49: 1666,447
+            </option>
+            <option value="1666,972">
+              50: 1666,972
+            </option>
+            <option value="1668,808">
+              51: 1668,808
+            </option>
+            <option value="1718,611">
+              52: 1718,611
+            </option>
+            <option value="1720,447">
+              53: 1720,447
+            </option>
+            <option value="1720,972">
+              54: 1720,972
+            </option>
+            <option value="1722,808">
+              55: 1722,808
+            </option>
+            <option value="1769,611">
+              56: 1769,611
+            </option>
+            <option value="1771,447">
+              57: 1771,447
+            </option>
+            <option value="1771,972">
+              58: 1771,972
+            </option>
+            <option value="1773,808">
+              59: 1773,808
+            </option>
+            <option value="1823,611">
+              60: 1823,611
+            </option>
+            <option value="1825,447">
+              61: 1825,447
+            </option>
+            <option value="1825,972">
+              62: 1825,972
+            </option>
+            <option value="1827,808">
+              63: 1827,808
+            </option>
+          </select>
+        </div>
+        <input
+          class="col-3"
+          name="question1-answer2-value"
+        />
+      </div>
+    </div>
+    <div
+      class="questionGroup mt-4"
+      id="question2"
+    >
+      <h5>Question No. 2</h5>
+      <div class="form-check form-switch">
+        <label
+          for="question2-answerAll-multipleFlag"
+          class="form-check-label"
+          >Multiple Answers</label
+        ><input
+          type="checkbox"
+          value="True"
+          name="question2-answerAll-multipleFlag"
+          id="question2-answerAll-multipleFlag"
+          class="form-check-input"
+        />
+      </div>
+      <button class="btn btn-primary col-3">
+        Add Answer
+      </button>
+      <div class="answerGroup row my-2">
+        <h6>Answer1</h6>
+        <div class="col-2">
+          <select name="question2-answer1-index">
+            <option value="555,628">
+              0: 555,628
+            </option>
+            <option value="557,464">
+              1: 557,464
+            </option>
+            <option value="558,958">
+              2: 558,958
+            </option>
+            <option value="560,793">
+              3: 560,793
+            </option>
+            <option value="609,627">
+              4: 609,627
+            </option>
+            <option value="611,464">
+              5: 611,464
+            </option>
+            <option value="612,958">
+              6: 612,958
+            </option>
+            <option value="614,794">
+              7: 614,794
+            </option>
+            <option value="660,628">
+              8: 660,628
+            </option>
+            <option value="662,464">
+              9: 662,464
+            </option>
+            <option value="663,958">
+              10: 663,958
+            </option>
+            <option value="665,794">
+              11: 665,794
+            </option>
+            <option value="714,628">
+              12: 714,628
+            </option>
+            <option value="716,464">
+              13: 716,464
+            </option>
+            <option value="716,958">
+              14: 716,958
+            </option>
+            <option value="719,794">
+              15: 719,794
+            </option>
+            <option value="759,629">
+              16: 759,629
+            </option>
+            <option value="761,465">
+              17: 761,465
+            </option>
+            <option value="761,960">
+              18: 761,960
+            </option>
+            <option value="764,795">
+              19: 764,795
+            </option>
+            <option value="813,629">
+              20: 813,629
+            </option>
+            <option value="815,465">
+              21: 815,465
+            </option>
+            <option value="815,960">
+              22: 815,960
+            </option>
+            <option value="818,796">
+              23: 818,796
+            </option>
+            <option value="864,630">
+              24: 864,630
+            </option>
+            <option value="866,465">
+              25: 866,465
+            </option>
+            <option value="866,960">
+              26: 866,960
+            </option>
+            <option value="868,796">
+              27: 868,796
+            </option>
+            <option value="918,630">
+              28: 918,630
+            </option>
+            <option value="920,466">
+              29: 920,466
+            </option>
+            <option value="920,960">
+              30: 920,960
+            </option>
+            <option value="922,796">
+              31: 922,796
+            </option>
+            <option value="1460,610">
+              32: 1460,610
+            </option>
+            <option value="1462,445">
+              33: 1462,445
+            </option>
+            <option value="1462,970">
+              34: 1462,970
+            </option>
+            <option value="1464,806">
+              35: 1464,806
+            </option>
+            <option value="1514,610">
+              36: 1514,610
+            </option>
+            <option value="1516,446">
+              37: 1516,446
+            </option>
+            <option value="1516,971">
+              38: 1516,971
+            </option>
+            <option value="1518,806">
+              39: 1518,806
+            </option>
+            <option value="1565,610">
+              40: 1565,610
+            </option>
+            <option value="1567,446">
+              41: 1567,446
+            </option>
+            <option value="1567,971">
+              42: 1567,971
+            </option>
+            <option value="1569,805">
+              43: 1569,805
+            </option>
+            <option value="1619,610">
+              44: 1619,610
+            </option>
+            <option value="1621,446">
+              45: 1621,446
+            </option>
+            <option value="1621,971">
+              46: 1621,971
+            </option>
+            <option value="1623,806">
+              47: 1623,806
+            </option>
+            <option value="1664,611">
+              48: 1664,611
+            </option>
+            <option value="1666,447">
+              49: 1666,447
+            </option>
+            <option value="1666,972">
+              50: 1666,972
+            </option>
+            <option value="1668,808">
+              51: 1668,808
+            </option>
+            <option value="1718,611">
+              52: 1718,611
+            </option>
+            <option value="1720,447">
+              53: 1720,447
+            </option>
+            <option value="1720,972">
+              54: 1720,972
+            </option>
+            <option value="1722,808">
+              55: 1722,808
+            </option>
+            <option value="1769,611">
+              56: 1769,611
+            </option>
+            <option value="1771,447">
+              57: 1771,447
+            </option>
+            <option value="1771,972">
+              58: 1771,972
+            </option>
+            <option value="1773,808">
+              59: 1773,808
+            </option>
+            <option value="1823,611">
+              60: 1823,611
+            </option>
+            <option value="1825,447">
+              61: 1825,447
+            </option>
+            <option value="1825,972">
+              62: 1825,972
+            </option>
+            <option value="1827,808">
+              63: 1827,808
+            </option>
+          </select>
+        </div>
+        <input
+          class="col-3"
+          name="question2-answer1-value"
+        />
+      </div>
+      <div class="answerGroup row my-2">
+        <h6>Answer2</h6>
+        <div class="col-2">
+          <select name="question2-answer2-index">
+            <option value="555,628">
+              0: 555,628
+            </option>
+            <option value="557,464">
+              1: 557,464
+            </option>
+            <option value="558,958">
+              2: 558,958
+            </option>
+            <option value="560,793">
+              3: 560,793
+            </option>
+            <option value="609,627">
+              4: 609,627
+            </option>
+            <option value="611,464">
+              5: 611,464
+            </option>
+            <option value="612,958">
+              6: 612,958
+            </option>
+            <option value="614,794">
+              7: 614,794
+            </option>
+            <option value="660,628">
+              8: 660,628
+            </option>
+            <option value="662,464">
+              9: 662,464
+            </option>
+            <option value="663,958">
+              10: 663,958
+            </option>
+            <option value="665,794">
+              11: 665,794
+            </option>
+            <option value="714,628">
+              12: 714,628
+            </option>
+            <option value="716,464">
+              13: 716,464
+            </option>
+            <option value="716,958">
+              14: 716,958
+            </option>
+            <option value="719,794">
+              15: 719,794
+            </option>
+            <option value="759,629">
+              16: 759,629
+            </option>
+            <option value="761,465">
+              17: 761,465
+            </option>
+            <option value="761,960">
+              18: 761,960
+            </option>
+            <option value="764,795">
+              19: 764,795
+            </option>
+            <option value="813,629">
+              20: 813,629
+            </option>
+            <option value="815,465">
+              21: 815,465
+            </option>
+            <option value="815,960">
+              22: 815,960
+            </option>
+            <option value="818,796">
+              23: 818,796
+            </option>
+            <option value="864,630">
+              24: 864,630
+            </option>
+            <option value="866,465">
+              25: 866,465
+            </option>
+            <option value="866,960">
+              26: 866,960
+            </option>
+            <option value="868,796">
+              27: 868,796
+            </option>
+            <option value="918,630">
+              28: 918,630
+            </option>
+            <option value="920,466">
+              29: 920,466
+            </option>
+            <option value="920,960">
+              30: 920,960
+            </option>
+            <option value="922,796">
+              31: 922,796
+            </option>
+            <option value="1460,610">
+              32: 1460,610
+            </option>
+            <option value="1462,445">
+              33: 1462,445
+            </option>
+            <option value="1462,970">
+              34: 1462,970
+            </option>
+            <option value="1464,806">
+              35: 1464,806
+            </option>
+            <option value="1514,610">
+              36: 1514,610
+            </option>
+            <option value="1516,446">
+              37: 1516,446
+            </option>
+            <option value="1516,971">
+              38: 1516,971
+            </option>
+            <option value="1518,806">
+              39: 1518,806
+            </option>
+            <option value="1565,610">
+              40: 1565,610
+            </option>
+            <option value="1567,446">
+              41: 1567,446
+            </option>
+            <option value="1567,971">
+              42: 1567,971
+            </option>
+            <option value="1569,805">
+              43: 1569,805
+            </option>
+            <option value="1619,610">
+              44: 1619,610
+            </option>
+            <option value="1621,446">
+              45: 1621,446
+            </option>
+            <option value="1621,971">
+              46: 1621,971
+            </option>
+            <option value="1623,806">
+              47: 1623,806
+            </option>
+            <option value="1664,611">
+              48: 1664,611
+            </option>
+            <option value="1666,447">
+              49: 1666,447
+            </option>
+            <option value="1666,972">
+              50: 1666,972
+            </option>
+            <option value="1668,808">
+              51: 1668,808
+            </option>
+            <option value="1718,611">
+              52: 1718,611
+            </option>
+            <option value="1720,447">
+              53: 1720,447
+            </option>
+            <option value="1720,972">
+              54: 1720,972
+            </option>
+            <option value="1722,808">
+              55: 1722,808
+            </option>
+            <option value="1769,611">
+              56: 1769,611
+            </option>
+            <option value="1771,447">
+              57: 1771,447
+            </option>
+            <option value="1771,972">
+              58: 1771,972
+            </option>
+            <option value="1773,808">
+              59: 1773,808
+            </option>
+            <option value="1823,611">
+              60: 1823,611
+            </option>
+            <option value="1825,447">
+              61: 1825,447
+            </option>
+            <option value="1825,972">
+              62: 1825,972
+            </option>
+            <option value="1827,808">
+              63: 1827,808
+            </option>
+          </select>
+        </div>
+        <input
+          class="col-3"
+          name="question2-answer2-value"
+        />
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-success">
+    Submit Template
+  </button>
+</form>
+
+{% endblock %}
