@@ -1,10 +1,15 @@
 import os
+from re import template
 
+import cv2
+from cv2 import imread
 from flask import Flask, flash, jsonify, redirect, render_template, request
 from flask.helpers import url_for
 
 from .api import (
     IMG_STORAGE_PATH,
+    delete_image,
+    get_image,
     img_to_str,
     mark_spots,
     parse_template_form,
@@ -14,10 +19,16 @@ from .api import (
 
 app = Flask(__name__)
 app.secret_key = os.environ["FLASK_SECRET"]
-from .db import get_all_templates, get_template, remove_template, save_template
+from .db import (
+    get_all_templates,
+    get_template,
+    remove_template,
+    save_template,
+    update_template,
+)
 
 
-@app.route("/")
+@app.get("/")
 def home():
     return render_template("index.html")
 
@@ -67,7 +78,9 @@ def view_template():
 @app.get("/delete/<template_id>")
 def delete_template(template_id: str):
     deleted = remove_template(template_id)
-    if deleted == 1:
+    img_delete = delete_image(template_id)
+
+    if deleted and img_delete:
         flash("template deleted!", "info")
     else:
         flash("unable to delete template", "danger")
@@ -77,4 +90,13 @@ def delete_template(template_id: str):
 @app.get("/edit/<template_id>")
 def edit_template(template_id):
     template = get_template(template_id)
-    return render_template("edit_template.html", template=template)
+    img = get_image(template_id)
+    template_img = img_to_str(img)
+    return render_template(
+        "edit_template.html", template=template, template_img=template_img
+    )
+
+
+@app.post("/update-template")
+def update_template():
+    template_id = request.form.get("template-id")

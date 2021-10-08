@@ -7,12 +7,13 @@ from typing import Tuple
 import cv2
 import formpy.utils.img_processing as ip
 import numpy as np
+from bson.objectid import ObjectId
 from flask.helpers import url_for
 from formpy.questions import Answer, Question, Template
 from formpy.utils.template_definition import find_spots
 from PIL import Image
 
-IMG_STORAGE_PATH = "/home/ismail/projects/python_projects/formpyapp/image_storage/template_images"
+IMG_STORAGE_PATH = "image_storage/template_images"
 
 
 def img_to_str(img: np.array) -> str:
@@ -90,9 +91,7 @@ def parse_template_form(form: dict, img: np.ndarray) -> Template:
     return Template.from_dict(img, questions)
 
 
-def save_image(
-    img: np.ndarray, img_id: str, img_path="image_storage/template_images"
-) -> str:
+def save_image(img: np.ndarray, img_id: str, img_path=IMG_STORAGE_PATH) -> str:
     """save image in location storage
 
     Args:
@@ -107,3 +106,37 @@ def save_image(
     )
     cv2.imwrite(save_img_path, img)
     return save_img_path
+
+
+def get_image(
+    template_id: str, img_path: str = IMG_STORAGE_PATH
+) -> np.ndarray:
+    """get image from template id
+
+    Args:
+        template_id (str): template id
+    """
+    img_path = save_img_path = os.path.join(
+        f"formpyapp/static/{img_path}", f"{template_id}.jpeg"
+    )
+
+    img = cv2.imread(img_path)
+
+    return img
+
+
+def delete_image(template_id: str, img_path: str = IMG_STORAGE_PATH) -> bool:
+    """delete image from template id, return true if deleted
+
+    Args:
+        template_id (str): template id
+    """
+    img_path = save_img_path = os.path.join(
+        f"formpyapp/static/{img_path}", f"{template_id}.jpeg"
+    )
+
+    if os.path.isfile(img_path):
+        os.remove(img_path)
+        return True
+
+    return False

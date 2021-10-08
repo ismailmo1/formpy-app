@@ -25,6 +25,17 @@ def save_template(
     return result.inserted_id
 
 
+def update_template(template_id: str, template_dict: dict):
+    """update template details from edit page form
+
+    Args:
+        template_id (str)
+        template_dict (dict): dict from edit template form
+    """
+    template = db.templates.find_one({"id": ObjectId(template_id)})
+    template.up
+
+
 def get_all_templates() -> list:
     """return list of existing templates"""
     template_cursor = db.templates.find()
@@ -32,14 +43,14 @@ def get_all_templates() -> list:
     return template_list
 
 
-def remove_template(template_id: str) -> int:
-    """delete template from db"""
+def remove_template(template_id: str) -> bool:
+    """delete template from db, return true on success"""
     try:
         id = ObjectId(template_id)
     except InvalidId as e:
-        return 0
+        return False
     result = db.templates.delete_one({"_id": id})
-    return result.deleted_count
+    return result.deleted_count == 1
 
 
 def get_template(template_id) -> dict:
