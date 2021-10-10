@@ -6,12 +6,13 @@
 
 <a href="#assignqns">Edit Questions</a>
 <img id="templateImg" class="img-fluid" src="data:image/png;base64,{{template_img}}" />
-<form id="templateDefForm" method="POST" action="/update-template" name="templateForm" enctype="multipart/form-data">
+<form id="templateDefForm" method="POST" action="/update-template/{{template['_id']}}" name="templateForm"
+  enctype="multipart/form-data">
   <div class="row" id="questionName">
     <h3 class="mt-5">
       Give your template a name:
     </h3>
-    <input class="col-3" name="templateName" value={{template['name']}}>
+    <input class="col-3" name="templateName" value="{{template['name']}}">
   </div>
   <div class="row" id="assignqns">
     <h1 class="mt-5">
@@ -25,20 +26,20 @@
       <div class="form-check form-switch">
         <label for="{{question}}-answerAll-multipleFlag" class="form-check-label">Multiple Answers</label><input
           type="checkbox" value="True" name="{{question}}-answerAll-multipleFlag" id="question1-answerAll-multipleFlag"
-          class="form-check-input" />
+          class="form-check-input" {% if template['questions'][question]['multiple'] %} checked {% endif %} />
       </div>
       <button class="btn btn-primary col-3">
         Add Answer
       </button>
-      {% for answer in template['questions'][question] %}
-
+      {% for answer in template['questions'][question]['answers'] %}
+      <!-- answer group -->
       <div class="answerGroup row my-2">
         <div class="col-2">
-          {% set selected_coord = answer['answer_coords']|join(',')%}
+          {% set cur_ans = template['questions'][question]['answers'][answer]%}
+          {% set selected_coord = cur_ans['answer_coords']%}
           <select name="{{question}}-answer{{loop.index}}-index" value={{selected_cord}}>
             {% for coord in template['coords'] %}
             {% set joined_coord = coord|join(',') %}
-
             <option value={{joined_coord}} {% if joined_coord==selected_coord %} selected {% endif %}>
               {{loop.index}}: {{coord|join(',')}}
             </option>
@@ -46,14 +47,14 @@
 
           </select>
         </div>
-        <input class="col-3" name="{{question}}-answer{{loop.index}}-value" value="{{answer['answer_val']}}">
+        <input class="col-3" name="{{question}}-answer{{loop.index}}-value" value="{{cur_ans['answer_val']}}">
       </div>
       {% endfor %}
     </div>
     {% endfor %}
-    <a class="btn btn-success mt-1">
+    <button class="btn btn-success mt-1">
       Submit Template
-    </a>
+    </button>
 </form>
 
 {% endblock %}

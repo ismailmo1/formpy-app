@@ -12,7 +12,7 @@ db = mongo.db
 
 
 def save_template(
-    template_name: str, template_coords, template_questions: dict
+    template_name: str, template_coords: str, template_questions: dict
 ) -> str:
     """save template json into template collection and return obj id"""
     template_dict = {}
@@ -32,8 +32,10 @@ def update_template(template_id: str, template_dict: dict):
         template_id (str)
         template_dict (dict): dict from edit template form
     """
-    template = db.templates.find_one({"id": ObjectId(template_id)})
-    template.up
+    update_result = db.templates.update_one(
+        {"_id": ObjectId(template_id)}, {"$set": template_dict}
+    )
+    return update_result.raw_result
 
 
 def get_all_templates() -> list:

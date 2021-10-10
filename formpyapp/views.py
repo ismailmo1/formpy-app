@@ -1,31 +1,24 @@
 import os
-from re import template
 
-import cv2
-from cv2 import imread
 from flask import Flask, flash, jsonify, redirect, render_template, request
 from flask.helpers import url_for
 
+# initialise app before import so app is "exported" first"
+app = Flask(__name__)  # nosort
+
+from . import db
 from .api import (
-    IMG_STORAGE_PATH,
     delete_image,
     get_image,
     img_to_str,
     mark_spots,
     parse_template_form,
+    read_form,
     save_image,
     str_to_img,
 )
 
-app = Flask(__name__)
 app.secret_key = os.environ["FLASK_SECRET"]
-from .db import (
-    get_all_templates,
-    get_template,
-    remove_template,
-    save_template,
-    update_template,
-)
 
 
 @app.get("/")
@@ -62,8 +55,8 @@ def define_template():
     template_coords = f'[{request.form["coords"]}]'
     img_str = request.files["uploadedImg"].read()
     img = str_to_img(img_str)
-    template = parse_template_form(question_data, img)
-    temp_id = save_template(template_name, template_coords, template.to_dict())
+    template_dict = parse_template_form(question_data)
+    temp_id = db.save_template(template_name, template_coords, template_dict)
     save_image(img, temp_id)
     flash("template created successfully!", "info")
     return redirect(url_for("view_template"))
@@ -71,13 +64,13 @@ def define_template():
 
 @app.get("/view")
 def view_template():
-    templates = get_all_templates()
+    templates = db.get_all_templates()
     return render_template("view_template.html", templates=templates)
 
 
 @app.get("/delete/<template_id>")
 def delete_template(template_id: str):
-    deleted = remove_template(template_id)
+    deleted = db.remove_template(template_id)
     img_delete = delete_image(template_id)
 
     if deleted and img_delete:
@@ -89,7 +82,7 @@ def delete_template(template_id: str):
 
 @app.get("/edit/<template_id>")
 def edit_template(template_id):
-    template = get_template(template_id)
+    template = db.get_template(template_id)
     img = get_image(template_id)
     template_img = img_to_str(img)
     return render_template(
@@ -97,6 +90,32 @@ def edit_template(template_id):
     )
 
 
-@app.post("/update-template")
-def update_template():
-    template_id = request.form.get("template-id")
+@app.post("/update-template/<template_id>")
+def update_template(template_id):
+    question_data = request.form
+    template_name = request.form["templateName"]
+    template_dict = {
+        "name": template_name,
+        "questions": parse_template_form(question_data),
+    }
+    temp_id = db.update_template(template_id, template_dict)
+    if temp_id["ok"] == 1.0:
+        flash("template updated successfully!", "info")
+    else:
+        flash("something went wrong", "danger")
+    return redirect(url_for("view_template"))
+
+
+@app.route("/read", methods=["POST", "GET"])
+def read_forms():
+    if request.method == "GET":
+        templates = db.get_all_templates()
+        return render_template("read_forms.html", templates=templates)
+    elif request.method == "POST":
+        template_id = request.form.get("templateId")
+        form_imgs = request.files.get("formImg")
+        for form in form_imgs:
+            read_form(template_id, form)
+
+        # return form image overlay with answers, json of question : answer(s)
+        return redirect(url_for("read_forms"))

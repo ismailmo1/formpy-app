@@ -2,7 +2,8 @@ import base64
 import io
 import os
 from collections import defaultdict
-from typing import Tuple
+from re import template
+from typing import Tuple, Union
 
 import cv2
 import formpy.utils.img_processing as ip
@@ -12,6 +13,8 @@ from flask.helpers import url_for
 from formpy.questions import Answer, Question, Template
 from formpy.utils.template_definition import find_spots
 from PIL import Image
+
+from formpyapp.db import get_template
 
 IMG_STORAGE_PATH = "image_storage/template_images"
 
@@ -69,9 +72,10 @@ def str_to_img(img_str: str) -> np.array:
     return img
 
 
-def parse_template_form(form: dict, img: np.ndarray) -> Template:
-    # initialise empty questions dict to populate with question:answers[]
-    # question_config in form {question_id:{multiple:bool, answers:list[answer_coords:tuple, answer_val:str]}, question_id2}
+def parse_template_form(form: dict) -> dict:
+    """return dict of template in from
+    initialise empty questions dict to populate with question:answers[]
+    question_config in form {question_id:{multiple:bool, answers: {answerid : {answer_coords:tuple, answer_val:str}}, question_id2}"""
     questions = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
     for data in form.items():
         name, att = data
@@ -88,7 +92,7 @@ def parse_template_form(form: dict, img: np.ndarray) -> Template:
         elif ans_type == "multipleFlag":
             questions[question_num]["multiple"] = att
 
-    return Template.from_dict(img, questions)
+    return questions
 
 
 def save_image(img: np.ndarray, img_id: str, img_path=IMG_STORAGE_PATH) -> str:
@@ -140,3 +144,21 @@ def delete_image(template_id: str, img_path: str = IMG_STORAGE_PATH) -> bool:
         return True
 
     return False
+
+
+def read_form(template_id: str, form_img: str):
+    """read form and return image of detected qns and form obj
+
+    Args:
+        template_id (str): id of selected template to read form against
+        form_img (str): bin64 str of form image
+    """
+    img = str_to_img(form_img)
+    template_dict = get_template(template_id)
+    # template = Template.from_dict(template_dict, img)
+    # TODO create form
+    # TODO read answers in form
+    # TODO return dict
+    # TODO return image of form with answer detection overlay
+
+    pass
