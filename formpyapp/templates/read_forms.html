@@ -12,7 +12,7 @@
         <div class="row justify-content-center">
 
             {% for template in templates %}
-            <div class="col-2 my-2">
+            <div class="col-lg-4 col-md-6 my-2">
                 <div class="card">
                     <img src={{url_for('static', filename="image_storage/template_images/" )}}{{template['_id']}}.jpeg
                         alt="template-image" class="card-img-top img-fluid">
@@ -28,12 +28,13 @@
             {% endfor %}
         </div>
         <div class="row mb-3 input-group">
-            <div class="col-6">
+            <div class="col-lg-6">
                 <label for="formImg">Upload your completed forms:</label>
                 <input type="file" name="formImg" id="formImg" class="form-control" multiple>
             </div>
         </div>
-        <button class="btn btn-info ">Read Form</button>
+        <button class="btn btn-info" id="readFormBtn">Read Form</button>
     </form>
 </div>
+<script src="static/scripts/formRead.js"></script>
 {% endblock %}

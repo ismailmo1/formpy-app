@@ -10,7 +10,7 @@ import formpy.utils.img_processing as ip
 import numpy as np
 from bson.objectid import ObjectId
 from flask.helpers import url_for
-from formpy.questions import Answer, Question, Template
+from formpy.questions import Answer, Form, Question, Template
 from formpy.utils.template_definition import find_spots
 from PIL import Image
 
@@ -146,7 +146,7 @@ def delete_image(template_id: str, img_path: str = IMG_STORAGE_PATH) -> bool:
     return False
 
 
-def read_form(template_id: str, form_img: str):
+def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
     """read form and return image of detected qns and form obj
 
     Args:
@@ -154,11 +154,15 @@ def read_form(template_id: str, form_img: str):
         form_img (str): bin64 str of form image
     """
     img = str_to_img(form_img)
-    template_dict = get_template(template_id)
-    # template = Template.from_dict(template_dict, img)
-    # TODO create form
-    # TODO read answers in form
-    # TODO return dict
-    # TODO return image of form with answer detection overlay
+    template_dict = get_template(template_id)["questions"]
+    template = Template.from_dict(img, template_dict)
+    form = Form(img, template)
+    qn_ans = {}
+    for qn in form.questions:
+        qn_ans[qn] = qn.find_answers()
 
-    pass
+    qn_ans_vals = {
+        qn.question_id: [ans.value for ans in answers]
+        for (qn, answers) in qn_ans.items()
+    }
+    return form.mark_all_answers(qn_ans), qn_ans_vals

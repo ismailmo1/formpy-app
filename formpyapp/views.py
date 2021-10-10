@@ -113,9 +113,14 @@ def read_forms():
         return render_template("read_forms.html", templates=templates)
     elif request.method == "POST":
         template_id = request.form.get("templateId")
-        form_imgs = request.files.get("formImg")
-        for form in form_imgs:
-            read_form(template_id, form)
+        form_imgs = request.files.getlist("formImg")
+        marked_imgs = []
+        for img in form_imgs:
+            marked_imgs.append(read_form(template_id, img.read()))
 
         # return form image overlay with answers, json of question : answer(s)
-        return redirect(url_for("read_forms"))
+        res = {
+            "imgs": [img_to_str(img[0]) for img in marked_imgs],
+            "answers": [img[1] for img in marked_imgs],
+        }
+        return jsonify(res)
