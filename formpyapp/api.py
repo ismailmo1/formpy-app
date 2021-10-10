@@ -159,7 +159,7 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
     form = Form(img, template)
     qn_ans = {}
     for qn in form.questions:
-        qn_ans[qn] = qn.find_answers()
+        qn_ans[qn] = qn.find_answers(form.img)
 
     qn_ans_vals = {
         qn.question_id: [ans.value for ans in answers]
