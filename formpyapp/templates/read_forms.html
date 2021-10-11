@@ -36,5 +36,25 @@
         <button class="btn btn-info" id="readFormBtn">Read Form</button>
     </form>
 </div>
+
+<!-- form img modal -->
+<div class="modal fade" id="formImgModal" tabindex="-1" aria-labelledby="formImgModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formImgModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Detected answers are highlighted in the form image below
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="static/scripts/csvDownload.js"></script>
 <script src="static/scripts/formRead.js"></script>
 {% endblock %}
