@@ -1,17 +1,18 @@
-{% extends "layout.html" %} {% block content %}
-  <div class="row">
-    <h1>Create a Template!</h1>
-  </div>
-  <div class="row" id="formRow">
-    <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
-      <label class="row m-2" for="photoUpload"
-        >Upload an image of your filled template</label
-      >
-      <input type="file" name="uploadedImg" id="photoUpload" />
-      <div>
-        <input class="btn btn-success mt-1" type="submit" value="Upload" />
-      </div>
-    </form>
-  </div>
+{% extends "layout.html" %}
+{% set active_link = 'create' %}
+
+{% block content %}
+<div class="row">
+  <h1>Create a Template!</h1>
+</div>
+<div class="row" id="formRow">
+  <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
+    <label class="row m-2" for="photoUpload">Upload an image of your filled template</label>
+    <input type="file" name="uploadedImg" id="photoUpload" />
+    <div>
+      <input class="btn btn-success mt-1" type="submit" value="Upload" />
+    </div>
+  </form>
+</div>
 <script src="static/scripts/templateCreation.js"></script>
 {% endblock %}

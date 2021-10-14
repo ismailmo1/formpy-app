@@ -18,8 +18,9 @@
     <h1 class="mt-5">
       How many questions are on this template?
     </h1>
-    <input class="col-3" type="number" min="1" max="64" value={{template['questions']|length}} />
-    <!-- question group -->
+    <input id="questionCountInput" class="col-3" type="number" min="1" max="64"
+      value={{template['questions']|length}} />
+    <!-- question groups -->
     {% for question in template['questions'] %}
     <div class="questionGroup mt-4" id={{question}}>
       <h5>Question No. {{loop.index}}</h5>
@@ -28,12 +29,13 @@
           type="checkbox" value="True" name="{{question}}-answerAll-multipleFlag" id="question1-answerAll-multipleFlag"
           class="form-check-input" {% if template['questions'][question]['multiple'] %} checked {% endif %} />
       </div>
-      <button class="btn btn-primary col-3">
+      <button class="btn btn-primary col-3 addAnsBtn">
         Add Answer
       </button>
       {% for answer in template['questions'][question]['answers'] %}
       <!-- answer group -->
       <div class="answerGroup row my-2">
+        <h6>Answer{{loop.index}}</h6>
         <div class="col-2">
           {% set cur_ans = template['questions'][question]['answers'][answer]%}
           {% set selected_coord = cur_ans['answer_coords']%}
@@ -52,9 +54,14 @@
       {% endfor %}
     </div>
     {% endfor %}
-    <button class="btn btn-success mt-1">
-      Submit Template
-    </button>
+  </div>
+  <button class="btn btn-success mt-1">
+    Submit Template
+  </button>
+  <!-- end of form -->
+
 </form>
+<!-- script -->
+<script src="{{ url_for( "static",filename="/scripts/templateCreation.js" ) }}"></script>
 
 {% endblock %}

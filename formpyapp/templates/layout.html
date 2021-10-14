@@ -23,7 +23,8 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a href="/" class="nav-link active" aria-current="page">
+                    <a href="/" class="nav-link {% if "home"==active_link %} active {% else %} text-white {%endif%}"
+                        aria-current="page">
                         <svg class="bi me-2" width="16" height="16">
                             <use xlink:href="#home"></use>
                         </svg>
@@ -31,7 +32,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/create" class="nav-link text-white">
+                    <a href="/create" class="nav-link {% if active_link=="create" %} active {% else %} text-white
+                        {%endif%}">
                         <svg class="bi me-2" width="16" height="16">
                             <use xlink:href="#speedometer2"></use>
                         </svg>
@@ -39,7 +41,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/view" class="nav-link text-white">
+                    <a href="/view" class="nav-link {% if "view"==active_link %} active {% else %} text-white
+                        {%endif%}">
                         <svg class="bi me-2" width="16" height="16">
                             <use xlink:href="#speedometer2"></use>
                         </svg>
@@ -47,7 +50,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/read" class="nav-link text-white">
+                    <a href="/read" class="nav-link {% if "read"==active_link %} active {% else %} text-white
+                        {%endif%}">
                         <svg class="bi me-2" width="16" height="16">
                             <use xlink:href="#speedometer2"></use>
                         </svg>
