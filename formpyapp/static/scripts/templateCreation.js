@@ -4,7 +4,9 @@ const container = document.getElementById("mainContainer");
 // make spots public
 let spots ={};
 
-// image upload events
+// image upload events if img uploaded
+if(imgForm){
+  // we are on the create template page
 imgForm.addEventListener("submit", async (e) => {
   // prevent form post request
   e.preventDefault();
@@ -17,7 +19,23 @@ imgForm.addEventListener("submit", async (e) => {
   addAssignButton();
   addImage(spots["img"]);
   addAssignForm(spots["coords"], photoUpload);
-});
+})}else{
+  // we are on the edit template page
+  spots["coords"] = [];
+  options = document.querySelector("select").querySelectorAll("option");
+  [...options].map((opt)=>{spots["coords"].push(opt.value)})
+  // need to assign event listeners to existing elements
+  // find existing question number input
+  let questionCountInput = document.querySelector("#questionCountInput")
+  // add new badge when question created
+  questionCountInput.addEventListener("input", (e)=>{questionCountEvent(e,badge=true)})
+  // loop through all answers group add answer btns and assign event listeners
+  let ansBtns = document.querySelectorAll(".addAnsBtn")
+  ansBtns.forEach(btn=>{
+    // add badge to ansBtnEvent
+    btn.addEventListener("click", (e)=>{ansBtnEvent(e, badge=true)});
+})
+};
 
 // remove original image upload form to find spots 
 function hideForm() {
@@ -100,6 +118,8 @@ function addAssignForm(coords, photoUpload) {
     questionCountInput.setAttribute("type", "number")
     questionCountInput.setAttribute("min", "1")
     questionCountInput.setAttribute("max", coords.length)
+    questionCountInput.id= 'questionCountInput'
+
     
 
     questionDiv.appendChild(questionCountInput)
@@ -109,36 +129,42 @@ function addAssignForm(coords, photoUpload) {
     container.appendChild(templateForm)
     
 // add or remove questions when questionCount changes
-    questionCountInput.addEventListener("input", function(e){
-      let questionGroups = document.querySelectorAll(".questionGroup")
-      let numQuestions = questionGroups.length
-      if (parseInt(this.value)>numQuestions) {
-        // add question
-        // keep adding questions until input value met
-        for(let i = numQuestions; this.value > i; i++){
-          let questionGroup = createQuestionGroup(i+1);
-          questionDiv.appendChild(questionGroup)
-        }
-        
-      }else{
-        // keep removing questions until input value met
-        for(let i = numQuestions; this.value < i; i--){
-          console.log(this.value, i)
-          questionDiv.removeChild(questionGroups[i-1])
-        }
-      }
-    })
+    questionCountInput.addEventListener("input", questionCountEvent)
     
 }
 
-function createAnswerGroup(coords, questionId){
+function questionCountEvent(e, badge){
+  let questionGroups = document.querySelectorAll(".questionGroup")
+  let numQuestions = questionGroups.length
+  let questionDiv = document.querySelector("#assignqns")
+  let qnCountinput = e.target.value
+  if (parseInt(qnCountinput)>numQuestions) {
+    // add question
+    // keep adding questions until input value met
+    for(let i = numQuestions; qnCountinput > i; i++){
+      let questionGroup = createQuestionGroup(i+1, badge);
+      questionDiv.appendChild(questionGroup)
+    }
+    
+  }else{
+    // keep removing questions until input value met
+    for(let i = numQuestions; qnCountinput < i; i--){
+      questionDiv.removeChild(questionGroups[i-1])
+    }
+  }
+}
+
+function createAnswerGroup(coords, questionId, badge=false){
   let questionGroup = document.querySelector(`#${questionId}`);
   let ansNum = questionGroup.querySelectorAll(".answerGroup").length+1;
   let answerGroup=document.createElement("div");
 
   answerGroup.classList.add("answerGroup","row", "my-2");
   answerGroup.innerHTML = `<h6>Answer${ansNum}</h6>`;
-  
+  // add new indicator if badge is true i.e. on edit template to differentiate new/old ans
+  if(badge){
+    answerGroup.innerHTML = `<h6>Answer${ansNum}  <span class='mx-2 badge bg-success rounded-pill'>New</span></h6>`;
+  }
   let answerVal = document.createElement("input");
   answerVal.classList.add("col-3");
   answerVal.name = `${questionId}-answer${ansNum}-value`
@@ -162,12 +188,15 @@ function createAnswerGroup(coords, questionId){
   return answerGroup  
 }
 
-function createQuestionGroup(questionNum){
+function createQuestionGroup(questionNum, badge=false){
  
   let questionGroup=document.createElement("div");
   let questionGroupId = `question${questionNum}`
   questionGroup.classList.add("questionGroup", "mt-4");
   questionGroup.innerHTML = `<h5>Question No. ${questionNum}</h5>`;
+  if(badge){
+    questionGroup.innerHTML = `<h5>Question No. ${questionNum}  <span class='mx-2 badge bg-success rounded-pill'>New</span></h5>`;
+  }
   questionGroup.id = questionGroupId
   
   // create toggle swtich for multple qns
@@ -194,18 +223,20 @@ function createQuestionGroup(questionNum){
   // create add answer button
   let addAnsBtn = document.createElement("button");
   addAnsBtn.innerHTML = "Add Answer";
-  addAnsBtn.classList.add("btn", "btn-primary", "col-3");  
-  addAnsBtn.addEventListener("click", (e)=>{
-    e.preventDefault();
-    // create answer group with sequential naming convention i.e. question1-answer1/2/3...
-    answerGroup = createAnswerGroup(spots["coords"], questionGroupId);
-    let currQuestionGroup = e.target.parentElement;
-    currQuestionGroup.appendChild(answerGroup);  
-  })
+  addAnsBtn.classList.add("btn", "btn-primary", "col-3", "addAnsBtn");  
+  addAnsBtn.addEventListener("click", ansBtnEvent)
 
   questionGroup.appendChild(addAnsBtn);
   return questionGroup;
 }
+
+function ansBtnEvent(e, badge){
+  e.preventDefault();
+  // create answer group with sequential naming convention i.e. question1-answer1/2/3...
+  answerGroup = createAnswerGroup(spots["coords"], e.target.parentElement.id, badge=badge);
+  let currQuestionGroup = e.target.parentElement;
+  currQuestionGroup.appendChild(answerGroup);  
+};
 
 function createTemplateName(){
   let questionNameDiv = document.createElement("div");
@@ -221,3 +252,4 @@ function createTemplateName(){
   return questionNameDiv;
 
 }
+
