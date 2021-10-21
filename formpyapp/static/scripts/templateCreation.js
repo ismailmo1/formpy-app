@@ -149,6 +149,7 @@ function questionCountEvent(e, badge){
   }else{
     // keep removing questions until input value met
     for(let i = numQuestions; qnCountinput < i; i--){
+      console.log(qnCountinput, i)
       questionDiv.removeChild(questionGroups[i-1])
     }
   }
@@ -199,7 +200,7 @@ function createQuestionGroup(questionNum, badge=false){
   }
   questionGroup.id = questionGroupId
   
-  // create toggle swtich for multple qns
+  // create toggle switch for multple qns
   let multipleFlagSwitchDiv = document.createElement("div")
   multipleFlagSwitchDiv.classList.add("form-check","form-switch")
   let multipleFlagSwitch = document.createElement("input")
