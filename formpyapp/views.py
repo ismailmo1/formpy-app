@@ -56,9 +56,10 @@ def define_template():
     img_str = request.files["uploadedImg"].read()
     img = str_to_img(img_str)
     template_dict = parse_template_form(question_data)
-    temp_id = db.save_template(template_name, template_coords, template_dict)
-    save_image(img, temp_id)
-    flash("template created successfully!", "info")
+    # db.template_dict_to_model(template_name, template_coords, template_dict)
+    template = db.save_template(template_name, template_coords, template_dict)
+    save_image(img, template.id)
+    flash(f"template created successfully! {template.id}", "info")
     return redirect(url_for("view_template"))
 
 

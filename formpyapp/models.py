@@ -3,8 +3,10 @@ from mongoengine.document import EmbeddedDocument
 from mongoengine.fields import (
     BooleanField,
     EmailField,
+    EmbeddedDocumentField,
     EmbeddedDocumentListField,
     IntField,
+    ListField,
     ReferenceField,
     StringField,
 )
@@ -17,9 +19,13 @@ class User(Document):
     email = EmailField(required=True)
 
 
-class Answer(EmbeddedDocument):
+class Coordinate2D(EmbeddedDocument):
     x_coordinate = IntField(required=True)
     y_coordinate = IntField(required=True)
+
+
+class Answer(EmbeddedDocument):
+    coordinates = EmbeddedDocumentField(Coordinate2D)
     value = StringField(max_length=100, required=True)
 
 
@@ -30,7 +36,11 @@ class Question(EmbeddedDocument):
 
 
 class Template(Document):
+    name = StringField(required=True)
+    public = BooleanField(default=True)
     questions = EmbeddedDocumentListField(Question, required=True)
     owner = ReferenceField(User, required=True)
+    # hold all detected spots (including ones not assigned)
+    detected_spots = EmbeddedDocumentListField(Coordinate2D, required=False)
     # i.e. what category the template belongs to: school quiz, manufacturing, public survey etc
-    category_tags = StringField(max_length=10)
+    category_tags = ListField(StringField(max_length=10))

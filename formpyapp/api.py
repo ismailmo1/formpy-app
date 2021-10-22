@@ -2,19 +2,18 @@ import base64
 import io
 import os
 from collections import defaultdict
-from re import template
-from typing import Tuple, Union
+from typing import Tuple
 
 import cv2
 import formpy.utils.img_processing as ip
 import numpy as np
-from bson.objectid import ObjectId
-from flask.helpers import url_for
-from formpy.questions import Answer, Form, Question, Template
+from formpy.questions import Form, Template
 from formpy.utils.template_definition import find_spots
 from PIL import Image
 
 from formpyapp.db import get_template
+
+from . import models
 
 IMG_STORAGE_PATH = "image_storage/template_images"
 
@@ -73,7 +72,7 @@ def str_to_img(img_str: str) -> np.array:
 
 
 def parse_template_form(form: dict) -> dict:
-    """return dict of template in from
+    """return dict of template
     initialise empty questions dict to populate with question:answers[]
     question_config in form {question_id:{multiple:bool, answers: {answerid : {answer_coords:tuple, answer_val:str}}, question_id2}"""
     questions = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
