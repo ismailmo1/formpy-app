@@ -12,26 +12,26 @@
   {% for template in templates %}
   <div class="col my-2">
     <div class="card">
-      <img src={{url_for('static', filename="image_storage/template_images/" )}}{{template['_id']}}.jpeg
+      <img src={{url_for('static', filename="image_storage/template_images/" )}}{{template.id}}.jpeg
         alt="template-image" class="card-img-top img-fluid">
       <div class="card-body">
-        <h5 class="card-title">{{template['name']}}</h5>
-        <p class="card-text"> <small>{{template['questions']|length}} questions</p></small>
+        <h5 class="card-title">{{template.name}}</h5>
+        <p class="card-text"> <small>{{template.questions|length}} questions</p></small>
         <div class="btn-group d-flex justify-content-center mx-3">
-          <a class="btn btn-outline-info" id="editTemplateButton" href="edit/{{template['_id']}}">Edit</a>
+          <a class="btn btn-outline-info" id="editTemplateButton" href="edit/{{template.id}}">Edit</a>
           <button class="btn btn-outline-danger " id="deleteTemplateButton" data-bs-toggle="modal"
-            data-bs-target="#delete{{template['_id']}}Modal">Delete</button>
+            data-bs-target="#delete{{template.id}}Modal">Delete</button>
 
         </div>
       </div>
     </div>
   </div>
-  <div class="modal fade" id="delete{{template['_id']}}Modal" tabindex="-1"
-    aria-labelledby="delete{{template['_id']}}ModalLabel" aria-hidden="true">
+  <div class="modal fade" id="delete{{template.id}}Modal" tabindex="-1"
+    aria-labelledby="delete{{template.id}}ModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="delete{{template['_id']}}ModalLabel">Are you sure?</h5>
+          <h5 class="modal-title" id="delete{{template.id}}ModalLabel">Are you sure?</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -39,7 +39,7 @@
         </div>
         <div class="modal-footer">
           <a type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
-          <a type="button" class="btn btn-primary" href="delete/{{template['_id']}}">Delete</a>
+          <a type="button" class="btn btn-primary" href="delete/{{template.id}}">Delete</a>
         </div>
       </div>
     </div>

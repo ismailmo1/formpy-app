@@ -50,16 +50,27 @@ def define_template():
     Returns:
         redirect: redirects to view_templates with success flash
     """
-    question_data = request.form
-    template_name = request.form["templateName"]
-    template_coords = f'[{request.form["coords"]}]'
+    saved_template = db.save_template(request.form)
     img_str = request.files["uploadedImg"].read()
     img = str_to_img(img_str)
-    template_dict = parse_template_form(question_data)
-    # db.template_dict_to_model(template_name, template_coords, template_dict)
-    template = db.save_template(template_name, template_coords, template_dict)
-    save_image(img, template.id)
-    flash(f"template created successfully! {template.id}", "info")
+    save_image(img, saved_template.id)
+    flash(f"template '{saved_template.name}' created successfully!", "info")
+    return redirect(url_for("view_template"))
+
+
+@app.post("/update-template/<template_id>")
+def update_template(template_id):
+    curr_template = db.get_template(template_id)
+    new_template_name = request.form["templateName"]
+    new_question_data = request.form
+    new_template_dict = parse_template_form(new_question_data)
+
+    template_questions = db.create_template_questions(new_template_dict)
+    updated_template = db.update_template()
+    if updated_template:
+        flash("template updated successfully!", "info")
+    else:
+        flash("something went wrong", "danger")
     return redirect(url_for("view_template"))
 
 
@@ -89,22 +100,6 @@ def edit_template(template_id):
     return render_template(
         "edit_template.html", template=template, template_img=template_img
     )
-
-
-@app.post("/update-template/<template_id>")
-def update_template(template_id):
-    question_data = request.form
-    template_name = request.form["templateName"]
-    template_dict = {
-        "name": template_name,
-        "questions": parse_template_form(question_data),
-    }
-    temp_id = db.update_template(template_id, template_dict)
-    if temp_id["ok"] == 1.0:
-        flash("template updated successfully!", "info")
-    else:
-        flash("something went wrong", "danger")
-    return redirect(url_for("view_template"))
 
 
 @app.route("/read", methods=["POST", "GET"])

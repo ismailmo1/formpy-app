@@ -44,3 +44,10 @@ class Template(Document):
     detected_spots = EmbeddedDocumentListField(Coordinate2D, required=False)
     # i.e. what category the template belongs to: school quiz, manufacturing, public survey etc
     category_tags = ListField(StringField(max_length=10))
+
+    def to_dict():
+        """return dictionary than can be read by formpy template.fromdict method
+        question_config in form
+        {question_id:{multiple:bool, answers:list[answer]}, question_id2}
+        """
+        pass
