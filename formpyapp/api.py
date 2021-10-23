@@ -11,7 +11,7 @@ from formpy.questions import Form, Template
 from formpy.utils.template_definition import find_spots
 from PIL import Image
 
-from .models import Template
+from . import models
 
 IMG_STORAGE_PATH = "image_storage/template_images"
 
@@ -151,7 +151,9 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
         form_img (str): bin64 str of form image
     """
     img = str_to_img(form_img)
-    template_dict = Template.objects(id=template_id).to_dict()
+    template_dict = (
+        models.Template.objects(id=template_id).first().question_dict
+    )
     template = Template.from_dict(img, template_dict)
     form = Form(img, template)
     qn_ans = {}
