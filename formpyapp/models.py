@@ -61,20 +61,14 @@ class Template(Document):
             question_dict[question.question_value][
                 "multiple"
             ] = question.multiple_choice
-            for ans in question.answers:
+            for idx, ans in enumerate(question.answers):
                 ans_dict = {
                     "answer_coords": f"{ans.coordinates.x_coordinate}, {ans.coordinates.y_coordinate}",
                     "answer_val": ans.value,
                 }
-                # check if answers dict already has a list to append to
-                if question_dict[question.question_value]["answers"]:
-                    question_dict[question.question_value]["answers"].append(
-                        ans_dict
-                    )
-                else:
-                    # create list if no answers exist for qn
-                    question_dict[question.question_value]["answers"] = [
-                        ans_dict
-                    ]
+
+                question_dict[question.question_value]["answers"][
+                    f"answer{idx}"
+                ] = ans_dict
 
         return question_dict
