@@ -70,7 +70,7 @@ def str_to_img(img_str: str) -> np.array:
 
 
 def parse_template_form(form: dict) -> dict:
-    """return dict of template
+    """return dict of template with web form from edit template/create template pages
     initialise empty questions dict to populate with question:answers[]
     question_config in form {question_id:{multiple:bool, answers: {answerid : {answer_coords:tuple, answer_val:str}}, question_id2}"""
     questions = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))

@@ -1,17 +1,10 @@
 import json
 
-from bson.errors import InvalidId
-from bson.objectid import ObjectId
-from flask_pymongo import PyMongo
+import mongoengine as me
 
 from .api import parse_template_form
 from .models import Answer, Coordinate2D, Question, Template, User
 from .views import app
-
-mongo = PyMongo(app, "mongodb://127.0.0.1:27017/formpyapp")
-
-db = mongo.db
-import mongoengine as me
 
 me.connect(host="mongodb://127.0.0.1:27017/formpyapp")
 
@@ -25,10 +18,7 @@ def create_template_coords(template_coords: str):
     return all_coords
 
 
-def create_template_questions(
-    template_questions: dict,
-    username: str = "user",
-) -> Template:
+def create_template_questions(template_questions: dict) -> Template:
 
     questions = []
     for qn in template_questions.items():
@@ -70,7 +60,6 @@ def save_template(request_form):
     template_name = request_form["templateName"]
     template_coords = f'[{request_form["coords"]}]'
     template_dict = parse_template_form(question_data)
-    # db.template_dict_to_model(template_name, template_coords, template_dict)
     user = current_user()
     all_coords = create_template_coords(template_coords)
     all_questions = create_template_questions(template_dict)
@@ -78,8 +67,20 @@ def save_template(request_form):
     return template.save()
 
 
-def update_template(template_id: str, template_dict: dict):
-    template = get_template(template_id)
+def update_template(template_id: str, request_form):
+    curr_template = get_template(template_id)
+    curr_template.name = request_form["templateName"]
+    template_dict = parse_template_form(request_form)
+    all_questions = create_template_questions(template_dict)
+    curr_template.questions = all_questions
+
+    # not updating/editing coords yet (future with fabricjs frontend)
+    # template_coords = f'[{request_form["coords"]}]'
+    # all_coords = create_template_coords(template_coords)
+    # curr_template.detected_spots = all_coords
+
+    # add "public" and category tags update when added to form
+    return curr_template.save()
 
 
 def get_all_templates() -> list:

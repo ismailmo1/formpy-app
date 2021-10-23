@@ -6,6 +6,8 @@ from flask.helpers import url_for
 # initialise app before import so app is "exported" first"
 app = Flask(__name__)  # nosort
 
+app.secret_key = os.environ["FLASK_SECRET"]
+
 from . import db
 from .api import (
     delete_image,
@@ -60,13 +62,7 @@ def define_template():
 
 @app.post("/update-template/<template_id>")
 def update_template(template_id):
-    curr_template = db.get_template(template_id)
-    new_template_name = request.form["templateName"]
-    new_question_data = request.form
-    new_template_dict = parse_template_form(new_question_data)
-
-    template_questions = db.create_template_questions(new_template_dict)
-    updated_template = db.update_template()
+    updated_template = db.update_template(template_id, request.form)
     if updated_template:
         flash("template updated successfully!", "info")
     else:
