@@ -18,7 +18,7 @@ from .api import (
     str_to_img,
 )
 
-app.secret_key = os.environ["FLASK_SECRET"]
+# app.secret_key = os.environ["FLASK_SECRET"]
 
 
 @app.get("/")

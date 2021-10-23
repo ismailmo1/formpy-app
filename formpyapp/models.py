@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from mongoengine import Document
 from mongoengine.document import EmbeddedDocument
 from mongoengine.fields import (
@@ -45,9 +47,34 @@ class Template(Document):
     # i.e. what category the template belongs to: school quiz, manufacturing, public survey etc
     category_tags = ListField(StringField(max_length=10))
 
-    def to_dict():
+    @property
+    def question_dict(self):
         """return dictionary than can be read by formpy template.fromdict method
         question_config in form
         {question_id:{multiple:bool, answers:list[answer]}, question_id2}
         """
-        pass
+        question_dict = defaultdict(
+            lambda: defaultdict(lambda: defaultdict(dict))
+        )
+
+        for question in self.questions:
+            question_dict[question.question_value][
+                "multiple"
+            ] = question.multiple_choice
+            for ans in question.answers:
+                ans_dict = {
+                    "answer_coords": f"{ans.coordinates.x_coordinate}, {ans.coordinates.y_coordinate}",
+                    "answer_val": ans.value,
+                }
+                # check if answers dict already has a list to append to
+                if question_dict[question.question_value]["answers"]:
+                    question_dict[question.question_value]["answers"].append(
+                        ans_dict
+                    )
+                else:
+                    # create list if no answers exist for qn
+                    question_dict[question.question_value]["answers"] = [
+                        ans_dict
+                    ]
+
+        return question_dict
