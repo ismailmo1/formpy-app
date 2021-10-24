@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from flask_login import UserMixin
 from mongoengine import Document
 from mongoengine.document import EmbeddedDocument
 from mongoengine.fields import (
@@ -12,13 +13,25 @@ from mongoengine.fields import (
     ReferenceField,
     StringField,
 )
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from .views import login
 
 
-class User(Document):
-    username = StringField(max_length=15, min_length=2, required=True)
+class User(UserMixin, Document):
+    username = StringField(
+        max_length=15, min_length=2, required=True, unique=True
+    )
     first_name = StringField(max_length=15)
     last_name = StringField(max_length=15)
-    email = EmailField(required=True)
+    email = EmailField(required=True, unique=True)
+    password_hash = StringField(required=True)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 class Coordinate2D(EmbeddedDocument):
@@ -72,3 +85,8 @@ class Template(Document):
                 ] = ans_dict
 
         return question_dict
+
+
+@login.user_loader
+def load_user(id):
+    return User.objects(id=id).first()

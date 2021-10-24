@@ -47,7 +47,13 @@
                 </li>
             </ul>
             <ul class="nav nav-pills flex-column mt-auto">
-                <li>
+                {% if not current_user.is_anonymous %}
+                       <li class= 'nav-link text-white'> Hi {{current_user.first_name}}</li>
+                       <a href="/logout" class="nav-link text-white">
+                       Logout
+                   </a>
+                        {%else%}
+                        <li>
                     <a href="/login" class="nav-link {% if "login"==active_link %} active {% else %} text-white
                         {%endif%}">
                         Login
@@ -55,10 +61,11 @@
                 </li>
                 <li>
                     <a href="/register" class="nav-link {% if "register"==active_link %} active {% else %} text-white
-                        {%endif%}">
-                        Register
-                    </a>
-                </li>
+                    {%endif%}">
+                    Register
+                </a>
+            </li>
+            {% endif %}
             </ul>
         </div>
         <div class="container" id="mainContainer">

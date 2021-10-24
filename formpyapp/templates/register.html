@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% set active_link = 'register' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center h-100">
+
+    <form action="register" method="post">
+        {{form.csrf_token}}
+        <div class="row mt-3">
+            <h1>{{title}}</h1>
+        </div>
+        <div class="row mb-3">
+            {{ form.username.label(class='form-label')}}<br>
+            {{ form.username (class ='form-control')}}<br>
+            {% for error in form.username.errors %}
+            <div class="form-text">{{ error }}</div>
+            {% endfor %}
+            <div class="row mb-3">
+                {{ form.first_name.label(class='form-label')}}<br>
+                {{ form.first_name(class ='form-control') }}<br>
+                {% for error in form.first_name.errors %}
+                <div class="form-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="row mb-3">
+                {{ form.last_name.label(class='form-label')}}<br>
+                {{ form.last_name(class ='form-control') }}<br>
+                {% for error in form.last_name.errors %}
+                <div class="form-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="row mb-3">
+                {{ form.email.label(class='form-label')}}<br>
+                {{ form.email(class ='form-control') }}<br>
+                {% for error in form.email.errors %}
+                <div class="form-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row mb-3">
+            {{ form.password.label(class='form-label')}}<br>
+            {{ form.password (class ='form-control')}}<br>
+            {% for error in form.password.errors %}
+            <div class="form-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="row mb-3">
+            {{ form.password2.label(class='form-label')}}<br>
+            {{ form.password2 (class ='form-control')}}<br>
+            {% for error in form.password2.errors %}
+            <div class="form-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+
+        <div class="row mb-3">
+            {{ form.submit(class='btn btn-success') }}<br>
+        </div>
+    </form>
+</div>
+{% endblock %}
