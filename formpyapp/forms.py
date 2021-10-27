@@ -1,4 +1,3 @@
-from flask.app import Flask
 from flask_wtf import FlaskForm
 from wtforms.fields.core import StringField
 from wtforms.fields.simple import BooleanField, PasswordField, SubmitField

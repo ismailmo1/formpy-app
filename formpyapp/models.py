@@ -54,11 +54,12 @@ class Template(Document):
     name = StringField(required=True)
     public = BooleanField(default=True)
     questions = EmbeddedDocumentListField(Question, required=True)
-    owner = ReferenceField(User, required=True)
+    owner = ReferenceField(User)
     # hold all detected spots (including ones not assigned)
     detected_spots = EmbeddedDocumentListField(Coordinate2D, required=False)
     # i.e. what category the template belongs to: school quiz, manufacturing, public survey etc
     category_tags = ListField(StringField(max_length=10))
+    public = BooleanField(default=False)
 
     @property
     def question_dict(self):

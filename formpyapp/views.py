@@ -57,7 +57,11 @@ def define_template():
     Returns:
         redirect: redirects to view_templates with success flash
     """
-    saved_template = db.save_template(request.form)
+    if current_user.is_authenticated:
+        owner = current_user
+    else:
+        owner = None
+    saved_template = db.save_template(request.form, owner)
     img_str = request.files["uploadedImg"].read()
     img = str_to_img(img_str)
     save_image(img, saved_template.id)

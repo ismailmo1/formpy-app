@@ -8,11 +8,13 @@
 <div class="row" id="formRow">
   <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
     <label class="row m-2" for="photoUpload">Upload an image of your filled template</label>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <input type="file" name="uploadedImg" id="photoUpload" />
     <div>
       <input class="btn btn-success mt-1" type="submit" value="Upload" />
     </div>
   </form>
 </div>
+<script>const csrf_token = "{{ csrf_token() }}"</script>
 <script src="static/scripts/templateCreation.js"></script>
 {% endblock %}

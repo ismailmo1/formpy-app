@@ -76,7 +76,7 @@ def parse_template_form(form: dict) -> dict:
     questions = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
     for data in form.items():
         name, att = data
-        if name == "templateName" or name == "coords":
+        if name in ["templateName", "coords", "csrf_token", "public"]:
             continue
         question_num, answer_details = name.split("-", maxsplit=1)
         ans_index, ans_type = answer_details.split("-")

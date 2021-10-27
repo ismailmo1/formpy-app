@@ -55,15 +55,16 @@ def create_template(questions, template_name, user, all_coords):
     return template
 
 
-def save_template(request_form):
+def save_template(request_form, owner: User = None):
     question_data = request_form
     template_name = request_form["templateName"]
+    # public = False if no public key defined in form
+    public = bool(request_form.get("public"))
     template_coords = f'[{request_form["coords"]}]'
     template_dict = parse_template_form(question_data)
-    user = current_user()
     all_coords = create_template_coords(template_coords)
     all_questions = create_template_questions(template_dict)
-    template = create_template(all_questions, template_name, user, all_coords)
+    template = create_template(all_questions, template_name, owner, all_coords)
     return template.save()
 
 
@@ -100,8 +101,3 @@ def remove_template(template_id: str) -> bool:
 def get_template(template_id) -> dict:
     found_template = Template.objects(id=template_id).first()
     return found_template
-
-
-def current_user():
-    user = User(username="username", email="test@test.com")
-    return user.save()

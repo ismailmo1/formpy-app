@@ -10,7 +10,6 @@ if(imgForm){
 imgForm.addEventListener("submit", async (e) => {
   // prevent form post request
   e.preventDefault();
-  console.log("sending form");
   // save image upload field to add as hidden field to new question definition form
   const photoUpload = document.querySelector("#photoUpload");
   hideForm();
@@ -46,6 +45,7 @@ function hideForm() {
 // ajax form post to find spots on template
 async function findSpots(form) {
   let formData = new FormData(form);
+  console.log(formData)
   res = await fetch("/find-spots", { method: "POST", body: formData });
   spots = await res.json();
   return spots;
@@ -84,9 +84,16 @@ function addAssignForm(coords, photoUpload) {
   templateForm.setAttribute("action", "/define-template")
   templateForm.setAttribute("name", "templateForm")
   templateForm.setAttribute("enctype", "multipart/form-data")
-  
+  // add csrf token
+  let csrfInput = document.createElement("input")
+  csrfInput.type = "hidden"
+  csrfInput.name = "csrf_token" 
+  csrfInput.value= csrf_token
+
   let templateNameInput = createTemplateName();
-  // hide orig image and submit as part of define template form
+  //add toggle to set template public/private
+  let templatePublicToggle = createPublicToggle();
+  // hide orig image but keep in form to submit part of define template form
   photoUpload.hidden = true;
   // add coords as hidden input to define template form
   let coordsInput = document.createElement("input");
@@ -99,9 +106,13 @@ function addAssignForm(coords, photoUpload) {
   coordsInput.value = coords_vals;
   coordsInput.hidden=true;
   templateForm.appendChild(coordsInput);
-
+  
+  templateForm.appendChild(csrfInput);
   templateForm.appendChild(photoUpload);
   templateForm.appendChild(templateNameInput);
+  templateForm.appendChild(templatePublicToggle);
+
+
   
   let submitBtn = document.createElement("button");
   submitBtn.classList.add("btn", "btn-success");
@@ -131,6 +142,30 @@ function addAssignForm(coords, photoUpload) {
 // add or remove questions when questionCount changes
     questionCountInput.addEventListener("input", questionCountEvent)
     
+}
+
+function createPublicToggle(){
+    // create toggle switch for multple qns
+    let publicToggleDiv = document.createElement("span")
+    publicToggleDiv.classList.add("col-2","form-check","form-switch")
+    let publicToggle = document.createElement("input")
+    publicToggle.setAttribute("type", "checkbox")
+    publicToggle.value ="True"
+    // keep naming convention consistent with other form fields for easy parsing
+    // i.e. delimit with - for qn-ans-inputType
+    let publicToggleName = `public`
+    publicToggle.name = publicToggleName
+    publicToggle.id = publicToggleName
+    publicToggle.classList.add("form-check-input")
+    publicToggle.checked=true;
+    let toggleLabel = document.createElement("label")
+    toggleLabel.innerHTML = "Public"
+    toggleLabel.setAttribute("for", publicToggleName)
+    toggleLabel.classList.add("form-check-label")
+    publicToggleDiv.appendChild(toggleLabel);
+    publicToggleDiv.appendChild(publicToggle);
+  
+  return publicToggleDiv    
 }
 
 function questionCountEvent(e, badge){
