@@ -1,9 +1,11 @@
 import os
+import re
 
 from flask import Flask, flash, jsonify, redirect, render_template, request
 from flask.helpers import url_for
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_wtf.csrf import CSRFProtect
+from mongoengine.errors import NotUniqueError
 
 # initialise app and login before import so app is "exported" first"
 app = Flask(__name__)  # nosort
@@ -12,6 +14,7 @@ login = LoginManager(app)
 
 from . import db
 from .api import (
+    IMG_STORAGE_PATH,
     delete_image,
     get_image,
     img_to_str,
@@ -50,8 +53,8 @@ def find_spots():
     )
 
 
-@app.post("/define-template")
-def define_template():
+@app.post("/define-template/<new_copy>")
+def define_template(new_copy):
     """parse template definition form and save to db
 
     Returns:
@@ -61,10 +64,22 @@ def define_template():
         owner = current_user
     else:
         owner = None
-    saved_template = db.save_template(request.form, owner)
-    img_str = request.files["uploadedImg"].read()
-    img = str_to_img(img_str)
-    save_image(img, saved_template.id)
+    try:
+        saved_template = db.save_template(request.form, owner)
+    except NotUniqueError as e:
+        flash(f"template save failed: that template name is taken!", "danger")
+        return redirect(request.environ.get("HTTP_REFERER"))
+    if new_copy == "copy":
+        curr_img_path = url_for(
+            "static",
+            filename=f"{IMG_STORAGE_PATH}/{request.form['currTempId']}",
+        )
+        saved_template.img_name = curr_img_path
+        saved_template.save()
+    elif new_copy == "new":
+        img_str = request.files["uploadedImg"].read()
+        img = str_to_img(img_str)
+        save_image(img, saved_template.img_name)
     flash(f"template '{saved_template.name}' created successfully!", "info")
     return redirect(url_for("view_template"))
 
@@ -81,7 +96,13 @@ def update_template(template_id):
 
 @app.get("/view")
 def view_template():
-    templates = db.get_all_templates()
+    # show all public templates and user's private templates if logged in
+    templates = db.get_public_templates()
+    if current_user.is_authenticated:
+        user = User.objects(id=current_user.id).first()
+        user_templates = db.get_user_templates(user)
+        templates.extend(user_templates)
+
     return render_template("view_template.html", templates=templates)
 
 

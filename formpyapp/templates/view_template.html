@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="row">
-  <h1>
+  <h1 class="mt-5">
     Current Templates
   </h1>
 </div>
@@ -12,11 +12,24 @@
   {% for template in templates %}
   <div class="col my-2">
     <div class="card">
-      <img src={{url_for('static', filename="image_storage/template_images/" )}}{{template.id}}.jpeg
+      <img src={{url_for('static', filename="image_storage/template_images/" )}}{{template.img_name}}.jpeg
         alt="template-image" class="card-img-top img-fluid">
       <div class="card-body">
         <h5 class="card-title">{{template.name}}</h5>
         <p class="card-text"> <small>{{template.questions|length}} questions</p></small>
+        <p class="d-flex justify-content-between card-text text-muted"><small>created by:{% if template.owner
+            %}
+            {{template.owner.username}}
+            {% else %}
+            anon
+            {% endif %}
+          </small>
+          {% if template.public%}
+          <span class="badge rounded-pill bg-info text-dark">Public</span>
+          {% else %}
+          <span class="badge rounded-pill bg-dark">Private</span>
+          {% endif %}
+        </p>
         <div class="btn-group d-flex justify-content-center mx-3">
           <a class="btn btn-outline-info" id="editTemplateButton" href="edit/{{template.id}}">Edit</a>
           <button class="btn btn-outline-danger " id="deleteTemplateButton" data-bs-toggle="modal"

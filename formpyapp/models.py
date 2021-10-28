@@ -1,4 +1,5 @@
 from collections import defaultdict
+from uuid import uuid4
 
 from flask_login import UserMixin
 from mongoengine import Document
@@ -51,7 +52,7 @@ class Question(EmbeddedDocument):
 
 
 class Template(Document):
-    name = StringField(required=True)
+    name = StringField(required=True, unique=True)
     public = BooleanField(default=True)
     questions = EmbeddedDocumentListField(Question, required=True)
     owner = ReferenceField(User)
@@ -60,6 +61,7 @@ class Template(Document):
     # i.e. what category the template belongs to: school quiz, manufacturing, public survey etc
     category_tags = ListField(StringField(max_length=10))
     public = BooleanField(default=False)
+    img_name = StringField(default=str(uuid4()))
 
     @property
     def question_dict(self):

@@ -3,17 +3,36 @@
 <div class="row">
   <h1>Edit Template: {{template.name}}</h1>
 </div>
+{% if template.owner != current_user %}
+<div class="alert alert-warning" role="alert">
+  You are not the owner of this template so you must rename and save a copy!
+</div>
+{% endif %}
 
 <a href="#assignqns">Edit Questions</a>
 <img id="templateImg" class="img-fluid" src="data:image/png;base64,{{template_img}}" />
 <form id="templateDefForm" method="POST" action="/update-template/{{template.id}}" name="templateForm"
   enctype="multipart/form-data">
-  <div class="row" id="questionName">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <input type="text" name="coords" hidden value={{template_coords}}>
+  <div class="row" id="templateName">
     <h3 class="mt-5">
       Give your template a name:
     </h3>
     <input class="col-3" name="templateName" value="{{template.name}}">
   </div>
+  <span class="col-2 form-check form-switch" data-bs-toggle="tooltip"
+    title="Login/Register to create private templates">
+    {% if current_user.is_anonymous %}
+    <label for="public" class="form-check-label">Public</label>
+    <input disabled checked type="checkbox" value="True" name="public" id="public" class="form-check-input">
+    {%else%}
+    <input {% if template.public %} checked {% endif%} type="checkbox" value="True" name="public" id="public"
+      class="form-check-input">
+    {% endif %}
+
+  </span>
+
   <div class="row" id="assignqns">
     <h1 class="mt-5">
       How many questions are on this template?
@@ -53,13 +72,22 @@
     </div>
     {% endfor %}
   </div>
-  <button class="btn btn-success mt-1">
-    Submit Template
+  {% if template.owner == current_user %}
+  <button class="btn btn-success my-1">
+    Update Template
   </button>
+  {% endif %}
+  <button class="btn btn-success my-1" id="saveCopy">
+    Save Copy
+  </button>
+
   <!-- end of form -->
 
 </form>
 <!-- script -->
+<script>const tempId = "{{ template.id }}"</script>
 <script src={{ url_for("static",filename="/scripts/templateCreation.js" ) }}></script>
+<script src={{ url_for("static",filename="/scripts/templateEdit.js" ) }}></script>
+
 
 {% endblock %}

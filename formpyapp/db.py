@@ -1,6 +1,7 @@
 import json
 
 import mongoengine as me
+from mongoengine.queryset.visitor import Q
 
 from .api import parse_template_form
 from .models import Answer, Coordinate2D, Question, Template, User
@@ -43,7 +44,7 @@ def create_template_questions(template_questions: dict) -> Template:
     return questions
 
 
-def create_template(questions, template_name, user, all_coords):
+def create_template(questions, template_name, user, all_coords, public):
 
     template = Template(
         name=template_name,
@@ -51,6 +52,7 @@ def create_template(questions, template_name, user, all_coords):
         owner=user,
         detected_spots=all_coords,
         category_tags=["testing"],
+        public=public,
     )
     return template
 
@@ -60,17 +62,28 @@ def save_template(request_form, owner: User = None):
     template_name = request_form["templateName"]
     # public = False if no public key defined in form
     public = bool(request_form.get("public"))
-    template_coords = f'[{request_form["coords"]}]'
+    if request_form.get("currTempId"):
+        all_coords = (
+            Template.objects(id=request_form.get("currTempId"))
+            .first()
+            .detected_spots
+        )
+    else:
+        template_coords = f'[{request_form["coords"]}]'
+        all_coords = create_template_coords(template_coords)
     template_dict = parse_template_form(question_data)
-    all_coords = create_template_coords(template_coords)
     all_questions = create_template_questions(template_dict)
-    template = create_template(all_questions, template_name, owner, all_coords)
+    template = create_template(
+        all_questions, template_name, owner, all_coords, public
+    )
     return template.save()
 
 
 def update_template(template_id: str, request_form):
     curr_template = get_template(template_id)
     curr_template.name = request_form["templateName"]
+    curr_template.public = bool(request_form.get("public"))
+
     template_dict = parse_template_form(request_form)
     all_questions = create_template_questions(template_dict)
     curr_template.questions = all_questions
@@ -84,11 +97,15 @@ def update_template(template_id: str, request_form):
     return curr_template.save()
 
 
-def get_all_templates() -> list:
-    """return list of existing templates"""
-    # template_cursor = db.templates.find()
-    template_list = list(Template.objects)
-    # template_list = [temp for temp in template_cursor]
+def get_public_templates() -> list:
+    """return list of public templates"""
+    template_list = list(Template.objects(public=True))
+    return template_list
+
+
+def get_user_templates(user: User) -> list:
+    """return list of private user templates"""
+    template_list = list(Template.objects(Q(owner=user) & Q(public=False)))
     return template_list
 
 

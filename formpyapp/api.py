@@ -76,7 +76,13 @@ def parse_template_form(form: dict) -> dict:
     questions = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
     for data in form.items():
         name, att = data
-        if name in ["templateName", "coords", "csrf_token", "public"]:
+        if name in [
+            "templateName",
+            "coords",
+            "csrf_token",
+            "public",
+            "currTempId",
+        ]:
             continue
         question_num, answer_details = name.split("-", maxsplit=1)
         ans_index, ans_type = answer_details.split("-")
@@ -117,8 +123,9 @@ def get_image(
     Args:
         template_id (str): template id
     """
-    img_path = save_img_path = os.path.join(
-        f"formpyapp/static/{img_path}", f"{template_id}.jpeg"
+    template = models.Template.objects(id=template_id).first()
+    img_path = os.path.join(
+        f"formpyapp/static/{img_path}", f"{template.img_name}.jpeg"
     )
 
     img = cv2.imread(img_path)

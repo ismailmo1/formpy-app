@@ -81,7 +81,7 @@ function addAssignForm(coords, photoUpload) {
   let templateForm = document.createElement("form")
   templateForm.id = "templateDefForm"
   templateForm.setAttribute("method", "POST")
-  templateForm.setAttribute("action", "/define-template")
+  templateForm.setAttribute("action", "/define-template/new")
   templateForm.setAttribute("name", "templateForm")
   templateForm.setAttribute("enctype", "multipart/form-data")
   // add csrf token
