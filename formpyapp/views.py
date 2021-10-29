@@ -1,15 +1,24 @@
 import os
-import re
 
-from flask import Flask, flash, jsonify, redirect, render_template, request
+from flask import (
+    Blueprint,
+    Flask,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+)
 from flask.helpers import url_for
 from flask_login import LoginManager, current_user, login_user, logout_user
+from flask_login.utils import login_required
 from flask_wtf.csrf import CSRFProtect
 from mongoengine.errors import NotUniqueError
 
-# initialise app and login before import so app is "exported" first"
+# initialise app and login before import so app is "exported" first
 app = Flask(__name__)  # nosort
 login = LoginManager(app)
+login.login_view = "login"
 
 
 from . import db
@@ -24,7 +33,7 @@ from .api import (
     save_image,
     str_to_img,
 )
-from .forms import LoginForm, RegistrationForm
+from .forms import EditForm, LoginForm, RegistrationForm
 from .models import User
 
 csrf = CSRFProtect(app)
@@ -185,6 +194,24 @@ def register():
         flash("user created successfully! please login", "success")
         return redirect(url_for("login"))
     return render_template("register.html", title="Register", form=form)
+
+
+@app.route("/user/edit", methods=["GET", "POST"])
+@login_required
+def edit_user():
+    form = EditForm(obj=current_user)
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.email = form.email.data
+        current_user.set_password(form.password.data)
+        current_user.save()
+        flash("user changed successfully!", "success")
+        return redirect(url_for("home"))
+    return render_template(
+        "register.html", title="Edit User", form=form, user=current_user
+    )
 
 
 @app.route("/logout")

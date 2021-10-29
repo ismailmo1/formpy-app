@@ -43,3 +43,7 @@ class RegistrationForm(FlaskForm):
         user = User.objects(email=email.data).first()
         if user is not None:
             raise ValidationError("Please use a different email address.")
+
+
+class EditForm(RegistrationForm):
+    submit = SubmitField("Submit")
