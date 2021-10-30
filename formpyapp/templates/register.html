@@ -8,58 +8,98 @@
 <div class="container d-flex justify-content-center h-100">
 
     <form action="register" method="post">
-        {{form.csrf_token}}
+        {{edit_form.csrf_token}}
         <div class="row mt-5">
             <h1>{{title}}</h1>
         </div>
         <div class="row mb-3">
-            {{ form.username.label(class='form-label')}}<br>
-            {{ form.username (class ='form-control')}}<br>
-            {% for error in form.username.errors %}
+            {{ edit_form.username.label(class='form-label')}}<br>
+            {{ edit_form.username (class ='form-control')}}<br>
+            {% for error in edit_form.username.errors %}
             <div class="form-text">{{ error }}</div>
             {% endfor %}
         </div>
         <div class="row mb-3">
-            {{ form.first_name.label(class='form-label')}}<br>
-            {{ form.first_name(class ='form-control') }}<br>
-            {% for error in form.first_name.errors %}
+            {{ edit_form.first_name.label(class='form-label')}}<br>
+            {{ edit_form.first_name(class ='form-control') }}<br>
+            {% for error in edit_form.first_name.errors %}
             <div class="form-text">{{ error }}</div>
             {% endfor %}
         </div>
         <div class="row mb-3">
-            {{ form.last_name.label(class='form-label')}}<br>
-            {{ form.last_name(class ='form-control') }}<br>
-            {% for error in form.last_name.errors %}
+            {{ edit_form.last_name.label(class='form-label')}}<br>
+            {{ edit_form.last_name(class ='form-control') }}<br>
+            {% for error in edit_form.last_name.errors %}
             <div class="form-text">{{ error }}</div>
             {% endfor %}
         </div>
         <div class="row mb-3">
-            {{ form.email.label(class='form-label')}}<br>
-            {{ form.email(class ='form-control') }}<br>
-            {% for error in form.email.errors %}
-            <div class="form-text">{{ error }}</div>
-            {% endfor %}
-        </div>
-
-        <div class="row mb-3">
-            {{ form.password.label(class='form-label')}}<br>
-            {{ form.password (class ='form-control')}}<br>
-            {% for error in form.password.errors %}
-            <div class="form-text">{{ error }}</div>
-            {% endfor %}
-        </div>
-        <div class="row mb-3">
-            {{ form.password2.label(class='form-label')}}<br>
-            {{ form.password2 (class ='form-control')}}<br>
-            {% for error in form.password2.errors %}
+            {{ edit_form.email.label(class='form-label')}}<br>
+            {{ edit_form.email(class ='form-control') }}<br>
+            {% for error in edit_form.email.errors %}
             <div class="form-text">{{ error }}</div>
             {% endfor %}
         </div>
 
+        <div class="row mb-3">
+            {{ edit_form.password.label(class='form-label')}}<br>
+            {{ edit_form.password (class ='form-control')}}<br>
+            {% for error in edit_form.password.errors %}
+            <div class="form-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="row mb-3">
+            {{ edit_form.password2.label(class='form-label')}}<br>
+            {{ edit_form.password2 (class ='form-control')}}<br>
+            {% for error in edit_form.password2.errors %}
+            <div class="form-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+
 
         <div class="row mb-3">
-            {{ form.submit(class='btn btn-success') }}<br>
+            {{ edit_form.submit(class='btn btn-success') }}<br>
+
+        </div>
+        {% if delete_form %}
+        <div class="row mb-3">
+            <button class="btn btn-danger " id="deleteUserButton" data-bs-toggle="modal"
+                data-bs-target="#deleteUserModal">Delete Account</button>
         </div>
     </form>
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteUserModalLabel">Are you sure you want to delete your account?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    How should we handle your templates?
+                    <form action="/user/delete" method="post">
+                        {{delete_form.csrf_token}}
+
+                        <div class="mt-2">
+                            {% for subfield in delete_form.delete_options %}
+                            <tr>
+                                {{ subfield(class="form-check-input")}}
+                                {{ subfield.label(class="form-check-label" ) }}<br>
+                            </tr>
+                            {% endfor %}
+                            <div class="d-flex justify-content-center">
+                                {{delete_form.submit(class='btn btn-danger mx-2 mt-4', id='deleteUserBtn')}}
+                                <button type="button" class="btn btn-secondary mx-2 mt-4"
+                                    data-bs-dismiss="modal">Cancel</button>
+
+                            </div>
+                        </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
+<script src="{{url_for('static', filename = '/scripts/deleteUser.js')}}"></script>
 {% endblock %}

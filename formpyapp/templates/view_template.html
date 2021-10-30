@@ -32,8 +32,10 @@
         </p>
         <div class="btn-group d-flex justify-content-center mx-3">
           <a class="btn btn-outline-info" id="editTemplateButton" href="edit/{{template.id}}">Edit</a>
+          {% if template.owner ==current_user %}
           <button class="btn btn-outline-danger " id="deleteTemplateButton" data-bs-toggle="modal"
             data-bs-target="#delete{{template.id}}Modal">Delete</button>
+          {% endif %}
 
         </div>
       </div>

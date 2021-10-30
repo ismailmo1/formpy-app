@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block content %}
 
 <div class="row">
-  <h1>Edit Template: {{template.name}}</h1>
+  <h1>Edit Template</h1>
 </div>
 {% if template.owner != current_user %}
 <div class="alert alert-warning" role="alert">
@@ -9,81 +9,95 @@
 </div>
 {% endif %}
 
-<a href="#assignqns">Edit Questions</a>
-<img id="templateImg" class="img-fluid" src="data:image/png;base64,{{template_img}}" />
-<form id="templateDefForm" method="POST" action="/update-template/{{template.id}}" name="templateForm"
-  enctype="multipart/form-data">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <input type="text" name="coords" hidden value={{template_coords}}>
-  <div class="row" id="templateName">
-    <h3 class="mt-5">
-      Give your template a name:
-    </h3>
-    <input class="col-3" name="templateName" value="{{template.name}}">
-  </div>
-  <span class="col-2 form-check form-switch" data-bs-toggle="tooltip"
-    title="Login/Register to create private templates">
-    {% if current_user.is_anonymous %}
-    <label for="public" class="form-check-label">Public</label>
-    <input disabled checked type="checkbox" value="True" name="public" id="public" class="form-check-input">
-    {%else%}
-    <input {% if template.public %} checked {% endif%} type="checkbox" value="True" name="public" id="public"
-      class="form-check-input">
-    {% endif %}
-
-  </span>
-
-  <div class="row" id="assignqns">
-    <h1 class="mt-5">
-      How many questions are on this template?
-    </h1>
-    <input id="questionCountInput" class="col-3" type="number" min="1" max="64" value={{template.questions|length}} />
-    <!-- question groups -->
-    {% for question in template.questions %}
-    <div class="questionGroup mt-4" id={{question.question_value}}>
-      <h5>Question No. {{loop.index}}</h5>
-      <div class="form-check form-switch">
-        <label for="{{question.question_value}}-answerAll-multipleFlag" class="form-check-label">Multiple
-          Answers</label><input type="checkbox" value="True" name="{{question.question_value}}-answerAll-multipleFlag"
-          class="form-check-input" {% if question.multiple_choice %} checked {% endif %} />
-      </div>
-      <button class="btn btn-primary col-3 addAnsBtn">
-        Add Answer
-      </button>
-      {% for answer in question.answers %}
-      <!-- answer group -->
-      <div class="answerGroup row my-2">
-        <h6>Answer{{loop.index}}</h6>
-        <div class="col-2">
-          {% set selected_coord = answer.coordinates.x_coordinate|string+','+answer.coordinates.y_coordinate|string %}
-          <select name="{{question.question_value}}-answer{{loop.index}}-index" value={{selected_coord}}>
-            {% for coord in template.detected_spots %}
-            {% set joined_coord = coord.x_coordinate|string+','+coord.y_coordinate|string %}
-            <option value={{joined_coord}} {% if joined_coord==selected_coord %} selected {% endif %}>
-              {{loop.index}}: {{joined_coord}}
-            </option>
-            {% endfor %}
-
-          </select>
+<div class="d-flex flex-column justify-content-between mx-2">
+  <div class="row">
+    <form id="templateDefForm" method="POST" action="/update-template/{{template.id}}" name="templateForm"
+      enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <input type="text" name="coords" hidden value={{template_coords}}>
+      <div class="row justify-content-center mb-3" id="templateName">
+        <div class="form-floating col-sm-6">
+          <input type="text" class="form-control" name="templateName" value="{{template.name}}"
+            placeholder="template name">
+          <label for="templateName" class="mx-2">Template Name</label>
         </div>
-        <input class="col-3" name="{{question.question_value}}-answer{{loop.index}}-value" value="{{answer.value}}">
+        <div class="d-flex justify-content-around align-items-center col-sm-6">
+          <div class="form-check form-switch">
+            {% if current_user.is_anonymous %}
+            <span data-bs-toggle="tooltip" title="Login/Register to create private templates">
+              <label for="public" class="form-check-label">Public</label>
+              <input disabled checked type="checkbox" value="True" name="public" id="public" class="form-check-input">
+            </span>
+            {%else%}
+            <input {% if template.public %} checked {% endif%} type="checkbox" value="True" name="public" id="public"
+              class="form-check-input">
+            <label for="public" class="form-check-label">Public</label>
+            {% endif %}
+          </div>
+          <a class="btn btn-info col-auto mx-2 mb-3" href="#assignqns">Edit Questions</a>
+        </div>
       </div>
-      {% endfor %}
-    </div>
-    {% endfor %}
+      <div class="row">
+        <img id="templateImg" class="img-fluid" src="data:image/png;base64,{{template_img}}" />
+      </div>
+
+      <div class="row justify-content-center" id="assignqns">
+        <button class="btn btn-primary col-auto" id="addQnBtn">
+          Add Question
+        </button>
+      </div>
+      <!-- question groups -->
+      <div class="row justify-content-center">
+        {% for question in template.questions %}
+        <div class="questionGroup mt-4" id={{question.question_value}}>
+          <h5>Question No. {{loop.index}}</h5>
+          <div class="form-check form-switch">
+            <label for="{{question.question_value}}-answerAll-multipleFlag" class="form-check-label">Multiple
+              Answers</label><input type="checkbox" value="True"
+              name="{{question.question_value}}-answerAll-multipleFlag" class="form-check-input" {% if
+              question.multiple_choice %} checked {% endif %} />
+          </div>
+          <button class="btn btn-primary col-3 addAnsBtn">
+            Add Answer
+          </button>
+          {% for answer in question.answers %}
+          <!-- answer group -->
+          <div class="answerGroup row my-2">
+            <h6>Answer{{loop.index}}</h6>
+            <div class="col-2">
+              {% set selected_coord =
+              answer.coordinates.x_coordinate|string+','+answer.coordinates.y_coordinate|string
+              %}
+              <select name="{{question.question_value}}-answer{{loop.index}}-index" value={{selected_coord}}>
+                {% for coord in template.detected_spots %}
+                {% set joined_coord = coord.x_coordinate|string+','+coord.y_coordinate|string %}
+                <option value={{joined_coord}} {% if joined_coord==selected_coord %} selected {% endif %}>
+                  {{loop.index}}: {{joined_coord}}
+                </option>
+                {% endfor %}
+
+              </select>
+            </div>
+            <input class="col-3" name="{{question.question_value}}-answer{{loop.index}}-value" value="{{answer.value}}">
+          </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+      {% if template.owner == current_user %}
+      <button class="btn btn-success my-1">
+        Update Template
+      </button>
+      {% endif %}
+      <button class="btn btn-success my-1" id="saveCopy">
+        Save Copy
+      </button>
+
+      <!-- end of form -->
   </div>
-  {% if template.owner == current_user %}
-  <button class="btn btn-success my-1">
-    Update Template
-  </button>
-  {% endif %}
-  <button class="btn btn-success my-1" id="saveCopy">
-    Save Copy
-  </button>
 
-  <!-- end of form -->
-
-</form>
+  </form>
+</div>
 <!-- script -->
 <script>const tempId = "{{ template.id }}"</script>
 <script src={{ url_for("static",filename="/scripts/templateCreation.js" ) }}></script>

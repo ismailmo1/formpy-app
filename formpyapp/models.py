@@ -14,6 +14,7 @@ from mongoengine.fields import (
     ReferenceField,
     StringField,
 )
+from mongoengine.queryset.base import NULLIFY
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from .views import login
@@ -55,7 +56,7 @@ class Template(Document):
     name = StringField(required=True, unique=True)
     public = BooleanField(default=True)
     questions = EmbeddedDocumentListField(Question, required=True)
-    owner = ReferenceField(User)
+    owner = ReferenceField(User, reverse_delete_rule=NULLIFY)
     # hold all detected spots (including ones not assigned)
     detected_spots = EmbeddedDocumentListField(Coordinate2D, required=False)
     # i.e. what category the template belongs to: school quiz, manufacturing, public survey etc

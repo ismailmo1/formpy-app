@@ -33,14 +33,15 @@ from .api import (
     save_image,
     str_to_img,
 )
-from .forms import EditForm, LoginForm, RegistrationForm
-from .models import User
+from .forms import DeleteUserForm, EditUserForm, LoginForm, RegistrationForm
+from .models import Template, User
 
 csrf = CSRFProtect(app)
 app.secret_key = os.environ["FLASK_SECRET"]
 
 
 @app.get("/")
+@app.get("/home")
 def home():
     return render_template("index.html")
 
@@ -79,11 +80,12 @@ def define_template(new_copy):
         flash(f"template save failed: that template name is taken!", "danger")
         return redirect(request.environ.get("HTTP_REFERER"))
     if new_copy == "copy":
-        curr_img_path = url_for(
-            "static",
-            filename=f"{IMG_STORAGE_PATH}/{request.form['currTempId']}",
+        old_img_name = (
+            Template.objects(id=request.form.get("currTempId"))
+            .first()
+            .img_name
         )
-        saved_template.img_name = curr_img_path
+        saved_template.img_name = old_img_name
         saved_template.save()
     elif new_copy == "new":
         img_str = request.files["uploadedImg"].read()
@@ -116,11 +118,12 @@ def view_template():
 
 
 @app.get("/delete/<template_id>")
+@login_required
 def delete_template(template_id: str):
     deleted = db.remove_template(template_id)
-    img_delete = delete_image(template_id)
 
-    if deleted and img_delete:
+    if deleted:
+        delete_image(template_id)
         flash("template deleted!", "info")
     else:
         flash("unable to delete template", "danger")
@@ -193,25 +196,51 @@ def register():
         user.save()
         flash("user created successfully! please login", "success")
         return redirect(url_for("login"))
-    return render_template("register.html", title="Register", form=form)
+    return render_template("register.html", title="Register", edit_form=form)
 
 
 @app.route("/user/edit", methods=["GET", "POST"])
 @login_required
 def edit_user():
-    form = EditForm(obj=current_user)
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.first_name = form.first_name.data
-        current_user.last_name = form.last_name.data
-        current_user.email = form.email.data
-        current_user.set_password(form.password.data)
+    edit_form = EditUserForm(obj=current_user)
+    delete_form = DeleteUserForm()
+    if edit_form.validate_on_submit():
+        current_user.username = edit_form.username.data
+        current_user.first_name = edit_form.first_name.data
+        current_user.last_name = edit_form.last_name.data
+        current_user.email = edit_form.email.data
+        current_user.set_password(edit_form.password.data)
         current_user.save()
         flash("user changed successfully!", "success")
         return redirect(url_for("home"))
     return render_template(
-        "register.html", title="Edit User", form=form, user=current_user
+        "register.html",
+        title="Edit User",
+        edit_form=edit_form,
+        delete_form=delete_form,
+        user=current_user,
     )
+
+
+@app.post("/user/delete")
+@login_required
+def delete_user():
+    form = DeleteUserForm()
+    if form.validate_on_submit():
+        template_delete = request.form.get("delete_options")
+
+        if template_delete == "all":
+            db.remove_user_templates(current_user, private_only=False)
+        elif template_delete == "private":
+            db.remove_user_templates(current_user, private_only=True)
+        elif template_delete == "none":
+            db.make_templates_public(current_user)
+
+        name = current_user.username
+        current_user.delete()
+        flash(f"user deleted, sorry to see you go {name}!")
+
+    return redirect(url_for("home"))
 
 
 @app.route("/logout")

@@ -1,6 +1,7 @@
 import json
 
 import mongoengine as me
+from flask_login import current_user
 from mongoengine.queryset.visitor import Q
 
 from .api import parse_template_form
@@ -110,9 +111,35 @@ def get_user_templates(user: User) -> list:
 
 
 def remove_template(template_id: str) -> bool:
-    """delete template from db, return true on success"""
+    """delete template from db by owner only, return true on success"""
     template = Template.objects(id=template_id)
-    return template.delete()
+    if template.owner == current_user:
+        return template.delete()
+
+
+def make_templates_public(owner):
+    templates = get_user_templates(owner)
+    for template in templates:
+        template.public = True
+        template.save()
+
+
+def remove_user_templates(owner, private_only=True) -> int:
+    """delete user templates
+
+    Args:
+        owner ([type]): user object whose templates to delete
+        private_only (bool, optional): Delete only user's private templates. Defaults to True.
+
+    Returns:
+        int: number of deleted documents
+    """
+    if private_only:
+        templates = Template.objects(Q(owner=owner) & Q(public=False))
+    else:
+        templates = Template.objects(owner=owner)
+
+    return templates.delete()
 
 
 def get_template(template_id) -> dict:

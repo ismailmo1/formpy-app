@@ -22,7 +22,7 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a href="/" class="nav-link {% if "home"==active_link %} active {% else %} text-white {%endif%}"
+                    <a href="/" class="nav-link {% if " home"==active_link %} active {% else %} text-white {%endif%}"
                         aria-current="page">
                         Home
                     </a>
@@ -34,13 +34,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/view" class="nav-link {% if "view"==active_link %} active {% else %} text-white
+                    <a href="/view" class="nav-link {% if " view"==active_link %} active {% else %} text-white
                         {%endif%}">
                         View templates
                     </a>
                 </li>
                 <li>
-                    <a href="/read" class="nav-link {% if "read"==active_link %} active {% else %} text-white
+                    <a href="/read" class="nav-link {% if " read"==active_link %} active {% else %} text-white
                         {%endif%}">
                         Read Forms
                     </a>
@@ -48,24 +48,28 @@
             </ul>
             <ul class="nav nav-pills flex-column mt-auto">
                 {% if not current_user.is_anonymous %}
-                       <li class= 'nav-link text-white'> Hi {{current_user.first_name}}</li>
-                       <a href="/logout" class="nav-link text-white">
-                       Logout
-                   </a>
-                        {%else%}
-                        <li>
-                    <a href="/login" class="nav-link {% if "login"==active_link %} active {% else %} text-white
+                <li>
+                    <a href="/user/edit" class='nav-link text-white'> Hi {{current_user.first_name}}</a>
+                </li>
+                <li>
+                    <a href="/logout" class="nav-link text-white">
+                        Logout
+                    </a>
+                </li>
+                {%else%}
+                <li>
+                    <a href="/login" class="nav-link {% if " login"==active_link %} active {% else %} text-white
                         {%endif%}">
                         Login
                     </a>
                 </li>
                 <li>
-                    <a href="/register" class="nav-link {% if "register"==active_link %} active {% else %} text-white
-                    {%endif%}">
-                    Register
-                </a>
-            </li>
-            {% endif %}
+                    <a href="/register" class="nav-link {% if " register"==active_link %} active {% else %} text-white
+                        {%endif%}">
+                        Register
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </div>
         <div class="container" id="mainContainer">

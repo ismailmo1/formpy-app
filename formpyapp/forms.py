@@ -1,6 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms.fields.core import StringField
-from wtforms.fields.simple import BooleanField, PasswordField, SubmitField
+from wtforms.fields.core import (
+    FieldList,
+    FormField,
+    IntegerField,
+    RadioField,
+    StringField,
+)
+from wtforms.fields.simple import (
+    BooleanField,
+    FileField,
+    PasswordField,
+    SubmitField,
+)
 from wtforms.validators import (
     DataRequired,
     Email,
@@ -10,6 +21,33 @@ from wtforms.validators import (
 )
 
 from .models import User
+
+
+class CoordinateForm(FlaskForm):
+    x = IntegerField()
+    y = IntegerField()
+
+
+class AnswerForm(CoordinateForm):
+    value = StringField(validators=[Length(max=100)])
+
+
+class QuestionForm(FlaskForm):
+    question_value = StringField(validators=[Length(max=200), DataRequired()])
+    multiple_choice = BooleanField(validators=[DataRequired()])
+    answers = FieldList(FormField(AnswerForm), min_entries=1)
+
+
+class DefineTemplateForm(FlaskForm):
+    name = StringField()
+    public = BooleanField()
+    questions = FieldList(FormField(QuestionForm), min_entries=1)
+    # hold all detected spots (including ones not assigned)
+    detected_spots = FieldList(FormField(CoordinateForm))
+    # i.e. what category the template belongs to: school quiz, manufacturing, public survey etc
+    category_tags = FieldList(StringField(validators=[Length(max=100)]))
+    public = BooleanField()
+    img_name = FileField()
 
 
 class LoginForm(FlaskForm):
@@ -45,5 +83,18 @@ class RegistrationForm(FlaskForm):
             raise ValidationError("Please use a different email address.")
 
 
-class EditForm(RegistrationForm):
+class EditUserForm(RegistrationForm):
     submit = SubmitField("Submit")
+
+
+class DeleteUserForm(FlaskForm):
+    delete_options = RadioField(
+        label="Template Deletion Options",
+        choices=[
+            ("none", "Keep my templates and make them public"),
+            ("private", "Delete all my private templates"),
+            ("all", "Delete all my templates"),
+        ],
+        validators=[DataRequired()],
+    )
+    submit = SubmitField("Delete Account")
