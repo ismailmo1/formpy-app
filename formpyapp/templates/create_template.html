@@ -5,16 +5,52 @@
 <div class="row">
   <h1 class="mt-5">Create a Template!</h1>
 </div>
-<div class="row" id="formRow">
-  <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
-    <label class="row m-2" for="photoUpload">Upload an image of your filled template</label>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <input type="file" name="uploadedImg" id="photoUpload" />
-    <div>
-      <input class="btn btn-success mt-1" type="submit" value="Upload" />
+<nav id="tab">
+  <div class="nav nav-tabs" role="tablist">
+    <button id="manualNavButton" class="nav-link active" role="tab" type="button" data-bs-toggle="tab"
+      data-bs-target="#nav-manual">
+      Manual Definition
+    </button>
+    <button id="interactiveNavButton" class="disabled nav-link" role="tab" type="button" data-bs-toggle="tab"
+      data-bs-target="#nav-auto">
+      Interactive
+    </button>
+  </div>
+</nav>
+
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-manual" role="tabpanel" aria-labelledby="nav-home-tab">
+    <div class="row" id="formRow">
+      <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
+        <label class="row m-2" for="photoUpload">Upload an image of your filled template</label>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="file" name="uploadedImg" id="photoUpload" />
+        <div>
+          <input class="btn btn-success mt-1" type="submit" value="Upload" />
+        </div>
+      </form>
     </div>
-  </form>
+  </div>
+  <div class="tab-pane fade disabled" id="nav-auto" role="tabpanel" aria-labelledby="nav-profile-tab">
+    <div class="d-flex align-items-center flex-column">
+      <div class="my-2">
+        <canvas id="canvas" width="600px" height="400px"></canvas>
+      </div>
+      <div id="controls">
+        <button class="mt-2 col-auto btn btn-primary" id="addCircle"> Add Circle</button>
+        <button class="mt-2 col-auto btn btn-primary" id="export">Export</button>
+        <button class="mt-2 col-auto btn btn-primary" id="zoomIn">Zoom In</button>
+        <button class="mt-2 col-auto btn btn-primary" id="zoomOut">Zoom Out</button>
+        <button class="mt-2 col-auto btn btn-primary" id="panMode">Pan Mode</button>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 <script>const csrf_token = "{{ csrf_token() }}"</script>
-<script src="static/scripts/templateCreation.js"></script>
+<script src={{ url_for("static",filename="/scripts/fabric.min.js" ) }}></script>
+<script src={{ url_for("static",filename="/scripts/canvasScript.js" ) }}></script>
+<script src={{ url_for("static",filename="/scripts/templateCreation.js" ) }}></script>
+
 {% endblock %}
