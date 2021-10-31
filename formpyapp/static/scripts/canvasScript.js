@@ -9,9 +9,13 @@ const panMode = document.getElementById("panMode")
 const circleList = document.getElementById("circleList")
 const intNavBtn = document.getElementById("interactiveNavButton");
 const canvasContainer = document.querySelector("#canvasDiv")
+const canvasControls = document.querySelector("#canvasControls")
+
 
 // hold spots data
 let questions = {}
+
+window.addEventListener("resize", resizeCanvas)
 
 async function addImageToCanvas(){
     let templateImg = document.getElementById("templateImg")
@@ -37,23 +41,24 @@ async function addImageToCanvas(){
         
   
   }
-function resizeCanvasImage(img){
 
-}
 // fire event on bootstrap nav activation (div doesnt have any width until shown!) 
 intNavBtn.addEventListener("shown.bs.tab", ()=>{
     let w = canvasContainer.offsetWidth 
     if(w!=canvas.width){
         resizeCanvas();
-        addImageToCanvas();
     }
 })
 // exportBtn.addEventListener('click', resizeCanvas, false);
 
 function resizeCanvas() {
-    // A4 paper height/width ratio ~ 0.7
-    canvas.setHeight(canvasContainer.offsetWidth*0.7);
+    console.log("resizing")
+    canvas.setHeight(canvasContainer.offsetWidth*0.6);
     canvas.setWidth(canvasContainer.offsetWidth);
+    let newTop = canvasContainer.offsetTop + (canvasContainer.offsetHeight/2) - (canvasControls.offsetHeight/2)
+    canvasControls.setAttribute("style", `left:${canvasContainer.offsetLeft}px;top:${newTop}px`)
+    addImageToCanvas();
+
     canvas.renderAll();
 }
 
@@ -81,11 +86,10 @@ canvas.on('mouse:down', function(opt) {
       this.lastPosY = evt.clientY;
     }
   });
+
   canvas.on('mouse:move', function(opt) {
     if (this.isDragging) {
-        // console.log(opt)
-        // console.log(opt.e)
-
+        
         let e = opt.e;
         let vpt = this.viewportTransform;
         // move viewport by amount moved since last move      

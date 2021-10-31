@@ -33,15 +33,15 @@
   </div>
   <div class="tab-pane fade disabled" id="nav-auto" role="tabpanel" aria-labelledby="nav-profile-tab">
     <div class="d-flex align-items-center flex-column" id="canvasDiv">
-      <div class="my-2">
-        <canvas id="canvas" width="600px" height="400px"></canvas>
-      </div>
-      <div id="controls">
-        <button class="mt-2 col-auto btn btn-primary" id="addCircle"> Add Circle</button>
-        <button class="mt-2 col-auto btn btn-primary" id="export">Export</button>
-        <button class="mt-2 col-auto btn btn-primary" id="zoomIn">Zoom In</button>
-        <button class="mt-2 col-auto btn btn-primary" id="zoomOut">Zoom Out</button>
-        <button class="mt-2 col-auto btn btn-primary" id="panMode">Pan Mode</button>
+      <canvas id="canvas" width="600px" height="400px"></canvas>
+      <div class="btn-group d-flex flex-column" id="canvasControls">
+        <button class="mt-2 col-auto btn btn-primary btn-small" id="addCircle"><i
+            class="fas fa-plus-circle"></i></button>
+        <button class="mt-2 col-auto btn btn-primary btn-small" id="export"><i class="fas fa-save"></i></button>
+        <button class="mt-2 col-auto btn btn-primary btn-small" id="zoomIn"><i class="fas fa-search-plus"></i></button>
+        <button class="mt-2 col-auto btn btn-primary btn-small" id="zoomOut"><i
+            class="fas fa-search-minus"></i></button>
+        <button class="mt-2 col-auto btn btn-primary btn-small" id="panMode"><i class="fas fa-hand-paper"></i></button>
       </div>
 
     </div>
