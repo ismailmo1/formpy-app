@@ -7,6 +7,57 @@ const zoomIn = document.getElementById("zoomIn")
 const zoomOut = document.getElementById("zoomOut")
 const panMode = document.getElementById("panMode")
 const circleList = document.getElementById("circleList")
+const intNavBtn = document.getElementById("interactiveNavButton");
+const canvasContainer = document.querySelector("#canvasDiv")
+
+// hold spots data
+let questions = {}
+
+async function addImageToCanvas(){
+    let templateImg = document.getElementById("templateImg")
+    
+      const bgImage = new fabric.Image.fromURL(templateImg.src, (img)=>{
+  
+        // get image aspect ratio to decide if scale to height or width
+        imgAR = img.width/img.height
+        if(imgAR>= 1){
+            // scale image width to canvas
+            scaleFactor = canvas.width/img.width
+
+        }else{
+            // // scale image height to canvas
+            scaleFactor = canvas.height/img.height
+        }
+        img.set({scaleY:scaleFactor,scaleX: scaleFactor})
+    
+        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas))
+  
+  
+      })
+        
+  
+  }
+function resizeCanvasImage(img){
+
+}
+// fire event on bootstrap nav activation (div doesnt have any width until shown!) 
+intNavBtn.addEventListener("shown.bs.tab", ()=>{
+    let w = canvasContainer.offsetWidth 
+    if(w!=canvas.width){
+        resizeCanvas();
+        addImageToCanvas();
+    }
+})
+// exportBtn.addEventListener('click', resizeCanvas, false);
+
+function resizeCanvas() {
+    // A4 paper height/width ratio ~ 0.7
+    canvas.setHeight(canvasContainer.offsetWidth*0.7);
+    canvas.setWidth(canvasContainer.offsetWidth);
+    canvas.renderAll();
+}
+
+
 
 panMode.addEventListener("click", (e)=>{
     if (!panMode.status){
@@ -32,8 +83,8 @@ canvas.on('mouse:down', function(opt) {
   });
   canvas.on('mouse:move', function(opt) {
     if (this.isDragging) {
-        console.log(opt)
-        console.log(opt.e)
+        // console.log(opt)
+        // console.log(opt.e)
 
         let e = opt.e;
         let vpt = this.viewportTransform;

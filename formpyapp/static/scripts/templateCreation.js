@@ -14,11 +14,12 @@ imgForm.addEventListener("submit", async (e) => {
   const photoUpload = document.querySelector("#photoUpload");
   hideForm();
   const spots = await findSpots(imgForm);
+  // resize on init
   document.getElementById("interactiveNavButton").classList.remove("disabled")
   addSpotCount(spots["num_spots"]);
   addAssignButton();
   addImage(spots["img"]);
-  addImageToCanvas()
+  await addImageToCanvas()
   addAssignForm(spots["coords"], photoUpload);
 })}else{
   // we are on the edit template page
@@ -35,35 +36,9 @@ imgForm.addEventListener("submit", async (e) => {
   ansBtns.forEach(btn=>{
     // add badge to ansBtnEvent
     btn.addEventListener("click", (e)=>{ansBtnEvent(e, badge=true)});
-})
+  })
 };
 
-function addImageToCanvas(){
-  let templateImg = document.getElementById("templateImg")
-  
-    const bgImage = new fabric.Image.fromURL(templateImg.src, (img)=>{
-
-      console.log(img)
-      // get image aspect ratio to decide if scale to height or width
-      imgAR = img.width/img.height
-      if(imgAR>= 1){
-          // scale image width to canvas
-          scaleFactor = canvas.width/img.width
-  
-      }else{
-          // // scale image height to canvas
-          scaleFactor = canvas.height/img.height
-      }
-      img.set({scaleY:scaleFactor,scaleX: scaleFactor})
-      console.log("adding image")
-  
-      canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas))
-
-
-    })
-      
-
-}
 
 // remove original image upload form to find spots 
 function hideForm() {
