@@ -40,7 +40,6 @@ class QuestionForm(FlaskForm):
 
 class DefineTemplateForm(FlaskForm):
     name = StringField()
-    public = BooleanField()
     questions = FieldList(FormField(QuestionForm), min_entries=1)
     # hold all detected spots (including ones not assigned)
     detected_spots = FieldList(FormField(CoordinateForm))

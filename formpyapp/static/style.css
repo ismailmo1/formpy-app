@@ -6,3 +6,7 @@
 #canvasControls {
   position: absolute;
 }
+
+.dropdown-menu > li {
+  display: inline-flex;
+}

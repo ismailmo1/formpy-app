@@ -42,12 +42,13 @@ def mark_spots(img: np.array) -> Tuple[list[list[int]], np.array]:
     Returns:
         np.array: img with bounding boxes around detected spots
     """
+    aligned_img = ip.align_page(img)
     processed_img = ip.process_img(img)
     spot_coords = find_spots(processed_img)
-    color_img = cv2.cvtColor(processed_img, cv2.COLOR_GRAY2BGR)
+    # color_img = cv2.cvtColor(aligned_img, cv2.COLOR_GRAY2BGR)
     for i, (x, y) in enumerate(spot_coords):
         cv2.putText(
-            color_img,
+            aligned_img,
             str(i),
             (x, y),
             cv2.FONT_HERSHEY_COMPLEX,
@@ -56,10 +57,10 @@ def mark_spots(img: np.array) -> Tuple[list[list[int]], np.array]:
             1,
         )
         cv2.rectangle(
-            color_img, (x - 13, y - 13), (x + 13, y + 13), (255, 0, 0), 2
+            aligned_img, (x - 13, y - 13), (x + 13, y + 13), (255, 0, 0), 2
         )
 
-    return spot_coords, color_img
+    return spot_coords, aligned_img
 
 
 def str_to_img(img_str: str) -> np.array:

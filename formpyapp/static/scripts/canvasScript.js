@@ -10,11 +10,48 @@ const circleList = document.getElementById("circleList")
 const intNavBtn = document.getElementById("interactiveNavButton");
 const canvasContainer = document.querySelector("#canvasDiv")
 const canvasControls = document.querySelector("#canvasControls")
-
-
+const addQn = document.getElementById("addQn");
+const canvasControlsList = document.getElementById("canvasControlsList")
+const pickQnMenu = document.getElementById("pickQn")
+let currentQuestion = null
 // hold spots data
 let questions = {}
 
+function setCurrentQuestion(qnNumber){  
+    currentQuestion = qnNumber
+    const badge = document.createElement("span")
+    badge.classList.add("position-absolute", "top-0", "start-100", "translate-middle", 
+    "badge", "rounded-pill", "bg-danger")
+    badge.innerText = qnNumber
+    pickQnMenu.appendChild(badge)
+}
+
+// add new question to list 
+addQn.addEventListener("click",(e)=>{
+    let newQn = document.createElement("li")
+    let link = document.createElement("a")
+    link.setAttribute("href", '#')
+    let span = document.createElement("span")
+    span.classList.add("badge", "bg-secondary","m-1", "questionSelect")
+    link.appendChild(span)
+    newQn.appendChild(link)
+    span.innerText = canvasControlsList.childElementCount
+    
+    newQn.addEventListener("click", ()=>{
+        console.log(newQn.innerText)
+        currentQuestion = newQn.innerText
+        canvasControlsList.querySelectorAll(".bg-danger").forEach(span=>{
+            span.classList.add("bg-secondary")
+            span.classList.remove("bg-danger")            
+        })
+        newQn.querySelector("span").classList.toggle("bg-danger")
+        newQn.querySelector("span").classList.toggle("bg-secondary")
+        setCurrentQuestion(newQn.innerText)
+    })
+
+    canvasControlsList.appendChild(newQn)
+    questions[newQn.innerText] = []
+})
 window.addEventListener("resize", resizeCanvas)
 
 async function addImageToCanvas(){
@@ -156,7 +193,7 @@ addCircleBtn.addEventListener("click", addCircle)
 // get object location when moved
 canvas.on("object:moved", (e)=>{
     let {type,top, left} = e.target  
-console.log(type,top/scaleFactor, left/scaleFactor)
+    console.log(type,top/scaleFactor, left/scaleFactor)
 })
 
 
@@ -170,6 +207,8 @@ function addCircle(){
         fill:'rgba(0,0,0,0)'
         });
     canvas.add(circle);
+    console.log(circle)
+    questions[currentQuestion].push(circle)    
 }
 
   

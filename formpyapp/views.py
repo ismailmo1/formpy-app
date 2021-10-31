@@ -33,7 +33,13 @@ from .api import (
     save_image,
     str_to_img,
 )
-from .forms import DeleteUserForm, EditUserForm, LoginForm, RegistrationForm
+from .forms import (
+    DefineTemplateForm,
+    DeleteUserForm,
+    EditUserForm,
+    LoginForm,
+    RegistrationForm,
+)
 from .models import Template, User
 
 csrf = CSRFProtect(app)
@@ -48,7 +54,8 @@ def home():
 
 @app.get("/create")
 def create_template():
-    return render_template("create_template.html")
+    form = DefineTemplateForm()
+    return render_template("create_template.html", form=form)
 
 
 @app.post("/find-spots")

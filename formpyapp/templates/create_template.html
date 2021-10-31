@@ -34,7 +34,14 @@
   <div class="tab-pane fade disabled" id="nav-auto" role="tabpanel" aria-labelledby="nav-profile-tab">
     <div class="d-flex align-items-center flex-column" id="canvasDiv">
       <canvas id="canvas" width="600px" height="400px"></canvas>
-      <div class="btn-group d-flex flex-column" id="canvasControls">
+      <div class="btn-group d-flex flex-column mx-3" id="canvasControls">
+        <div class="btn-group dropend">
+          <button class="mt-2 col-auto btn btn-primary btn-small dropdown-toggle" data-bs-toggle="dropdown"
+            id="pickQn"><i class="fas fa-plus-question"></i>Qn</button>
+          <ul id="canvasControlsList" class="dropdown-menu mx-1">
+            <li id="addQn"><a href="#"><span class="badge bg-secondary m-1">+</span></a></li>
+          </ul>
+        </div>
         <button class="mt-2 col-auto btn btn-primary btn-small" id="addCircle"><i
             class="fas fa-plus-circle"></i></button>
         <button class="mt-2 col-auto btn btn-primary btn-small" id="export"><i class="fas fa-save"></i></button>
@@ -43,11 +50,30 @@
             class="fas fa-search-minus"></i></button>
         <button class="mt-2 col-auto btn btn-primary btn-small" id="panMode"><i class="fas fa-hand-paper"></i></button>
       </div>
-
     </div>
-  </div>
+    <form action="/newform">
+      <div class="mb-3">
+        {{form.name.label(class ='form-label')}}
+        {{form.name(class='form-control')}}
+      </div>
+      <div class="mb-3">
+        {{form.public.label(class ='form-label')}}
+        {{form.public(class='form-control')}}
+      </div>
+      {% for question in form.questions %}
+      {{form.questions.label(class ='form-label')}}
+      {{form.questions(class='form-control')}}
+      {% endfor %}
 
+      <div class="mb-3">
+        {{form.category_tags.label(class ='form-label')}}
+        {{form.category_tags(class='form-control')}}
+      </div>
+
+    </form>
+  </div>
 </div>
+
 <script>const csrf_token = "{{ csrf_token() }}"</script>
 <script src={{ url_for("static",filename="/scripts/fabric.min.js" ) }}></script>
 <script src={{ url_for("static",filename="/scripts/canvasScript.js" ) }}></script>
