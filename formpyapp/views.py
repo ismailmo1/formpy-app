@@ -58,11 +58,11 @@ def create_template():
     return render_template("create_template.html", form=form)
 
 
-@app.post("/align-image")
-def align_image():
+@app.post("/align-template")
+def align_template():
     img_str = request.files["uploadedImg"].read()
     img = str_to_img(img_str)
-    aligned_img = align_image(img)
+    aligned_img = align_img(img)
     aligned_img_str = img_to_str(aligned_img)
     return jsonify({"img": aligned_img_str})
 

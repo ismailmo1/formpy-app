@@ -7,22 +7,22 @@
 </div>
 <div class="mt-5">
   <nav id="tab">
-    <div class="nav nav-tabs" role="tablist">
+    <div class="nav nav-tabs nav-fill" role="tablist">
       <button id="uploadNavButton" class="nav-link active" role="tab" type="button" data-bs-toggle="tab"
         data-bs-target="#nav-upload">
-        Upload
+        <span class="badge bg-warning text-dark rounded-circle mx-2">1</span><span class="mx-2">Upload</span>
       </button>
       <button id="alignNavButton" class="nav-link" role="tab" type="button" data-bs-toggle="tab"
         data-bs-target="#nav-align">
-        Align
+        <span class="badge bg-secondary rounded-circle mx-2">2</span><span class="mx-2">Align</span>
       </button>
       <button id="defineNavButton" class="nav-link" role="tab" type="button" data-bs-toggle="tab"
         data-bs-target="#nav-define">
-        Define
+        <span class="badge bg-secondary rounded-circle mx-2">3</span><span class="mx-2">Define</span>
       </button>
       <button id="saveNavButton" class="nav-link" role="tab" type="button" data-bs-toggle="tab"
         data-bs-target="#nav-save">
-        Save
+        <span class="badge bg-secondary rounded-circle mx-2">4</span class="mx-2">Save</span>
       </button>
     </div>
   </nav>
@@ -43,61 +43,100 @@
   </div>
   <div class="tab-pane fade" id="nav-align" role="tabpanel" aria-labelledby="nav-align-tab">
     <div class="row"">
-      canvas for alignment goes here
+      <div class=" tab-pane fade" id="nav-define" role="tabpanel" aria-labelledby="nav-home-tab">
+      <div class="d-flex align-items-center flex-column" id="canvasDiv">
+        <canvas id="alignmentCanvas" width="600px" height="400px"></canvas>
+        <div class="btn-group d-flex flex-column mx-3" id="canvasControls">
+          <div class="btn-group dropend">
+            <button class="mt-2 col-auto btn btn-primary btn-small dropdown-toggle" data-bs-toggle="dropdown"
+              id="pickQn"><i class="fas fa-plus-question"></i>Qn</button>
+            <ul id="canvasControlsList" class="dropdown-menu mx-1">
+              <li id="addQn"><a href="#"><span class="badge bg-secondary m-1">+</span></a></li>
+            </ul>
+          </div>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="addCircle"><i
+              class="fas fa-plus-circle"></i></button>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="export"><i class="fas fa-save"></i></button>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="zoomIn"><i
+              class="fas fa-search-plus"></i></button>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="zoomOut"><i
+              class="fas fa-search-minus"></i></button>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="panMode"><i
+              class="fas fa-hand-paper"></i></button>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class=" tab-pane fade" id="nav-define" role="tabpanel" aria-labelledby="nav-home-tab">
-      <div class="accordion accordion-flush" id="accordionFlushExample">
+    <div class=" tab-pane fade" id="nav-define" role="tabpanel" aria-labelledby="nav-home-tab">
+      <div class="d-flex align-items-center flex-column" id="canvasDiv">
+        <canvas id="defineCanvas" width="600px" height="400px"></canvas>
+        <div class="btn-group d-flex flex-column mx-3" id="canvasControls">
+          <div class="btn-group dropend">
+            <button class="mt-2 col-auto btn btn-primary btn-small dropdown-toggle" data-bs-toggle="dropdown"
+              id="pickQn"><i class="fas fa-plus-question"></i>Qn</button>
+            <ul id="canvasControlsList" class="dropdown-menu mx-1">
+              <li id="addQn"><a href="#"><span class="badge bg-secondary m-1">+</span></a></li>
+            </ul>
+          </div>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="addCircle"><i
+              class="fas fa-plus-circle"></i></button>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="export"><i class="fas fa-save"></i></button>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="zoomIn"><i
+              class="fas fa-search-plus"></i></button>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="zoomOut"><i
+              class="fas fa-search-minus"></i></button>
+          <button class="mt-2 col-auto btn btn-primary btn-small" id="panMode"><i
+              class="fas fa-hand-paper"></i></button>
+        </div>
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                All Questions
+              </button>
+            </h2>
+            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+              data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body">
+                <div class="row" id="templateFormRow">
+                  <form action="/newform">
+                    <div class="mb-3">
+                      {{form.name.label(class ='form-label')}}
+                      {{form.name(class='form-control')}}
+                    </div>
+                    <div class="mb-3">
+                      {{form.public.label(class ='form-label')}}
+                      {{form.public(class='form-control')}}
+                    </div>
+                    {% for question in form.questions %}
+                    {{form.questions.label(class ='form-label')}}
+                    {{form.questions(class='form-control')}}
+                    {% endfor %}
 
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-              All Questions
-            </button>
-          </h2>
-          <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
-            data-bs-parent="#accordionFlushExample">
-            <div class="accordion-body">
-              <div class="row" id="templateFormRow">
-                <form action="/newform">
-                  <div class="mb-3">
-                    {{form.name.label(class ='form-label')}}
-                    {{form.name(class='form-control')}}
-                  </div>
-                  <div class="mb-3">
-                    {{form.public.label(class ='form-label')}}
-                    {{form.public(class='form-control')}}
-                  </div>
-                  {% for question in form.questions %}
-                  {{form.questions.label(class ='form-label')}}
-                  {{form.questions(class='form-control')}}
-                  {% endfor %}
+                    <div class="mb-3">
+                      {{form.category_tags.label(class ='form-label')}}
+                      {{form.category_tags(class='form-control')}}
+                    </div>
 
-                  <div class="mb-3">
-                    {{form.category_tags.label(class ='form-label')}}
-                    {{form.category_tags(class='form-control')}}
-                  </div>
-
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="tab-pane fade" id="nav-auto" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <div class="tab-pane fade" id="nav-auto" role="tabpanel" aria-labelledby="nav-profile-tab">
 
+        </div>
       </div>
-    </div>
-    <div class="tab-pane fade" id="nav-save" role="tabpanel" aria-labelledby="nav-align-tab">
-      <div class="row"">
+      <div class="tab-pane fade" id="nav-save" role="tabpanel" aria-labelledby="nav-align-tab">
+        <div class="row"">
           nav save
       </div>
     </div>
   </div>
   <script>const csrf_token = " {{ csrf_token() }}"</script>
-        <script src={{ url_for("static",filename="/scripts/fabric.min.js" ) }}></script>
-        <script src={{ url_for("static",filename="/scripts/canvasScript.js" ) }}></script>
-        <script src={{ url_for("static",filename="/scripts/templateCreation.js" ) }}></script>
+          <script src={{ url_for("static",filename="/scripts/fabric.min.js" ) }}></script>
+          <script src={{ url_for("static",filename="/scripts/canvasScript.js" ) }}></script>
+          <script src={{ url_for("static",filename="/scripts/templateCreation.js" ) }}></script>
 
-        {% endblock %}
+          {% endblock %}
