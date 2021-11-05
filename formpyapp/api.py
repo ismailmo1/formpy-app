@@ -33,34 +33,18 @@ def img_to_str(img: np.array) -> str:
     return str(img_base64).split("'")[1]
 
 
-def mark_spots(img: np.array) -> Tuple[list[list[int]], np.array]:
-    """marks detected spots on template image
+def align_img(img: np.array) -> np.array:
+    """aligns image with bounding box if detected
 
     Args:
-        img (np.array): image returned from read_img
+        img (np.array): user uploaded image
 
     Returns:
-        np.array: img with bounding boxes around detected spots
+        np.array: aligned image
     """
     aligned_img = ip.align_page(img)
-    processed_img = ip.process_img(img)
-    spot_coords = find_spots(processed_img)
-    # color_img = cv2.cvtColor(aligned_img, cv2.COLOR_GRAY2BGR)
-    for i, (x, y) in enumerate(spot_coords):
-        cv2.putText(
-            aligned_img,
-            str(i),
-            (x, y),
-            cv2.FONT_HERSHEY_COMPLEX,
-            0.7,
-            (255, 0, 0),
-            1,
-        )
-        cv2.rectangle(
-            aligned_img, (x - 13, y - 13), (x + 13, y + 13), (255, 0, 0), 2
-        )
 
-    return spot_coords, aligned_img
+    return aligned_img
 
 
 def str_to_img(img_str: str) -> np.array:

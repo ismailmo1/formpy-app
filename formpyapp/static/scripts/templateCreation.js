@@ -7,7 +7,7 @@ let spots ={};
 // image upload events if img uploaded
 if(imgForm){
   // we are on the create template page
-imgForm.addEventListener("submit", async (e) => {
+  imgForm.addEventListener("submit", async (e) => {
   // prevent form post request
   e.preventDefault();
   // save image upload field to add as hidden field to new question definition form
@@ -49,9 +49,8 @@ function hideForm() {
 // ajax form post to find spots on template
 async function findSpots(form) {
   let formData = new FormData(form);
-  console.log(formData)
-  res = await fetch("/find-spots", { method: "POST", body: formData });
-  spots = await res.json();
+  res = await fetch("/align-image", { method: "POST", body: formData });
+  alignedImg = await res.json();
   return spots;
 }
 

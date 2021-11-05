@@ -24,10 +24,10 @@ login.login_view = "login"
 from . import db
 from .api import (
     IMG_STORAGE_PATH,
+    align_img,
     delete_image,
     get_image,
     img_to_str,
-    mark_spots,
     parse_template_form,
     read_form,
     save_image,
@@ -58,16 +58,13 @@ def create_template():
     return render_template("create_template.html", form=form)
 
 
-@app.post("/find-spots")
-def find_spots():
+@app.post("/align-image")
+def align_image():
     img_str = request.files["uploadedImg"].read()
     img = str_to_img(img_str)
-    spot_coords, marked_img = mark_spots(img)
-    marked_img_str = img_to_str(marked_img)
-    num_spots = len(spot_coords)
-    return jsonify(
-        {"img": marked_img_str, "num_spots": num_spots, "coords": spot_coords}
-    )
+    aligned_img = align_image(img)
+    aligned_img_str = img_to_str(aligned_img)
+    return jsonify({"img": aligned_img_str})
 
 
 @app.post("/define-template/<new_copy>")
