@@ -47,7 +47,12 @@ def align_img(img: np.array) -> np.array:
     return aligned_img
 
 
-def str_to_img(img_str: str) -> np.array:
+def get_bounding_pts(img: np.ndarray) -> tuple:
+    pts = ip.get_outer_box(img)
+    return pts
+
+
+def read_form_img(img_str: str) -> np.array:
     """reads image from web form"""
     img_arr = np.fromstring(img_str, np.uint8)
     img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
@@ -142,7 +147,7 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
         template_id (str): id of selected template to read form against
         form_img (str): bin64 str of form image
     """
-    img = str_to_img(form_img)
+    img = read_form_img(form_img)
     template_dict = (
         models.Template.objects(id=template_id).first().question_dict
     )

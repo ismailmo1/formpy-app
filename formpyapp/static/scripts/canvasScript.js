@@ -24,8 +24,6 @@ const activeBtnClassList = ["nav-link", "active"]
 const inactiveBtnClassList = ["nav-link", "disabled"]
 const activeTabClassList = ["tab-pane", "fade", "show", "active"]
 const inactiveTabClassList = ["tab-pane", "fade"]
-let defineCanvasImg = null
-let alignCanvasImg = null
 
 const creationSteps ={
   UPLOAD:"upload",
@@ -33,7 +31,6 @@ const creationSteps ={
   DEFINE:"define",
   SAVE:"save"
 }
-
 // create template detection
 imgForm ? creating = true : creating=false
 // image upload events if on create template page creating template
@@ -43,25 +40,43 @@ if(creating){
     // prevent form post request
     e.preventDefault();
     // save image upload field to add as hidden field to new question definition form
-    alignCanvasImg=await alignImg(imgForm);
-    prepareAlignTab(alignCanvasImg);
+    let boundingPts=await getBoundingPts(imgForm);
+    console.log(boundingPts);
+    
+    // prepareAlignTab(alignCanvasImg);
 })}else{
   // we are on the edit template page
-
 };
 
 // ajax form post to align template image
-async function alignImg(form) {
+async function alignImg(pts) {
   let formData = new FormData(form);
   res = await fetch("/align-template", { method: "POST", body: formData });
   let {img} = await res.json();
   return img;
 }
 
-function prepareAlignTab(alignedImgData){
-  deactivateTab(creationSteps.UPLOAD);
-  activateTab(creationSteps.ALIGN);
-  prepareCanvas(alignCanvas, alignedImgData)
+
+// ajax form post to find bounding box in template
+async function getBoundingPts(form) {
+    let formData = new FormData(form);
+    res = await fetch("/upload-template", { method: "POST", body: formData });
+    let {img,pts} = await res.json();
+    return img, pts;
+  }
+
+function prepareAlignTab(img){
+    alignNavBtn.addEventListener("shown.bs.tab", ()=>{
+        prepareCanvas(alignCanvas, img)
+    
+    })
+    prepareCanvas(alignCanvas, img)
+
+    // let alignTab = new bootstrap.Tab(alignNavBtn);
+    // alignTab.show();
+    deactivateTab(creationSteps.UPLOAD);
+    activateTab(creationSteps.ALIGN);
+    console.log("align", alignCanvas);
 }
 
 function getStepEl(creationStep){
@@ -74,20 +89,17 @@ function getStepEl(creationStep){
 
 function activateTab(creationStep){
   const {tab, button} = getStepEl(creationStep)
-  // clear current classes
-  button.classList.remove(...button.classList)
-  button.classList.add("nav-link", "active")
-  tab.classList.remove(...tab.classList)
-  tab.classList.add("tab-pane", "fade", "show", "active")
+  button.classList.add("active")
+  tab.classList.add("show", "active")
 
 }
 
 function deactivateTab(creationStep){
   const {tab, button} = getStepEl(creationStep)
-  button.classList.remove(...button.classList)
-  button.classList.add("nav-link", "disabled")
-  tab.classList.remove(...tab.classList)
-  tab.classList.add("tab-pane", "fade", "disabled")
+  button.classList.remove("active")
+    button.classList.add("disabled")
+  tab.classList.remove("show","active")
+  tab.classList.add("disabled")
 }
 
 
@@ -142,7 +154,7 @@ addQn.addEventListener("click",(e)=>{
 })
 
 async function addImageToCanvas(canvas, imgData){
-      const bgImage = new fabric.Image.fromURL(imgData, (img)=>{
+      const bgImage = new fabric.Image.fromURL(`data:image/png;base64,${imgData}`, (img)=>{
   
         // get image aspect ratio to decide if scale to height or width
         imgAR = img.width/img.height
@@ -165,21 +177,15 @@ async function addImageToCanvas(canvas, imgData){
   }
 function prepareCanvas(canvas, imgData){
   let w = canvasContainer.offsetWidth 
-  if(w!=canvas.width){
-      resizeCanvas(canvas, imgData);
-  }
-  addCanvasEventListeners(defineCanvas)
+    resizeCanvas(canvas, imgData);
+    addCanvasEventListeners(canvas)
 }
 
 // fire event on bootstrap nav activation (div doesnt have any width until shown!) 
-defineNavBtn.addEventListener("shown.bs.tab", ()=>{
+defineNavBtn.addEventListener("shown.bs.tab", (e)=>{
     prepareCanvas(defineCanvas, defineCanvasImg)
 })
-alignNavBtn.addEventListener("shown.bs.tab", ()=>{
 
-    prepareCanvas(alignCanvas, alignCanvasImg)
-
-})
 // exportBtn.addEventListener('click', resizeCanvas, false);
 
 function resizeCanvas(canvas, imgData) {

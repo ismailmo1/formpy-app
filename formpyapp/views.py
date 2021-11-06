@@ -26,12 +26,13 @@ from .api import (
     IMG_STORAGE_PATH,
     align_img,
     delete_image,
+    get_bounding_pts,
     get_image,
     img_to_str,
     parse_template_form,
     read_form,
+    read_form_img,
     save_image,
-    str_to_img,
 )
 from .forms import (
     DefineTemplateForm,
@@ -58,11 +59,23 @@ def create_template():
     return render_template("create_template.html", form=form)
 
 
+@app.post("/upload-template")
+def upload_template():
+    form_img = request.files["uploadedImg"].read()
+    img = read_form_img(form_img)
+    # change func to accept bounding rect pts
+    img_str = img_to_str(img)
+    pts = get_bounding_pts(img).tolist()
+    return jsonify({"pts": pts})
+
+
 @app.post("/align-template")
-def align_template():
-    img_str = request.files["uploadedImg"].read()
-    img = str_to_img(img_str)
-    aligned_img = align_img(img)
+def align_template(bounding_pts):
+    pts = request.get_json()["pts"]
+    form_img = request.files["uploadedImg"].read()
+    img = read_form_img(form_img)
+    # change func to accept bounding rect pts
+    aligned_img = align_img(img, pts)
     aligned_img_str = img_to_str(aligned_img)
     return jsonify({"img": aligned_img_str})
 
@@ -93,7 +106,7 @@ def define_template(new_copy):
         saved_template.save()
     elif new_copy == "new":
         img_str = request.files["uploadedImg"].read()
-        img = str_to_img(img_str)
+        img = read_form_img(img_str)
         save_image(img, saved_template.img_name)
     flash(f"template '{saved_template.name}' created successfully!", "info")
     return redirect(url_for("view_template"))
