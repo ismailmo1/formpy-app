@@ -1,5 +1,6 @@
 // create canvas with id of canvas element
 // add options via object
+const submitAlignBtn = document.getElementById("submitAlign")
 const addCircleBtn = document.getElementById("addCircle");
 const exportBtn = document.getElementById("export");
 const defineCanvas = new fabric.Canvas("defineCanvas");
@@ -46,13 +47,27 @@ if(creating){
     prepareAlignTab(preAlignImgSrc);
     // save image upload field to add as hidden field to new question definition form
     let boundingPts=await getBoundingPts(imgForm);
-    console.log(boundingPts);
+    addAlignSpots(boundingPts)
     let alignTab = new bootstrap.Tab(alignNavBtn);
     alignTab.show();
+    deactivateTab(creationSteps.UPLOAD)
 })}else{
   // we are on the edit template page
 };
 
+function addAlignSpots(pts = []){
+    pts.forEach((pt)=>{
+        let = scaleFactor =1.83 
+        let x = pt[0]/scaleFactor
+        let y = pt[1]/scaleFactor
+
+        addCircle(alignCanvas, {
+        top : y, 
+        left:x, 
+        fill:'rgba(255,0,0, 0.5)'})
+        }
+    )
+}
 // ajax form post to align template image
 async function alignImg(pts) {
   let formData = new FormData(form);
@@ -80,7 +95,6 @@ function prepareAlignTab(img){
     // alignTab.show();
     // deactivateTab(creationSteps.UPLOAD);
     // activateTab(creationSteps.ALIGN);
-    console.log("align", alignCanvas);
 }
 
 function getStepEl(creationStep){
@@ -100,10 +114,7 @@ function activateTab(creationStep){
 
 function deactivateTab(creationStep){
   const {tab, button} = getStepEl(creationStep)
-  button.classList.remove("active")
-    button.classList.add("disabled")
-  tab.classList.remove("show","active")
-  tab.classList.add("disabled")
+  button.classList.add("disabled")
 }
 
 
@@ -134,31 +145,6 @@ function setCurrentQuestion(qnNumber){
     pickQnMenu.appendChild(badge)
 }
 
-// add new question to list 
-addQn.addEventListener("click",(e)=>{
-    let newQn = document.createElement("li")
-    let link = document.createElement("a")
-    link.setAttribute("href", '#')
-    let span = document.createElement("span")
-    span.classList.add("badge", "bg-secondary","m-1", "questionSelect")
-    link.appendChild(span)
-    newQn.appendChild(link)
-    span.innerText = canvasControlsList.childElementCount
-    
-    newQn.addEventListener("click", ()=>{
-        currentQuestion = newQn.innerText
-        canvasControlsList.querySelectorAll(".bg-danger").forEach(span=>{
-            span.classList.add("bg-secondary")
-            span.classList.remove("bg-danger")            
-        })
-        newQn.querySelector("span").classList.toggle("bg-danger")
-        newQn.querySelector("span").classList.toggle("bg-secondary")
-        setCurrentQuestion(newQn.innerText)
-    })
-
-    canvasControlsList.appendChild(newQn)
-    questions[newQn.innerText] = []
-})
 
 async function addImageToCanvas(canvas, imgData){
       const bgImage = new fabric.Image.fromURL(imgData, (img)=>{
@@ -196,7 +182,6 @@ defineNavBtn.addEventListener("shown.bs.tab", (e)=>{
 // exportBtn.addEventListener('click', resizeCanvas, false);
 
 function resizeCanvas(canvas, imgData) {
-    console.log("resizing", canvas.lowerCanvasEl.id);
     canvas.setHeight(canvasContainer.offsetWidth*0.6);
     canvas.setWidth(canvasContainer.offsetWidth);
     let newTop = canvasContainer.offsetTop + (canvasContainer.offsetHeight/2) - (canvasControls.offsetHeight/2)
@@ -208,11 +193,9 @@ function resizeCanvas(canvas, imgData) {
 
 
 function addCanvasEventListeners(canvas){
-    console.log("adding event listener to ", canvas.lowerCanvasEl.id);
     panMode.status = false
     panMode.addEventListener("click", (e)=>{
         if (!panMode.status){
-            console.log(panMode.parentElement.parentElement.parentElement);
             panMode.classList.toggle("panModeOn")
             panMode.classList.remove("btn-dark")
             panMode.classList.add("btn-warning")
@@ -268,9 +251,7 @@ function addCanvasEventListeners(canvas){
     zoomIn.addEventListener("click", ()=>{
         canvas.setZoom(canvas.getZoom() *1.1)
     })
-    if (canvas.lowerCanvasEl.id =='alignCanvas'){
-        addCircleBtn.addEventListener("click", addAlignPoint);
-    }else{
+    if (canvas.lowerCanvasEl.id =='defineCanvas'){
         addCircleBtn.addEventListener("click", addAnswerCircle)
     }
 
@@ -278,38 +259,62 @@ function addCanvasEventListeners(canvas){
     canvas.on("object:moved", (e)=>{
         let {type,top, left} = e.target  
     })
+    
+    // // add new question to list 
+    // addQn.addEventListener("click",(e)=>{
+    //     let newQn = document.createElement("li")
+    //     let link = document.createElement("a")
+    //     link.setAttribute("href", '#')
+    //     let span = document.createElement("span")
+    //     span.classList.add("badge", "bg-secondary","m-1", "questionSelect")
+    //     link.appendChild(span)
+    //     newQn.appendChild(link)
+    //     span.innerText = canvasControlsList.childElementCount
+        
+    //     newQn.addEventListener("click", ()=>{
+    //         currentQuestion = newQn.innerText
+    //         canvasControlsList.querySelectorAll(".bg-danger").forEach(span=>{
+    //             span.classList.add("bg-secondary")
+    //             span.classList.remove("bg-danger")            
+    //         })
+    //         newQn.querySelector("span").classList.toggle("bg-danger")
+    //         newQn.querySelector("span").classList.toggle("bg-secondary")
+    //         setCurrentQuestion(newQn.innerText)
+    //     })
 
-
-    function addAnswerCircle(colour ='rgba(100,100,150, 0.5)'){
-        const circle = new fabric.Circle({
-            radius: 25,
-            top: 200,
-            left: 200,
-            strokeWidth:5,
-            stroke:colour,
-            fill:colour
-            });
-        canvas.add(circle);
-        questions[currentQuestion].push(circle)    
-    }
-
-    function addAlignPoint(colour ='rgb(255,0,0)'){
-        const circle = new fabric.Circle({
-            radius: 10,
-            top: 200,
-            left: 200,
-            strokeWidth:1,
-            stroke:colour,
-            fill:colour
-            });
-        canvas.add(circle);
-        if (alignPts.length<4){
-            alignPts.push(circle)    
-        }else{
-            canvas.remove(alignPts[3])
-            alignPts[3]=circle
-        }
-    }
+    //     canvasControlsList.appendChild(newQn)
+    //     questions[newQn.innerText] = []
+    // })
 
 }  
+
+function addCircle(canvas, {
+    radius= 10,
+    top= 200,
+    left= 200,
+    strokeWidth=0,
+    stroke='rgba(100,100,150, 0.5)',
+    fill='rgba(100,100,150, 0.5)',
+    }={}){
+        opts = {
+        radius:radius,
+        top:top,
+        left:left,
+        strokeWidth:strokeWidth,
+        stroke:stroke,
+        fill:fill}
+        console.log("circle opts:",opts);
+        const circle = new fabric.Circle(opts);
+        canvas.add(circle);
  
+}
+
+
+submitAlignBtn.addEventListener("click", (e)=>{
+    console.log(e, e.target,e.target.innerHTMl);
+    e.target.innerHTMl = '<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>'
+    alignCanvas._objects.forEach(pt=>{
+        console.log(pt.left,pt.top);
+    })
+    
+})
