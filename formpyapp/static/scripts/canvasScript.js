@@ -16,6 +16,8 @@ const addQn = document.getElementById("addQn");
 const canvasControlsList = document.getElementById("canvasControlsList")
 const pickQnMenu = document.getElementById("pickQn")
 const imgForm = document.getElementById("uploadImgForm");
+const imgFormUploadBtn = document.getElementById("uploadImgBtn");
+const imgUploadInput = document.getElementById("photoUpload");
 const uploadTab = document.getElementById("nav-upload");
 const alignTab = document.getElementById("nav-align");
 const alignBtn = document.getElementById("alignNavButton");
@@ -36,14 +38,17 @@ imgForm ? creating = true : creating=false
 // image upload events if on create template page creating template
 if(creating){
   // we are on the create template page
-  imgForm.addEventListener("submit", async (e) => {
+  imgFormUploadBtn.addEventListener("click", async (e) => {
     // prevent form post request
     e.preventDefault();
+    // add image to canvas
+    let preAlignImgSrc = URL.createObjectURL(imgUploadInput.files[0])
+    prepareAlignTab(preAlignImgSrc);
     // save image upload field to add as hidden field to new question definition form
     let boundingPts=await getBoundingPts(imgForm);
     console.log(boundingPts);
-    
-    // prepareAlignTab(alignCanvasImg);
+    let alignTab = new bootstrap.Tab(alignNavBtn);
+    alignTab.show();
 })}else{
   // we are on the edit template page
 };
@@ -70,12 +75,11 @@ function prepareAlignTab(img){
         prepareCanvas(alignCanvas, img)
     
     })
-    prepareCanvas(alignCanvas, img)
 
     // let alignTab = new bootstrap.Tab(alignNavBtn);
     // alignTab.show();
-    deactivateTab(creationSteps.UPLOAD);
-    activateTab(creationSteps.ALIGN);
+    // deactivateTab(creationSteps.UPLOAD);
+    // activateTab(creationSteps.ALIGN);
     console.log("align", alignCanvas);
 }
 
@@ -107,6 +111,9 @@ function deactivateTab(creationStep){
 let currentQuestion = null
 // hold spots data
 let questions = {}
+
+// hold alignpts data
+let alignPts = []
 
 window.addEventListener("resize", resizeCanvas)
 // ajax form post to align template image
@@ -154,7 +161,7 @@ addQn.addEventListener("click",(e)=>{
 })
 
 async function addImageToCanvas(canvas, imgData){
-      const bgImage = new fabric.Image.fromURL(`data:image/png;base64,${imgData}`, (img)=>{
+      const bgImage = new fabric.Image.fromURL(imgData, (img)=>{
   
         // get image aspect ratio to decide if scale to height or width
         imgAR = img.width/img.height
@@ -189,6 +196,7 @@ defineNavBtn.addEventListener("shown.bs.tab", (e)=>{
 // exportBtn.addEventListener('click', resizeCanvas, false);
 
 function resizeCanvas(canvas, imgData) {
+    console.log("resizing", canvas.lowerCanvasEl.id);
     canvas.setHeight(canvasContainer.offsetWidth*0.6);
     canvas.setWidth(canvasContainer.offsetWidth);
     let newTop = canvasContainer.offsetTop + (canvasContainer.offsetHeight/2) - (canvasControls.offsetHeight/2)
@@ -200,17 +208,23 @@ function resizeCanvas(canvas, imgData) {
 
 
 function addCanvasEventListeners(canvas){
-
+    console.log("adding event listener to ", canvas.lowerCanvasEl.id);
+    panMode.status = false
     panMode.addEventListener("click", (e)=>{
         if (!panMode.status){
-            e.target.classList.toggle("panModeOn")
+            console.log(panMode.parentElement.parentElement.parentElement);
+            panMode.classList.toggle("panModeOn")
+            panMode.classList.remove("btn-dark")
+            panMode.classList.add("btn-warning")
             panMode.status = true;
             canvas.isSelection=false
         }else{
-            e.target.classList.toggle("panModeOn")
-
+            panMode.classList.toggle("panModeOn")
+            panMode.classList.add("btn-dark")
+            panMode.classList.remove("btn-warning")
             panMode.status = false;
             canvas.isSelection=true
+            
         }}
     )
 
@@ -226,7 +240,6 @@ function addCanvasEventListeners(canvas){
 
     canvas.on('mouse:move', function(opt) {
         if (this.isDragging) {
-            
             let e = opt.e;
             let vpt = this.viewportTransform;
             // move viewport by amount moved since last move      
@@ -255,41 +268,11 @@ function addCanvasEventListeners(canvas){
     zoomIn.addEventListener("click", ()=>{
         canvas.setZoom(canvas.getZoom() *1.1)
     })
-
-
-
-    exportBtn.addEventListener("click", ()=>{
-        circleList.innerHTML = ""
-        let table = document.createElement("table")
-        let hdRow = document.createElement("tr")
-        let idxHdr = document.createElement("th")
-        let xHdr = document.createElement("th")
-        let yHdr = document.createElement("th")
-        idxHdr.innerText = "Answer No."
-        xHdr.innerText = "x coord"
-        yHdr.innerText =  "y coord"
-        hdRow.appendChild(idxHdr)
-        hdRow.appendChild(xHdr)
-        hdRow.appendChild(yHdr)
-        table.appendChild(hdRow)
-        circleList.appendChild(table)
-
-        canvas.toObject().objects.forEach((obj, i) => {        
-            let row = document.createElement("tr")
-            let ansCol = document.createElement("td")
-            let ansX = document.createElement("td")
-            let ansY = document.createElement("td")
-            ansCol.innerText = i
-            ansX.innerText = Math.round(obj.left/scaleFactor)
-            ansY.innerText = Math.round(obj.top/scaleFactor)
-            row.appendChild(ansCol)
-            row.appendChild(ansX)
-            row.appendChild(ansY)
-            table.appendChild(row)
-
-        });
-    })
-    addCircleBtn.addEventListener("click", addCircle)
+    if (canvas.lowerCanvasEl.id =='alignCanvas'){
+        addCircleBtn.addEventListener("click", addAlignPoint);
+    }else{
+        addCircleBtn.addEventListener("click", addAnswerCircle)
+    }
 
     // get object location when moved
     canvas.on("object:moved", (e)=>{
@@ -297,17 +280,35 @@ function addCanvasEventListeners(canvas){
     })
 
 
-    function addCircle(){
+    function addAnswerCircle(colour ='rgba(100,100,150, 0.5)'){
         const circle = new fabric.Circle({
             radius: 25,
             top: 200,
             left: 200,
             strokeWidth:5,
-            stroke:'rgba(100,100,150, 0.5)',
-            fill:'rgba(0,0,0,0)'
+            stroke:colour,
+            fill:colour
             });
         canvas.add(circle);
         questions[currentQuestion].push(circle)    
+    }
+
+    function addAlignPoint(colour ='rgb(255,0,0)'){
+        const circle = new fabric.Circle({
+            radius: 10,
+            top: 200,
+            left: 200,
+            strokeWidth:1,
+            stroke:colour,
+            fill:colour
+            });
+        canvas.add(circle);
+        if (alignPts.length<4){
+            alignPts.push(circle)    
+        }else{
+            canvas.remove(alignPts[3])
+            alignPts[3]=circle
+        }
     }
 
 }  
