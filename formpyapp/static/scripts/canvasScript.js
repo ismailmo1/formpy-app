@@ -133,7 +133,7 @@ function deactivateTab(creationStep) {
 
 
 
-let currentQuestion = null
+let currentQuestion = 0
 // hold spots data
 let questions = {}
 
@@ -159,7 +159,6 @@ function setCurrentQuestion(qnNumber) {
     badge.classList.add("position-absolute", "top-0", "start-100", "translate-middle",
         "badge", "rounded-pill", "bg-danger")
     badge.innerText = qnNumber
-    pickQnMenu.appendChild(badge)
 }
 
 
@@ -197,12 +196,18 @@ function prepareCanvas(canvas, imgData) {
 // exportBtn.addEventListener('click', resizeCanvas, false);
 
 function resizeCanvas(canvas, imgData) {
-    let canvasControls = document.getElementById(`${canvas.lowerCanvasEl.id}Controls`)
+    let canvasName = canvas.lowerCanvasEl.id
+    let canvasControls = document.getElementById(`${canvasName}Controls`)
     let canvasContainer = canvas.upperCanvasEl.parentElement.parentElement
     canvas.setHeight(canvasContainer.offsetWidth * 0.6);
     canvas.setWidth(canvasContainer.offsetWidth);
     let newTop = canvasContainer.offsetTop + (canvasContainer.offsetHeight / 2) - (canvasControls.offsetHeight / 2)
     canvasControls.setAttribute("style", `left:${canvasContainer.offsetLeft}px;top:${newTop}px`)
+    if (canvasName == "defineCanvas") {
+        let qnControl = document.getElementById("defineCanvasQnControls")
+        console.log(qnControl);
+        qnControl.setAttribute("style", `left:${canvasContainer.offsetLeft + (canvasContainer.width / 2)}px;top:${canvasContainer.offsetTop + 5}px`)
+    }
     addImageToCanvas(canvas, imgData);
 
     canvas.renderAll();
@@ -220,7 +225,8 @@ function addCanvasEventListeners(canvas) {
         const addCircleBtn = document.getElementById("addCircle");
         const addQn = document.getElementById("addQn");
         addCircleBtn.addEventListener("click", () => {
-            addCircle(canvas)
+            circle = addCircle(canvas)
+            questions[currentQuestion].push(circle)
         })
         // add new question to list 
         addQn.addEventListener("click", addQuestion)
@@ -324,20 +330,15 @@ function addCanvasEventListeners(canvas) {
         canvas.setZoom(canvas.getZoom() * 1.1)
     })
 
-    // get object location when moved
-    canvas.on("object:moved", (e) => {
-        let { type, top, left } = e.target
-    })
-
 }
 
 function addCircle(canvas, {
     radius = 10,
     top = 200,
     left = 200,
-    strokeWidth = 0,
-    stroke = 'rgba(100,100,150, 0.5)',
-    fill = 'rgba(100,100,150, 0.5)',
+    strokeWidth = 3,
+    stroke = 'rgba(255,0,0, 0.5)',
+    fill = 'rgba(0,0,0, 0.5)',
 } = {}) {
     opts = {
         radius: radius,
@@ -349,7 +350,12 @@ function addCircle(canvas, {
     }
     const circle = new fabric.Circle(opts);
     canvas.add(circle);
+    circle.hasControls = false;
+    circle.on("selected", () => {
 
+
+    })
+    return circle
 }
 
 function addQuestion() {
@@ -364,16 +370,26 @@ function addQuestion() {
     span.innerText = canvasControlsList.childElementCount
 
     newQn.addEventListener("click", () => {
-        currentQuestion = newQn.innerText
-        canvasControlsList.querySelectorAll(".bg-danger").forEach(span => {
-            span.classList.add("bg-secondary")
-            span.classList.remove("bg-danger")
-        })
-        newQn.querySelector("span").classList.toggle("bg-danger")
-        newQn.querySelector("span").classList.toggle("bg-secondary")
-        setCurrentQuestion(newQn.innerText)
+        activateQn(newQn)
     })
 
     canvasControlsList.appendChild(newQn)
     questions[newQn.innerText] = []
+    return newQn
 }
+
+function activateQn(newQn) {
+    let qnControl = document.getElementById("defineCanvasQnControls")
+    let canvasControlsList = document.getElementById("defineCanvasControlsList")
+
+    canvasControlsList.querySelectorAll(".bg-danger").forEach(span => {
+        span.classList.add("bg-secondary")
+        span.classList.remove("bg-danger")
+    })
+    newQn.querySelector("span").classList.toggle("bg-danger")
+    newQn.querySelector("span").classList.toggle("bg-secondary")
+    setCurrentQuestion(newQn.innerText)
+    qnControl.getElementsByClassName("btn")[0].innerText = `Currently defining Question ${currentQuestion}`
+}
+
+activateQn(addQuestion())

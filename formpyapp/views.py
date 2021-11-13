@@ -64,7 +64,6 @@ def upload_template():
     form_img = request.files["uploadedImg"].read()
     img = read_form_img(form_img)
     # change func to accept bounding rect pts
-    img_str = img_to_str(img)
     pts = get_bounding_pts(img).tolist()
     return jsonify({"pts": pts})
 

@@ -4,7 +4,8 @@
 }
 
 #defineCanvasControls,
-#alignCanvasControls {
+#alignCanvasControls,
+#defineCanvasQnControls {
   position: absolute;
 }
 

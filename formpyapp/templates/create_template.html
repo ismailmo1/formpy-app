@@ -59,14 +59,18 @@
   <div class=" tab-pane fade" id="nav-define" role="tabpanel" aria-labelledby="nav-home-tab">
     <div class="d-flex align-items-center flex-column canvas-controls" id="defineCanvasDiv">
       <canvas id="defineCanvas" width="600px" height="400px"></canvas>
-      <div class="btn-group d-flex flex-column mx-3" id="defineCanvasControls">
+      <div class="btn-group d-flex flex-column mx-3" id="defineCanvasQnControls">
         <div class="btn-group dropend">
           <button class="mt-2 col-auto btn btn-dark btn-small dropdown-toggle" data-bs-toggle="dropdown" id="pickQn"><i
-              class="fas fa-plus-question"></i>Qn</button>
+              class="fas fa-plus-question"></i>Currently defining Question 1</current> </button>
           <ul id="defineCanvasControlsList" class="dropdown-menu mx-1">
             <li id="addQn"><a href="#"><span class="badge bg-secondary m-1">+</span></a></li>
+            <!-- <li><a href="#"><span class="badge bg-danger questionSelect m-1">1</span></a></li> -->
+
           </ul>
         </div>
+      </div>
+      <div class="btn-group d-flex flex-column mx-3" id="defineCanvasControls">
         <button class="mt-2 col-auto btn btn-dark btn-small" id="addCircle"><i class="fas fa-plus-circle"></i></button>
         <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasSubmit"><i
             class="fas fa-save"></i></button>
