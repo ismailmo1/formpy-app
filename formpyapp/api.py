@@ -1,5 +1,6 @@
 import base64
 import io
+import json
 import os
 from collections import defaultdict
 from typing import Tuple
@@ -33,7 +34,7 @@ def img_to_str(img: np.array) -> str:
     return str(img_base64).split("'")[1]
 
 
-def align_img(img: np.array) -> np.array:
+def align_img(img: np.array, json_pts: str, scale_factor: str) -> np.array:
     """aligns image with bounding box if detected
 
     Args:
@@ -42,7 +43,17 @@ def align_img(img: np.array) -> np.array:
     Returns:
         np.array: aligned image
     """
-    aligned_img = ip.align_page(img)
+    pts = np.array(json.loads(json_pts), dtype="float32")
+    pts /= float(scale_factor)
+    ordered_pts = np.zeros((4, 2), dtype="float32")
+    ordered_pts[0] = pts[np.argmin(pts.sum(axis=1))]
+    ordered_pts[2] = pts[np.argmax(pts.sum(axis=1))]
+
+    # smallest difference x-y = top right
+    ordered_pts[1] = pts[np.argmin(np.diff(pts, axis=1))]
+    # largest difference x-y = bottom left
+    ordered_pts[3] = pts[np.argmax(np.diff(pts, axis=1))]
+    aligned_img = ip.align_page(img, corner_pts=ordered_pts)
 
     return aligned_img
 

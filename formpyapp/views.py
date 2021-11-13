@@ -70,12 +70,13 @@ def upload_template():
 
 
 @app.post("/align-template")
-def align_template(bounding_pts):
-    pts = request.get_json()["pts"]
+def align_template():
+    pts = request.form["pts"]
+    scale_factor = request.form["scale"]
     form_img = request.files["uploadedImg"].read()
     img = read_form_img(form_img)
     # change func to accept bounding rect pts
-    aligned_img = align_img(img, pts)
+    aligned_img = align_img(img, pts, scale_factor)
     aligned_img_str = img_to_str(aligned_img)
     return jsonify({"img": aligned_img_str})
 

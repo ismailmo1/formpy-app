@@ -3,7 +3,8 @@
   height: auto;
 }
 
-#canvasControls {
+#defineCanvasControls,
+#alignCanvasControls {
   position: absolute;
 }
 

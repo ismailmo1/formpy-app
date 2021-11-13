@@ -42,34 +42,40 @@
     </div>
   </div>
   <div class="tab-pane fade" id="nav-align" role="tabpanel" aria-labelledby="nav-align-tab">
-    <div class="d-flex align-items-center flex-column" id="canvasDiv">
+    <div class="d-flex align-items-center flex-column" id="alignCanvasDiv">
       <canvas id="alignCanvas" width="600px" height="400px"></canvas>
-      <div class="btn-group d-flex flex-column mx-3" id="canvasControls">
-        <button class="mt-2 col-auto btn btn-dark btn-small" id="submitAlign"><i class="fas fa-check"></i></button>
-        <button class="mt-2 col-auto btn btn-dark btn-small" id="zoomIn"><i class="fas fa-search-plus"></i></button>
-        <button class="mt-2 col-auto btn btn-dark btn-small" id="zoomOut"><i class="fas fa-search-minus"></i></button>
-        <button class="mt-2 col-auto btn btn-dark btn-small" id="panMode"><i class="fas fa-hand-paper"></i></button>
+      <div class="btn-group d-flex flex-column mx-3 canvas-controls" id="alignCanvasControls">
+        <button class="mt-2 col-auto btn btn-dark btn-small" id="alignCanvasSubmit"><i
+            class="fas fa-check"></i></button>
+        <button class="mt-2 col-auto btn btn-dark btn-small" id="alignCanvasZoomIn"><i
+            class="fas fa-search-plus"></i></button>
+        <button class="mt-2 col-auto btn btn-dark btn-small" id="alignCanvasZoomOut"><i
+            class="fas fa-search-minus"></i></button>
+        <button class="mt-2 col-auto btn btn-dark btn-small" id="alignCanvasPanMode"><i
+            class="fas fa-hand-paper"></i></button>
       </div>
     </div>
   </div>
-  <!-- <div class=" tab-pane fade" id="nav-define" role="tabpanel" aria-labelledby="nav-home-tab">
-    <div class="d-flex align-items-center flex-column" id="canvasDiv">
+  <div class=" tab-pane fade" id="nav-define" role="tabpanel" aria-labelledby="nav-home-tab">
+    <div class="d-flex align-items-center flex-column canvas-controls" id="defineCanvasDiv">
       <canvas id="defineCanvas" width="600px" height="400px"></canvas>
-      <div class="btn-group d-flex flex-column mx-3" id="canvasControls">
+      <div class="btn-group d-flex flex-column mx-3" id="defineCanvasControls">
         <div class="btn-group dropend">
-          <button class="mt-2 col-auto btn btn-primary btn-small dropdown-toggle" data-bs-toggle="dropdown"
-            id="pickQn"><i class="fas fa-plus-question"></i>Qn</button>
-          <ul id="canvasControlsList" class="dropdown-menu mx-1">
+          <button class="mt-2 col-auto btn btn-dark btn-small dropdown-toggle" data-bs-toggle="dropdown" id="pickQn"><i
+              class="fas fa-plus-question"></i>Qn</button>
+          <ul id="defineCanvasControlsList" class="dropdown-menu mx-1">
             <li id="addQn"><a href="#"><span class="badge bg-secondary m-1">+</span></a></li>
           </ul>
         </div>
-        <button class="mt-2 col-auto btn btn-primary btn-small" id="addCircle"><i
-            class="fas fa-plus-circle"></i></button>
-        <button class="mt-2 col-auto btn btn-primary btn-small" id="export"><i class="fas fa-save"></i></button>
-        <button class="mt-2 col-auto btn btn-primary btn-small" id="zoomIn"><i class="fas fa-search-plus"></i></button>
-        <button class="mt-2 col-auto btn btn-primary btn-small" id="zoomOut"><i
+        <button class="mt-2 col-auto btn btn-dark btn-small" id="addCircle"><i class="fas fa-plus-circle"></i></button>
+        <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasSubmit"><i
+            class="fas fa-save"></i></button>
+        <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasZoomIn"><i
+            class="fas fa-search-plus"></i></button>
+        <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasZoomOut"><i
             class="fas fa-search-minus"></i></button>
-        <button class="mt-2 col-auto btn btn-primary btn-small" id="panMode"><i class="fas fa-hand-paper"></i></button>
+        <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasPanMode"><i
+            class="fas fa-hand-paper"></i></button>
       </div>
       <div class="accordion accordion-flush" id="accordionFlushExample">
         <div class="accordion-item">
@@ -109,15 +115,15 @@
         </div>
       </div>
     </div>
-    <div class="tab-pane fade" id="nav-save" role="tabpanel" aria-labelledby="nav-align-tab">
+    <div class="tab-pane fade" id="nav-save" role="tabpanel" aria-labelledby="nav-save-tab">
       <div class="row"">
           nav save
       </div>
     </div>
-  </div> -->
+  </div> 
 </div>
 <script>const csrf_token = " {{ csrf_token() }}"</script>
-<script src={{ url_for("static",filename="/scripts/fabric.min.js" ) }}></script>
-<script src={{ url_for("static",filename="/scripts/canvasScript.js" ) }}></script>
+        <script src={{ url_for("static",filename="/scripts/fabric.min.js" ) }}></script>
+        <script src={{ url_for("static",filename="/scripts/canvasScript.js" ) }}></script>
 
-{% endblock %}
+        {% endblock %}
