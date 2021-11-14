@@ -17,6 +17,11 @@ const activeBtnClassList = ["nav-link", "active"]
 const inactiveBtnClassList = ["nav-link", "disabled"]
 const activeTabClassList = ["tab-pane", "fade", "show", "active"]
 const inactiveTabClassList = ["tab-pane", "fade"]
+const answerPopup = document.getElementById("answerPopup")
+const questionName = document.getElementById("questionName")
+const multipleToggle = document.getElementById("multipleToggle")
+
+
 let scaleFactor = 1
 let boundingPts = []
 const creationSteps = {
@@ -42,6 +47,7 @@ if (creating) {
         alignTab.show();
         addAlignSpots(boundingPts)
         deactivateTab(creationSteps.UPLOAD)
+        activateTab(creationSteps.ALIGN)
     })
 } else {
     // we are on the edit template page
@@ -91,11 +97,6 @@ function prepareAlignTab(img) {
         prepareCanvas(alignCanvas, img)
 
     })
-
-    // let alignTab = new bootstrap.Tab(alignNavBtn);
-    // alignTab.show();
-    // deactivateTab(creationSteps.UPLOAD);
-    // activateTab(creationSteps.ALIGN);
 }
 
 
@@ -104,38 +105,43 @@ function prepareDefineTab(img) {
         prepareCanvas(defineCanvas, img)
 
     })
-
-    // let alignTab = new bootstrap.Tab(alignNavBtn);
-    // alignTab.show();
-    // deactivateTab(creationSteps.UPLOAD);
-    // activateTab(creationSteps.ALIGN);
 }
 
 function getStepEl(creationStep) {
     let tabId = `nav-${creationStep}`
     let buttonId = `${creationStep}NavButton`
+    let badgeId = `${creationStep}NavBadge`
     const tab = document.getElementById(tabId)
     const button = document.getElementById(buttonId)
-    return { "tab": tab, "button": button }
+    const badge = document.getElementById(badgeId)
+
+    return { "tab": tab, "button": button, "badge": badge }
 }
 
 function activateTab(creationStep) {
-    const { tab, button } = getStepEl(creationStep)
+    const { tab, button, badge } = getStepEl(creationStep)
+    button.classList.remove("disabled")
     button.classList.add("active")
     tab.classList.add("show", "active")
+    badge.classList.remove("bg-secondary")
+    badge.classList.add("bg-warning", "text-dark")
 
 }
 
 function deactivateTab(creationStep) {
-    const { tab, button } = getStepEl(creationStep)
+    const { tab, button, badge } = getStepEl(creationStep)
     button.classList.add("disabled")
+    badge.classList.remove("bg-warning", "text-dark")
+    badge.classList.add("bg-success")
 }
 
 
 
 let currentQuestion = 0
-// hold spots data
-let questions = {}
+// list of questions to initialise obj when submitting spot data
+let questionMultiple = {}
+let questionNumbers = []
+let questionNames = {}
 
 // hold alignpts data
 let alignPts = []
@@ -206,7 +212,7 @@ function resizeCanvas(canvas, imgData) {
     if (canvasName == "defineCanvas") {
         let qnControl = document.getElementById("defineCanvasQnControls")
         console.log(qnControl);
-        qnControl.setAttribute("style", `left:${canvasContainer.offsetLeft + (canvasContainer.width / 2)}px;top:${canvasContainer.offsetTop + 5}px`)
+        qnControl.setAttribute("style", `left:${canvasContainer.offsetLeft + (canvasContainer.offsetWidth / 2) - qnControl.width}px;top:${canvasContainer.offsetTop + 5}px`)
     }
     addImageToCanvas(canvas, imgData);
 
@@ -215,6 +221,9 @@ function resizeCanvas(canvas, imgData) {
 
 
 function addCanvasEventListeners(canvas) {
+    let deleteAns = document.getElementById("deletePopup")
+    let saveAns = document.getElementById("submitPopup")
+
     let canvasName = canvas.lowerCanvasEl.id
     let submitAlignBtn = document.getElementById(`alignCanvasSubmit`)
     let submitDefineBtn = document.getElementById(`defineCanvasSubmit`)
@@ -226,7 +235,8 @@ function addCanvasEventListeners(canvas) {
         const addQn = document.getElementById("addQn");
         addCircleBtn.addEventListener("click", () => {
             circle = addCircle(canvas)
-            questions[currentQuestion].push(circle)
+            circle.question = currentQuestion
+            // questions[currentQuestion].push(circle)
         })
         // add new question to list 
         addQn.addEventListener("click", addQuestion)
@@ -247,28 +257,34 @@ function addCanvasEventListeners(canvas) {
         defineTab.show();
 
         deactivateTab(creationSteps.ALIGN)
-
+        activateTab(creationSteps.DEFINE)
 
     })
 
-    submitDefineBtn.addEventListener("click", async (e) => {
-        alignCanvas._objects.forEach(pt => {
-            let { left, top } = pt
-            alignPts.push([left, top])
+    submitDefineBtn.addEventListener("click", () => {
+        const publicToggle = document.getElementById("publicToggle")
+
+        defineData = {}
+        // create empty array for each question
+        questionNumbers.forEach((qn) => {
+            defineData[qn] = []
         })
-
-        let alignedImg = await alignImg(alignPts, imgForm)
-        alignedImg = `data:image/jpeg;base64, ${alignedImg}`
-        prepareDefineTab(alignedImg);
-
-        let defineTab = new bootstrap.Tab(defineNavBtn);
-        defineTab.show();
-
-        deactivateTab(creationSteps.ALIGN)
-
-
+        defineCanvas._objects.map((obj) => {
+            let { top, left, question, value } = obj
+            defineData[question].push({ top, left, value })
+            console.log(defineData, questionMultiple, questionNames)
+        })
     })
 
+    saveAns.addEventListener("click", () => {
+        const ansVal = document.getElementById("answerValue")
+        canvas.getActiveObject().value = ansVal.value
+    })
+    deleteAns.addEventListener("click", (e) => {
+        console.log("deleting:", e.target);
+        canvas.remove(canvas.getActiveObject())
+        answerPopup.hidden = true
+    })
 
     panModeBtn.status = false
     panModeBtn.addEventListener("click", (e) => {
@@ -296,6 +312,9 @@ function addCanvasEventListeners(canvas) {
             this.selection = false;
             this.lastPosX = evt.clientX;
             this.lastPosY = evt.clientY;
+        }
+        if (opt.target == null) {
+            answerPopup.hidden = true;
         }
     });
 
@@ -350,10 +369,14 @@ function addCircle(canvas, {
     }
     const circle = new fabric.Circle(opts);
     canvas.add(circle);
+    circle.value = `ans${canvas._objects.length}`
     circle.hasControls = false;
-    circle.on("selected", () => {
-
-
+    circle.on("selected", (e) => {
+        console.log(e.target, circle);
+        showPopup(circle, canvas)
+    })
+    circle.on("moving", () => {
+        answerPopup.hidden = true;
     })
     return circle
 }
@@ -374,11 +397,12 @@ function addQuestion() {
     })
 
     canvasControlsList.appendChild(newQn)
-    questions[newQn.innerText] = []
+    questionNumbers.push(newQn.innerText)
+    questionMultiple[newQn.innerText] = true
     return newQn
 }
 
-function activateQn(newQn) {
+function activateQn(questionNum) {
     let qnControl = document.getElementById("defineCanvasQnControls")
     let canvasControlsList = document.getElementById("defineCanvasControlsList")
 
@@ -386,10 +410,35 @@ function activateQn(newQn) {
         span.classList.add("bg-secondary")
         span.classList.remove("bg-danger")
     })
-    newQn.querySelector("span").classList.toggle("bg-danger")
-    newQn.querySelector("span").classList.toggle("bg-secondary")
-    setCurrentQuestion(newQn.innerText)
+    questionNum.querySelector("span").classList.toggle("bg-danger")
+    questionNum.querySelector("span").classList.toggle("bg-secondary")
+    setCurrentQuestion(questionNum.innerText)
+    multipleToggle.checked = questionMultiple[questionNum.innerText]
     qnControl.getElementsByClassName("btn")[0].innerText = `Currently defining Question ${currentQuestion}`
+    questionName.value = questionNames[questionNum.innerText]
 }
+
+function showPopup(circle, canvas) {
+    // move popup;
+    answerPopup.hidden = false
+    const { top, left, question, value, width, strokeWidth } = circle
+    const ansVal = document.getElementById("answerValue")
+    const qnNum = document.getElementById("questionPopup")
+    qnNum.innerText = `Question ${question}`
+    answerPopup.style.left = (2 + width + strokeWidth + left + canvas._offset.left) + 'px'
+    answerPopup.style.top = (top + canvas._offset.top) + 'px'
+    ansVal.value = value
+}
+
+multipleToggle.addEventListener("change", setMultipleFlag)
+questionName.addEventListener("change", setQuestionName)
+
+function setMultipleFlag() {
+    questionMultiple[currentQuestion] = multipleToggle.checked;
+}
+function setQuestionName() {
+    questionNames[currentQuestion] = questionName.value;
+}
+
 
 activateQn(addQuestion())
