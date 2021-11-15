@@ -139,6 +139,7 @@ function deactivateTab(creationStep) {
 
 let currentQuestion = 0
 // list of questions to initialise obj when submitting spot data
+let questions = {}
 let questionMultiple = {}
 let questionNumbers = []
 let questionNames = {}
@@ -261,19 +262,33 @@ function addCanvasEventListeners(canvas) {
 
     })
 
-    submitDefineBtn.addEventListener("click", () => {
+    submitDefineBtn.addEventListener("click", async () => {
         const publicToggle = document.getElementById("publicToggle")
-
-        defineData = {}
-        // create empty array for each question
-        questionNumbers.forEach((qn) => {
-            defineData[qn] = []
-        })
+        const templateName = document.getElementById("templateName")
+        // defineData = {}
+        // // create empty array for each question
+        // questionNumbers.forEach((qn) => {
+        //     defineData[qn] = []
+        // })
+        questions['public'] = publicToggle.checked;
+        questions['templateName'] = templateName.value
         defineCanvas._objects.map((obj) => {
             let { top, left, question, value } = obj
-            defineData[question].push({ top, left, value })
-            console.log(defineData, questionMultiple, questionNames)
+            // defineData[question].push({ top, left, value })
+            ansCoords = Math.round(left) + ',' + Math.round(top)
+            ansVal = value
+            answer = { 'answer_coords': ansCoords, "answer_val": ansVal }
+            questions[question]['answers'].push(answer)
         })
+        res = await fetch("/define-template/new", {
+            method: "POST",
+            headers: {
+                'X-CSRF-Token': csrf_token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(questions)
+        });
+        console.log(res);
     })
 
     saveAns.addEventListener("click", () => {
@@ -398,7 +413,11 @@ function addQuestion() {
 
     canvasControlsList.appendChild(newQn)
     questionNumbers.push(newQn.innerText)
-    questionMultiple[newQn.innerText] = true
+    // instantiate question_id obj in questions obj 
+    questions[newQn.innerText] = {}
+    questions[newQn.innerText]['multiple'] = true
+    questions[newQn.innerText]['answers'] = []
+
     return newQn
 }
 
@@ -413,7 +432,7 @@ function activateQn(questionNum) {
     questionNum.querySelector("span").classList.toggle("bg-danger")
     questionNum.querySelector("span").classList.toggle("bg-secondary")
     setCurrentQuestion(questionNum.innerText)
-    multipleToggle.checked = questionMultiple[questionNum.innerText]
+    multipleToggle.checked = questions[questionNum.innerText]['multiple']
     qnControl.getElementsByClassName("btn")[0].innerText = `Currently defining Question ${currentQuestion}`
     questionName.value = questionNames[questionNum.innerText]
 }
@@ -434,7 +453,7 @@ multipleToggle.addEventListener("change", setMultipleFlag)
 questionName.addEventListener("change", setQuestionName)
 
 function setMultipleFlag() {
-    questionMultiple[currentQuestion] = multipleToggle.checked;
+    questions[currentQuestion]['multiple'] = multipleToggle.checked;
 }
 function setQuestionName() {
     questionNames[currentQuestion] = questionName.value;

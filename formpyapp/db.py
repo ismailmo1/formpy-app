@@ -27,12 +27,10 @@ def create_template_questions(template_questions: dict) -> Template:
         answers = []
         qn_name = qn[0]
         qn_mult = True if qn[1]["multiple"] == "True" else False
-        for ans in qn[1]["answers"].items():
-            x, y = (int(coord) for coord in ans[1]["answer_coords"].split(","))
+        for ans in qn[1]["answers"]:
+            x, y = (int(coord) for coord in ans["answer_coords"].split(","))
             coordinates = Coordinate2D(x_coordinate=x, y_coordinate=y)
-            answer = Answer(
-                coordinates=coordinates, value=ans[1]["answer_val"]
-            )
+            answer = Answer(coordinates=coordinates, value=ans["answer_val"])
             answers.append(answer)
 
         question = Question(
@@ -45,13 +43,12 @@ def create_template_questions(template_questions: dict) -> Template:
     return questions
 
 
-def create_template(questions, template_name, user, all_coords, public):
+def create_template(questions, template_name, user, public):
 
     template = Template(
         name=template_name,
         questions=questions,
         owner=user,
-        detected_spots=all_coords,
         category_tags=["testing"],
         public=public,
     )
@@ -59,24 +56,16 @@ def create_template(questions, template_name, user, all_coords, public):
 
 
 def save_template(request_form, owner: User = None):
-    question_data = request_form
     template_name = request_form["templateName"]
     # public = False if no public key defined in form
     public = bool(request_form.get("public"))
-    if request_form.get("currTempId"):
-        all_coords = (
-            Template.objects(id=request_form.get("currTempId"))
-            .first()
-            .detected_spots
-        )
-    else:
-        template_coords = f'[{request_form["coords"]}]'
-        all_coords = create_template_coords(template_coords)
-    template_dict = parse_template_form(question_data)
-    all_questions = create_template_questions(template_dict)
-    template = create_template(
-        all_questions, template_name, owner, all_coords, public
-    )
+    request_form.pop("templateName")
+    request_form.pop("public")
+    question_data = request_form
+
+    all_questions = create_template_questions(question_data)
+
+    template = create_template(all_questions, template_name, owner, public)
     return template.save()
 
 

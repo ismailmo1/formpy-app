@@ -29,7 +29,6 @@ from .api import (
     get_bounding_pts,
     get_image,
     img_to_str,
-    parse_template_form,
     read_form,
     read_form_img,
     save_image,
@@ -87,18 +86,19 @@ def define_template(new_copy):
     Returns:
         redirect: redirects to view_templates with success flash
     """
+    template_data = request.json
     if current_user.is_authenticated:
         owner = current_user
     else:
         owner = None
     try:
-        saved_template = db.save_template(request.form, owner)
+        saved_template = db.save_template(template_data, owner)
     except NotUniqueError as e:
         flash(f"template save failed: that template name is taken!", "danger")
         return redirect(request.environ.get("HTTP_REFERER"))
     if new_copy == "copy":
         old_img_name = (
-            Template.objects(id=request.form.get("currTempId"))
+            Template.objects(id=template_data.get("currTempId"))
             .first()
             .img_name
         )
