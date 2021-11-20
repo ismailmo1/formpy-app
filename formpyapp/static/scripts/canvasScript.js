@@ -6,6 +6,7 @@ const alignCanvas = new fabric.Canvas("alignCanvas");
 const circleList = document.getElementById("circleList")
 const defineNavBtn = document.getElementById("defineNavButton");
 const alignNavBtn = document.getElementById("alignNavButton");
+const saveNavBtn = document.getElementById("saveNavButton");
 const imgForm = document.getElementById("uploadImgForm");
 const imgFormUploadBtn = document.getElementById("uploadImgBtn");
 const imgUploadInput = document.getElementById("photoUpload");
@@ -300,6 +301,10 @@ function addCanvasEventListeners(canvas) {
             console.log(template);
 
             // add logic to enable save tab and redirect to view page?
+            let saveTab = new bootstrap.Tab(saveNavBtn);
+            saveTab.show();
+            deactivateTab(creationSteps.DEFINE)
+            activateTab(creationSteps.SAVE)
         }
     })
 
