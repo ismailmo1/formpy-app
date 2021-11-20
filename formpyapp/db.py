@@ -61,6 +61,7 @@ def save_template(request_form, owner: User = None):
     public = bool(request_form.get("public"))
     request_form.pop("templateName")
     request_form.pop("public")
+    request_form.pop("uploadedImg")
     question_data = request_form
 
     all_questions = create_template_questions(question_data)

@@ -21,7 +21,8 @@ const answerPopup = document.getElementById("answerPopup")
 const questionName = document.getElementById("questionName")
 const multipleToggle = document.getElementById("multipleToggle")
 
-
+let alignedImg = ''
+let isTemplateDefined = false
 let scaleFactor = 1
 let boundingPts = []
 const creationSteps = {
@@ -245,12 +246,13 @@ function addCanvasEventListeners(canvas) {
     }
 
     submitAlignBtn.addEventListener("click", async (e) => {
+        console.log("sending align");
         alignCanvas._objects.forEach(pt => {
             let { left, top } = pt
             alignPts.push([left, top])
         })
 
-        let alignedImg = await alignImg(alignPts, imgForm)
+        alignedImg = await alignImg(alignPts, imgForm)
         alignedImg = `data:image/jpeg;base64, ${alignedImg}`
         prepareDefineTab(alignedImg);
 
@@ -262,33 +264,43 @@ function addCanvasEventListeners(canvas) {
 
     })
 
-    submitDefineBtn.addEventListener("click", async () => {
-        const publicToggle = document.getElementById("publicToggle")
-        const templateName = document.getElementById("templateName")
-        // defineData = {}
-        // // create empty array for each question
-        // questionNumbers.forEach((qn) => {
-        //     defineData[qn] = []
-        // })
-        questions['public'] = publicToggle.checked;
-        questions['templateName'] = templateName.value
-        defineCanvas._objects.map((obj) => {
-            let { top, left, question, value } = obj
-            // defineData[question].push({ top, left, value })
-            ansCoords = Math.round(left) + ',' + Math.round(top)
-            ansVal = value
-            answer = { 'answer_coords': ansCoords, "answer_val": ansVal }
-            questions[question]['answers'].push(answer)
-        })
-        res = await fetch("/define-template/new", {
-            method: "POST",
-            headers: {
-                'X-CSRF-Token': csrf_token,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(questions)
-        });
-        console.log(res);
+    submitDefineBtn.addEventListener("click", async (e) => {
+        console.log(e, "sending template", isTemplateDefined);
+        if (!isTemplateDefined) {
+            isTemplateDefined = true
+            submitDefineBtn.classList.add("disabled")
+            const publicToggle = document.getElementById("publicToggle")
+            const templateName = document.getElementById("templateName")
+            // defineData = {}
+            // // create empty array for each question
+            // questionNumbers.forEach((qn) => {
+            //     defineData[qn] = []
+            // })
+            questions['public'] = publicToggle.checked;
+            questions['templateName'] = templateName.value
+            questions['uploadedImg'] = alignedImg
+            defineCanvas._objects.map((obj) => {
+                let { top, left, question, value } = obj
+                // defineData[question].push({ top, left, value })
+                ansCoords = Math.round(left) + ',' + Math.round(top)
+                ansVal = value
+                answer = { 'answer_coords': ansCoords, "answer_val": ansVal }
+                questions[question]['answers'].push(answer)
+
+            })
+            let res = await fetch("/define-template/new", {
+                method: "POST",
+                headers: {
+                    'X-CSRF-Token': csrf_token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(questions)
+            });
+            let template = await res.json();
+            console.log(template);
+
+            // add logic to enable save tab and redirect to view page?
+        }
     })
 
     saveAns.addEventListener("click", () => {

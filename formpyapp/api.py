@@ -34,6 +34,21 @@ def img_to_str(img: np.array) -> str:
     return str(img_base64).split("'")[1]
 
 
+def str_to_img(img_str: str) -> np.array:
+    """converts b64 img to np.array"""
+    img_data = base64.b64decode(img_str)
+    img_arr = np.fromstring(img_data, np.uint8)
+    img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
+    return img
+
+
+def read_form_img(img_str: str) -> np.array:
+    """reads image from web form"""
+    img_arr = np.fromstring(img_str, np.uint8)
+    img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
+    return img
+
+
 def align_img(img: np.array, json_pts: str, scale_factor: str) -> np.array:
     """aligns image with bounding box if detected
 
@@ -61,13 +76,6 @@ def align_img(img: np.array, json_pts: str, scale_factor: str) -> np.array:
 def get_bounding_pts(img: np.ndarray) -> tuple:
     pts = ip.get_outer_box(img)
     return pts
-
-
-def read_form_img(img_str: str) -> np.array:
-    """reads image from web form"""
-    img_arr = np.fromstring(img_str, np.uint8)
-    img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
-    return img
 
 
 def parse_template_form(form: dict) -> dict:

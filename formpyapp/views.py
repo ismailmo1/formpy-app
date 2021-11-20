@@ -32,6 +32,7 @@ from .api import (
     read_form,
     read_form_img,
     save_image,
+    str_to_img,
 )
 from .forms import (
     DefineTemplateForm,
@@ -87,6 +88,9 @@ def define_template(new_copy):
         redirect: redirects to view_templates with success flash
     """
     template_data = request.json
+    img_str = template_data["uploadedImg"].split("data:image/jpeg;base64, ")[1]
+    img = str_to_img(img_str)
+
     if current_user.is_authenticated:
         owner = current_user
     else:
@@ -94,8 +98,9 @@ def define_template(new_copy):
     try:
         saved_template = db.save_template(template_data, owner)
     except NotUniqueError as e:
-        flash(f"template save failed: that template name is taken!", "danger")
-        return redirect(request.environ.get("HTTP_REFERER"))
+        # flash(f"template save failed: that template name is taken!", "danger")
+        # return redirect(request.environ.get("HTTP_REFERER"))
+        return e
     if new_copy == "copy":
         old_img_name = (
             Template.objects(id=template_data.get("currTempId"))
@@ -105,11 +110,11 @@ def define_template(new_copy):
         saved_template.img_name = old_img_name
         saved_template.save()
     elif new_copy == "new":
-        img_str = request.files["uploadedImg"].read()
-        img = read_form_img(img_str)
         save_image(img, saved_template.img_name)
-    flash(f"template '{saved_template.name}' created successfully!", "info")
-    return redirect(url_for("view_template"))
+
+    return jsonify(saved_template.to_json())
+    # flash(f"template '{saved_template.name}' created successfully!", "info")
+    # return redirect(url_for("view_template"))
 
 
 @app.post("/update-template/<template_id>")
