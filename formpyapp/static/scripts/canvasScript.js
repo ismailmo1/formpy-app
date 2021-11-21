@@ -195,7 +195,7 @@ function addImageToCanvas(canvas, imgData) {
 
 }
 function prepareCanvas(canvas, imgData) {
-    let canvasContainer = canvas.upperCanvasEl.parentElement.parentElement
+    let canvasContainer = document.getElementById(`${canvas.lowerCanvasEl.id}Div`)
     let w = canvasContainer.offsetWidth
     resizeCanvas(canvas, imgData);
     addCanvasEventListeners(canvas)
@@ -207,7 +207,7 @@ function prepareCanvas(canvas, imgData) {
 function resizeCanvas(canvas, imgData) {
     let canvasName = canvas.lowerCanvasEl.id
     let canvasControls = document.getElementById(`${canvasName}Controls`)
-    let canvasContainer = canvas.upperCanvasEl.parentElement.parentElement
+    let canvasContainer = document.getElementById(`${canvas.lowerCanvasEl.id}Div`)
     canvas.setHeight(canvasContainer.offsetWidth * 0.6);
     canvas.setWidth(canvasContainer.offsetWidth);
     let newTop = canvasContainer.offsetTop + (canvasContainer.offsetHeight / 2) - (canvasControls.offsetHeight / 2)
@@ -233,7 +233,7 @@ function addCanvasEventListeners(canvas) {
     let zoomInBtn = document.getElementById(`${canvasName}ZoomIn`)
     let zoomOutBtn = document.getElementById(`${canvasName}ZoomOut`)
     let panModeBtn = document.getElementById(`${canvasName}PanMode`)
-    if (canvasName == "defineCanvas") {
+    if (canvasName == "defineCanvas" | canvasName == "editCanvas") {
         const addCircleBtn = document.getElementById("addCircle");
         const addQn = document.getElementById("addQn");
         addCircleBtn.addEventListener("click", () => {
@@ -245,25 +245,27 @@ function addCanvasEventListeners(canvas) {
         addQn.addEventListener("click", addQuestion)
 
     }
+    if (canvasName == "alignCanvas") {
 
-    submitAlignBtn.addEventListener("click", async (e) => {
-        console.log("sending align");
-        alignCanvas._objects.forEach(pt => {
-            let { left, top } = pt
-            alignPts.push([left, top])
+        submitAlignBtn.addEventListener("click", async (e) => {
+            console.log("sending align");
+            alignCanvas._objects.forEach(pt => {
+                let { left, top } = pt
+                alignPts.push([left, top])
+            })
+
+            alignedImg = await alignImg(alignPts, imgForm)
+            alignedImg = `data:image/jpeg;base64, ${alignedImg}`
+            prepareDefineTab(alignedImg);
+
+            let defineTab = new bootstrap.Tab(defineNavBtn);
+            defineTab.show();
+
+            deactivateTab(creationSteps.ALIGN)
+            activateTab(creationSteps.DEFINE)
+
         })
-
-        alignedImg = await alignImg(alignPts, imgForm)
-        alignedImg = `data:image/jpeg;base64, ${alignedImg}`
-        prepareDefineTab(alignedImg);
-
-        let defineTab = new bootstrap.Tab(defineNavBtn);
-        defineTab.show();
-
-        deactivateTab(creationSteps.ALIGN)
-        activateTab(creationSteps.DEFINE)
-
-    })
+    }
 
     submitDefineBtn.addEventListener("click", async (e) => {
         console.log(e, "sending template", isTemplateDefined);

@@ -56,7 +56,7 @@ def home():
 @app.get("/create")
 def create_template():
     form = DefineTemplateForm()
-    return render_template("create_template.html", form=form)
+    return render_template("create_template.html", form=form, title="create")
 
 
 @app.post("/upload-template")
@@ -158,7 +158,10 @@ def edit_template(template_id):
     img = get_image(template_id)
     template_img = img_to_str(img)
     return render_template(
-        "edit_template.html", template=template, template_img=template_img
+        "create_template.html",
+        template=template,
+        template_img=template_img,
+        title="edit",
     )
 
 

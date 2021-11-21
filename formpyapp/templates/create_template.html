@@ -1,15 +1,25 @@
 {% extends "layout.html" %}
+{% if title == 'create' %}
 {% set active_link = 'create' %}
+{% endif %}
+
 
 {% block content %}
 <div class="row">
-  <h1 class="mt-5">Create a Template!</h1>
+  <h1 class="mt-5">
+    {% if title == 'create' %}
+    Create a Template!
+    {% elif title == 'edit' %}
+    Edit Template
+    {% endif %}
+  </h1>
+
 </div>
 <div class="mt-5">
   <nav id="tab">
     <div class="nav nav-tabs nav-fill" role="tablist">
-      <button id="uploadNavButton" class="nav-link active" role="tab" type="button" data-bs-toggle="tab"
-        data-bs-target="#nav-upload">
+      <button id="uploadNavButton" class="nav-link {% if title=="edit" %} disabled {% else %} active {% endif %}"
+        role="tab" type="button" data-bs-toggle="tab" data-bs-target="#nav-upload">
         <span id="uploadNavBadge" class="badge bg-warning text-dark rounded-circle mx-2">1</span><span
           class="mx-2">Upload</span>
       </button>
@@ -17,8 +27,8 @@
         data-bs-target="#nav-align">
         <span id="alignNavBadge" class="badge bg-secondary rounded-circle mx-2">2</span><span class="mx-2">Align</span>
       </button>
-      <button id="defineNavButton" class="nav-link disabled" role="tab" type="button" data-bs-toggle="tab"
-        data-bs-target="#nav-define">
+      <button id="defineNavButton" class="nav-link {% if title=="edit" %} active {% else %} disabled {% endif %}
+        disabled" role="tab" type="button" data-bs-toggle="tab" data-bs-target="#nav-define">
         <span id="defineNavBadge" class="badge bg-secondary rounded-circle mx-2">3</span><span
           class="mx-2">Define</span>
       </button>
@@ -31,6 +41,7 @@
 </div>
 
 <div class="tab-content" id="nav-tabContent">
+{% if title=="create" %}
   <div class="tab-pane fade show active" id="nav-upload" role="tabpanel" aria-labelledby="nav-upload-tab">
     <div class="row" id="formRow">
       <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
@@ -58,6 +69,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
   <div class="tab-pane fade" id="nav-save" role="tabpanel" aria-labelledby="nav-save-tab">
     <div class="alert alert-success mt-2" role="alert">
       Template created successfully!
@@ -67,7 +79,8 @@
       <h3 class="text-center">Click <a href="/view">here</a> to view all templates.</h3>
     </div>
   </div>
-  <div class=" tab-pane fade" id="nav-define" role="tabpanel" aria-labelledby="nav-home-tab">
+  <div class="tab-pane fade {% if title=="edit" %} active show {%endif%}" id="nav-define" role="tabpanel"
+    aria-labelledby="nav-home-tab">
     <form action="/newform">
       <div class="row d-flex justify-content-around mt-3">
         <div class="col-md-6">
@@ -135,7 +148,16 @@
 
 
 <script>const csrf_token = " {{ csrf_token() }}"</script>
+
 <script src={{ url_for("static",filename="/scripts/fabric.min.js" ) }}></script>
 <script src={{ url_for("static",filename="/scripts/canvasScript.js" ) }}></script>
+{% if title=='edit' %}
+<script>
+  const tempId = "{{template.id}}"
+  const imgData = "{{template_img}}"
+</script>
+<script src={{ url_for("static",filename="/scripts/templateEdit.js" ) }}></script>
+
+{% endif %}
 
 {% endblock %}
