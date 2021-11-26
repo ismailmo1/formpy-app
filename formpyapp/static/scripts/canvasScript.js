@@ -56,12 +56,10 @@ if (creating) {
 };
 
 function addAlignSpots(pts = []) {
-    console.log("scaleFactor for spots:", scaleFactor);
     pts.forEach((pt) => {
         let radius = 10
         let x = scaleFactor * pt[0]
         let y = scaleFactor * pt[1]
-
         addCircle(alignCanvas, {
             top: y,
             left: x,
@@ -187,7 +185,6 @@ function addImageToCanvas(canvas, imgData) {
         img.set({ scaleY: scaleFactor, scaleX: scaleFactor })
 
         canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas))
-        console.log("img scaleFactor", scaleFactor);
         // move alignment circles
         scaleAlignSpots(canvas, scaleFactor)
     })
@@ -208,14 +205,14 @@ function resizeCanvas(canvas, imgData) {
     let canvasName = canvas.lowerCanvasEl.id
     let canvasControls = document.getElementById(`${canvasName}Controls`)
     let canvasContainer = document.getElementById(`${canvas.lowerCanvasEl.id}Div`)
-    canvas.setHeight(canvasContainer.offsetWidth * 0.6);
+    // a4 aspect ratio = 1:root(2)
+    canvas.setHeight(canvasContainer.offsetWidth * (1 / Math.sqrt(2)));
     canvas.setWidth(canvasContainer.offsetWidth);
     let newTop = canvasContainer.offsetTop + (canvasContainer.offsetHeight / 2) - (canvasControls.offsetHeight / 2)
     canvasControls.setAttribute("style", `left:${canvasContainer.offsetLeft}px;top:${newTop}px`)
     if (canvasName == "defineCanvas") {
         let qnControl = document.getElementById("defineCanvasQnControls")
-        console.log(qnControl);
-        qnControl.setAttribute("style", `left:${canvasContainer.offsetLeft + (canvasContainer.offsetWidth / 2) - qnControl.width}px;top:${canvasContainer.offsetTop + 5}px`)
+        qnControl.setAttribute("style", `left:${canvasContainer.offsetLeft + (canvasContainer.offsetWidth / 2) - qnControl.width}px;top:${canvasContainer.offsetTop + 20}px`)
     }
     addImageToCanvas(canvas, imgData);
 
@@ -248,9 +245,10 @@ function addCanvasEventListeners(canvas) {
     if (canvasName == "alignCanvas") {
 
         submitAlignBtn.addEventListener("click", async (e) => {
-            console.log("sending align");
             alignCanvas._objects.forEach(pt => {
-                let { left, top } = pt
+                let { left, top, radius } = pt
+                left += radius
+                top += radius
                 alignPts.push([left, top])
             })
 
@@ -268,7 +266,6 @@ function addCanvasEventListeners(canvas) {
     }
 
     submitDefineBtn.addEventListener("click", async (e) => {
-        console.log(e, "sending template", isTemplateDefined);
         if (!isTemplateDefined) {
             isTemplateDefined = true
             submitDefineBtn.classList.add("disabled")
@@ -282,10 +279,11 @@ function addCanvasEventListeners(canvas) {
             questions['public'] = publicToggle.checked;
             questions['templateName'] = templateName.value
             questions['uploadedImg'] = alignedImg
+
             defineCanvas._objects.map((obj) => {
-                let { top, left, question, value } = obj
+                let { top, left, radius, question, value } = obj
                 // defineData[question].push({ top, left, value })
-                ansCoords = Math.round(left) + ',' + Math.round(top)
+                ansCoords = Math.round(left + radius) + ',' + Math.round(top + radius)
                 ansVal = value
                 answer = { 'answer_coords': ansCoords, "answer_val": ansVal }
                 questions[question]['answers'].push(answer)
@@ -300,7 +298,6 @@ function addCanvasEventListeners(canvas) {
                 body: JSON.stringify(questions)
             });
             let template = await res.json();
-            console.log(template);
 
             // add logic to enable save tab and redirect to view page?
             let saveTab = new bootstrap.Tab(saveNavBtn);
@@ -312,10 +309,9 @@ function addCanvasEventListeners(canvas) {
 
     saveAns.addEventListener("click", () => {
         const ansVal = document.getElementById("answerValue")
-        canvas.getActiveObject().value = ansVal.value
+        defineCanvas.getActiveObject().value = ansVal.value
     })
     deleteAns.addEventListener("click", (e) => {
-        console.log("deleting:", e.target);
         canvas.remove(canvas.getActiveObject())
         answerPopup.hidden = true
     })
@@ -406,7 +402,6 @@ function addCircle(canvas, {
     circle.value = `ans${canvas._objects.length}`
     circle.hasControls = false;
     circle.on("selected", (e) => {
-        console.log(e.target, circle);
         showPopup(circle, canvas)
     })
     circle.on("moving", () => {
@@ -459,12 +454,12 @@ function activateQn(questionNum) {
 function showPopup(circle, canvas) {
     // move popup;
     answerPopup.hidden = false
-    const { top, left, question, value, width, strokeWidth } = circle
+    const { top, left, question, value, width, strokeWidth, zoomX } = circle
     const ansVal = document.getElementById("answerValue")
     const qnNum = document.getElementById("questionPopup")
     qnNum.innerText = `Question ${question}`
-    answerPopup.style.left = (2 + width + strokeWidth + left + canvas._offset.left) + 'px'
-    answerPopup.style.top = (top + canvas._offset.top) + 'px'
+    answerPopup.style.left = (zoomX * (width + strokeWidth + left) + 2 + canvas._offset.left) + 'px'
+    answerPopup.style.top = ((zoomX * top) + canvas._offset.top) + 'px'
     ansVal.value = value
 }
 

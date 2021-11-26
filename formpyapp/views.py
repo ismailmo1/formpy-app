@@ -130,11 +130,7 @@ def update_template(template_id):
 @app.get("/view")
 def view_template():
     # show all public templates and user's private templates if logged in
-    templates = db.get_public_templates()
-    if current_user.is_authenticated:
-        user = User.objects(id=current_user.id).first()
-        user_templates = db.get_user_templates(user)
-        templates.extend(user_templates)
+    templates = db.get_all_templates(current_user)
 
     return render_template("view_template.html", templates=templates)
 
@@ -168,7 +164,7 @@ def edit_template(template_id):
 @app.route("/read", methods=["POST", "GET"])
 def read_forms():
     if request.method == "GET":
-        templates = db.get_all_templates()
+        templates = db.get_all_templates(current_user)
         return render_template("read_forms.html", templates=templates)
     elif request.method == "POST":
         template_id = request.form.get("templateId")

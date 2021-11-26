@@ -18,7 +18,7 @@
 <div class="mt-5">
   <nav id="tab">
     <div class="nav nav-tabs nav-fill" role="tablist">
-      <button id="uploadNavButton" class="nav-link {% if title=="edit" %} disabled {% else %} active {% endif %}"
+      <button id="uploadNavButton" class="nav-link {% if title==" edit" %} disabled {% else %} active {% endif %}"
         role="tab" type="button" data-bs-toggle="tab" data-bs-target="#nav-upload">
         <span id="uploadNavBadge" class="badge bg-warning text-dark rounded-circle mx-2">1</span><span
           class="mx-2">Upload</span>
@@ -27,7 +27,7 @@
         data-bs-target="#nav-align">
         <span id="alignNavBadge" class="badge bg-secondary rounded-circle mx-2">2</span><span class="mx-2">Align</span>
       </button>
-      <button id="defineNavButton" class="nav-link {% if title=="edit" %} active {% else %} disabled {% endif %}
+      <button id="defineNavButton" class="nav-link {% if title==" edit" %} active {% else %} disabled {% endif %}
         disabled" role="tab" type="button" data-bs-toggle="tab" data-bs-target="#nav-define">
         <span id="defineNavBadge" class="badge bg-secondary rounded-circle mx-2">3</span><span
           class="mx-2">Define</span>
@@ -41,7 +41,7 @@
 </div>
 
 <div class="tab-content" id="nav-tabContent">
-{% if title=="create" %}
+  {% if title=="create" %}
   <div class="tab-pane fade show active" id="nav-upload" role="tabpanel" aria-labelledby="nav-upload-tab">
     <div class="row" id="formRow">
       <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
@@ -55,7 +55,7 @@
     </div>
   </div>
   <div class="tab-pane fade" id="nav-align" role="tabpanel" aria-labelledby="nav-align-tab">
-    <div class="d-flex align-items-center flex-column" id="alignCanvasDiv">
+    <div class="d-flex align-items-center flex-column my-2" id="alignCanvasDiv">
       <canvas id="alignCanvas" width="600px" height="400px"></canvas>
       <div class="d-flex flex-column mx-3 canvas-controls" id="alignCanvasControls">
         <button class="mt-2 col-auto btn btn-dark btn-small" id="alignCanvasSubmit"><i
@@ -79,10 +79,10 @@
       <h3 class="text-center">Click <a href="/view">here</a> to view all templates.</h3>
     </div>
   </div>
-  <div class="tab-pane fade {% if title=="edit" %} active show {%endif%}" id="nav-define" role="tabpanel"
+  <div class="tab-pane fade {% if title==" edit" %} active show {%endif%}" id="nav-define" role="tabpanel"
     aria-labelledby="nav-home-tab">
     <form action="/newform">
-      <div class="row d-flex justify-content-around mt-3">
+      <div class="row d-flex justify-content-around my-2">
         <div class="col-md-6">
           <input type="text" id='templateName' name="templateName" class="form-control" placeholder="template name">
         </div>
@@ -96,7 +96,7 @@
       <button type="submit" hidden>_</button>
     </form>
 
-    <div class="d-flex align-items-center flex-column canvas-controls" id="defineCanvasDiv">
+    <div class="d-flex align-items-center flex-column canvas-controls my-2" id="defineCanvasDiv">
       <canvas id="defineCanvas" width="600px" height="400px"></canvas>
       <div id="defineCanvasQnControls">
         <div class="btn-group">

@@ -135,3 +135,13 @@ def remove_user_templates(owner, private_only=True) -> int:
 def get_template(template_id) -> dict:
     found_template = Template.objects(id=template_id).first()
     return found_template
+
+
+def get_all_templates(current_user):
+    templates = get_public_templates()
+    if current_user.is_authenticated:
+        user = User.objects(id=current_user.id).first()
+        user_templates = get_user_templates(user)
+        templates.extend(user_templates)
+
+    return templates
