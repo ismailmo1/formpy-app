@@ -1,3 +1,4 @@
+import json
 import os
 
 from flask import (
@@ -153,11 +154,13 @@ def edit_template(template_id):
     template = db.get_template(template_id)
     img = get_image(template_id)
     template_img = img_to_str(img)
+    template_pts = template.question_dict
     return render_template(
         "create_template.html",
         template=template,
         template_img=template_img,
         title="edit",
+        template_json=template.to_json(),
     )
 
 

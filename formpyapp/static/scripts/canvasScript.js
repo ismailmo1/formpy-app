@@ -283,7 +283,7 @@ function addCanvasEventListeners(canvas) {
             defineCanvas._objects.map((obj) => {
                 let { top, left, radius, question, value } = obj
                 // defineData[question].push({ top, left, value })
-                ansCoords = Math.round(left + radius) + ',' + Math.round(top + radius)
+                ansCoords = Math.round((left + radius) / scaleFactor) + ',' + Math.round((top + radius) / scaleFactor)
                 ansVal = value
                 answer = { 'answer_coords': ansCoords, "answer_val": ansVal }
                 questions[question]['answers'].push(answer)
