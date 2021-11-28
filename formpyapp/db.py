@@ -43,50 +43,39 @@ def create_template_questions(template_questions: dict) -> Template:
     return questions
 
 
-def create_template(questions, template_name, user, public):
-
-    template = Template(
-        name=template_name,
-        questions=questions,
-        owner=user,
-        category_tags=["testing"],
-        public=public,
-    )
-    return template
-
-
 def save_template(request_form, owner: User = None):
     template_name = request_form["templateName"]
     # public = False if no public key defined in form
     public = bool(request_form.get("public"))
-    request_form.pop("templateName")
-    request_form.pop("public")
-    request_form.pop("uploadedImg")
-    request_form.pop("currTempId")
 
-    question_data = request_form
+    question_data = request_form["questions"]
 
-    all_questions = create_template_questions(question_data)
+    questions = create_template_questions(question_data)
 
-    template = create_template(all_questions, template_name, owner, public)
+    template = Template(
+        name=template_name,
+        questions=questions,
+        owner=owner,
+        category_tags=["testing"],
+        public=public,
+    )
     return template.save()
 
 
 def update_template(template_id: str, request_form):
     curr_template = get_template(template_id)
-    curr_template.name = request_form["templateName"]
-    curr_template.public = bool(request_form.get("public"))
+    template_name = request_form["templateName"]
+    # public = False if no public key defined in form
+    public = bool(request_form.get("public"))
 
-    template_dict = parse_template_form(request_form)
-    all_questions = create_template_questions(template_dict)
-    curr_template.questions = all_questions
+    question_data = request_form["questions"]
 
-    # not updating/editing coords yet (future with fabricjs frontend)
-    # template_coords = f'[{request_form["coords"]}]'
-    # all_coords = create_template_coords(template_coords)
-    # curr_template.detected_spots = all_coords
+    curr_template.name = template_name
+    curr_template.public = public
+    questions = create_template_questions(question_data)
 
-    # add "public" and category tags update when added to form
+    curr_template.questions = questions
+
     return curr_template.save()
 
 

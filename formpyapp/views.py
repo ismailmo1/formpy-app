@@ -90,8 +90,10 @@ def define_template(new_copy):
         json: json response of saved template or error
     """
     template_data = request.json
-    img_str = template_data["uploadedImg"].split("data:image/jpeg;base64, ")[1]
-    curr_template_id = template_data.get("currTempId")
+
+    img_str = template_data.get("uploadedImg").split(
+        "data:image/jpeg;base64, "
+    )[1]
     img = str_to_img(img_str)
 
     if current_user.is_authenticated:
@@ -105,6 +107,7 @@ def define_template(new_copy):
         # return redirect(request.environ.get("HTTP_REFERER"))
         return jsonify("NotUniqueError")
     if new_copy == "copy":
+        curr_template_id = template_data.pop("currTempId")
         old_img_name = Template.objects(id=curr_template_id).first().img_name
         saved_template.img_name = old_img_name
         saved_template.save()
@@ -118,12 +121,11 @@ def define_template(new_copy):
 
 @app.post("/update-template/<template_id>")
 def update_template(template_id):
-    updated_template = db.update_template(template_id, request.form)
+    updated_template = db.update_template(template_id, request.get_json())
     if updated_template:
-        flash("template updated successfully!", "info")
+        return jsonify(updated_template.to_json())
     else:
-        flash("something went wrong", "danger")
-    return redirect(url_for("view_template"))
+        return None
 
 
 @app.get("/view")

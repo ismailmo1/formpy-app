@@ -1,13 +1,10 @@
-const saveAsBtn = document.querySelector("#saveCopy");
-const editForm = document.querySelector("#templateDefForm");
+const saveAsBtn = document.getElementById("saveCopy");
+const editForm = document.getElementById("templateDefForm");
+const updateBtn = document.getElementById("defineCanvasUpdate")
 
 // override variables in canvasScript
 alignedImg = `data:image/jpeg;base64, ${imgData}`
 defineUrl = "/define-template/copy"
-
-// add current template id to save old image name in copied template
-questions['currTempId'] = templateId
-
 
 prepareCanvas(defineCanvas, alignedImg);
 activateTab(creationSteps.DEFINE)
@@ -15,6 +12,7 @@ templateName.value = template.name;
 publicToggle.checked = template.public;
 
 template.questions.map((qn, idx) => {
+    // question 1 already initialised on load so only add additional questions
     (idx > 0) && addQuestion();
     qn.answers.map((ans) => {
         let { x_coordinate, y_coordinate } = ans.coordinates
@@ -25,4 +23,10 @@ template.questions.map((qn, idx) => {
             value: ans.value
         })
     })
+})
+
+updateBtn.addEventListener("click", async () => {
+    defineUrl = `/update-template/${templateId}`
+    let res = await defineTemplate(update = true)
+    console.log(res);
 })

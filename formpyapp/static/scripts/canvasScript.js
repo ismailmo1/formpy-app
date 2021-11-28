@@ -25,7 +25,10 @@ const publicToggle = document.getElementById("publicToggle")
 const templateName = document.getElementById("templateName")
 const saveSuccessMsg = document.getElementById("templateSaveStatus")
 const saveSuccessIcon = document.getElementById("saveSuccessIcon")
-
+const deleteAns = document.getElementById("deletePopup")
+const saveAns = document.getElementById("submitPopup")
+const submitAlignBtn = document.getElementById(`alignCanvasSubmit`)
+const submitDefineBtn = document.getElementById(`defineCanvasSubmit`)
 
 let defineUrl = "/define-template/new"
 
@@ -229,13 +232,9 @@ function resizeCanvas(canvas, imgData) {
 
 
 function addCanvasEventListeners(canvas) {
-    let deleteAns = document.getElementById("deletePopup")
-    let saveAns = document.getElementById("submitPopup")
+
 
     let canvasName = canvas.lowerCanvasEl.id
-    let submitAlignBtn = document.getElementById(`alignCanvasSubmit`)
-    let submitDefineBtn = document.getElementById(`defineCanvasSubmit`)
-    let submitUpdateBtn = document.getElementById(`defineCanvasUpdate`)
 
     let zoomInBtn = document.getElementById(`${canvasName}ZoomIn`)
     let zoomOutBtn = document.getElementById(`${canvasName}ZoomOut`)
@@ -276,71 +275,11 @@ function addCanvasEventListeners(canvas) {
         })
     }
 
-    submitUpdateBtn.addEventListener("click", async (e) => {
-        // abstract out functions in submit define btn and change url to update
-    })
     submitDefineBtn.addEventListener("click", async (e) => {
+        // maybe a bit unneccessary - but prevents user from overriding UI and sending request
         if (!isTemplateDefined) {
             isTemplateDefined = true
-            submitDefineBtn.classList.add("disabled")
-
-            questions['public'] = publicToggle.checked;
-            questions['templateName'] = templateName.value
-            questions['uploadedImg'] = alignedImg
-
-            defineCanvas._objects.map((obj) => {
-                let { top, left, radius, question, value } = obj
-                // defineData[question].push({ top, left, value })
-                ansCoords = Math.round((left + radius) / scaleFactor) + ',' + Math.round((top + radius) / scaleFactor)
-                ansVal = value
-                answer = { 'answer_coords': ansCoords, "answer_val": ansVal }
-                questions[question]['answers'].push(answer)
-
-            })
-            try {
-                let res = await fetch(defineUrl, {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-Token': csrf_token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(questions)
-                });
-                let template = await res.json();
-                if (template == 'NotUniqueError') {
-                    saveSuccessMsg.innerText = "Template save failed - you must choose a unique name!"
-                    saveSuccessIcon.classList.remove("fa-check-circle")
-                    saveSuccessMsg.classList.add("alert-warning")
-                    saveSuccessIcon.classList.add("fa-times-circle")
-                    saveSuccessIcon.style = "color: red; font-size:500%"
-                    // allow resending define request
-                    isTemplateDefined = false;
-                    submitDefineBtn.classList.remove("disabled");
-                } else {
-                    saveSuccessMsg.innerText = "Template saved successfully!"
-                    saveSuccessMsg.classList.remove("alert-warning")
-                    saveSuccessIcon.classList.remove("fa-times-circle")
-                    saveSuccessIcon.classList.add("fa-check-circle")
-                    saveSuccessIcon.style = "color: green; font-size:500%"
-                    saveSuccessMsg.classList.add("alert-success")
-                    deactivateTab(creationSteps.DEFINE)
-                }
-            } catch (err) {
-                console.log(err);
-                saveSuccessMsg.innerText = "Template save failed"
-                saveSuccessMsg.classList.add("alert-danger")
-                saveSuccessIcon.classList.remove("fa-check-circle")
-                saveSuccessIcon.classList.add("fa-times-circle")
-                saveSuccessIcon.style = "color: red; font-size:500%"
-                // allow resending define request
-                isTemplateDefined = false;
-                submitDefineBtn.classList.remove("disabled")
-
-            }
-            let saveTab = new bootstrap.Tab(saveNavBtn);
-            saveTab.show();
-            activateTab(creationSteps.SAVE)
-            // add logic to enable save tab and redirect to view page?
+            defineTemplate()
         }
     })
 
@@ -519,5 +458,72 @@ function setQuestionName() {
     questionNames[currentQuestion] = questionName.value;
 }
 
+async function defineTemplate(update = false) {
+    submitDefineBtn.classList.add("disabled")
 
+    // template data to send in request body
+    templateBody = {}
+    templateBody['public'] = publicToggle.checked;
+    templateBody['templateName'] = templateName.value
+    templateBody['uploadedImg'] = alignedImg
+
+    // add current template id to save old image name in copied template if editing
+    templateBody['currTempId'] = templateId || null
+
+    defineCanvas._objects.map((obj) => {
+        let { top, left, radius, question, value } = obj
+        // defineData[question].push({ top, left, value })
+        ansCoords = Math.round((left + radius) / scaleFactor) + ',' + Math.round((top + radius) / scaleFactor)
+        ansVal = value
+        answer = { 'answer_coords': ansCoords, "answer_val": ansVal }
+        questions[question]['answers'].push(answer)
+
+    })
+    templateBody['questions'] = questions
+    try {
+        let res = await fetch(defineUrl, {
+            method: "POST",
+            headers: {
+                'X-CSRF-Token': csrf_token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(templateBody)
+        });
+        let template = await res.json();
+        if (template == 'NotUniqueError') {
+            saveSuccessMsg.innerText = `Template ${update ? 'update' : 'save'} failed - you must choose a unique name!`
+            saveSuccessIcon.classList.remove("fa-check-circle")
+            saveSuccessMsg.classList.add("alert-warning")
+            saveSuccessIcon.classList.add("fa-times-circle")
+            saveSuccessIcon.style = "color: red; font-size:500%"
+            // allow resending define request
+            isTemplateDefined = false;
+            submitDefineBtn.classList.remove("disabled");
+        } else {
+            saveSuccessMsg.innerText = `Template ${update ? 'update' : 'save'}d successfully!`
+            saveSuccessMsg.classList.remove("alert-warning")
+            saveSuccessIcon.classList.remove("fa-times-circle")
+            saveSuccessIcon.classList.add("fa-check-circle")
+            saveSuccessIcon.style = "color: green; font-size:500%"
+            saveSuccessMsg.classList.add("alert-success")
+            deactivateTab(creationSteps.DEFINE)
+        }
+    } catch (err) {
+        console.log(err);
+        saveSuccessMsg.innerText = `Template ${update ? 'update' : 'save'} failed`
+        saveSuccessMsg.classList.add("alert-danger")
+        saveSuccessIcon.classList.remove("fa-check-circle")
+        saveSuccessIcon.classList.add("fa-times-circle")
+        saveSuccessIcon.style = "color: red; font-size:500%"
+        // allow resending define request
+        isTemplateDefined = false;
+        submitDefineBtn.classList.remove("disabled")
+
+    }
+    let saveTab = new bootstrap.Tab(saveNavBtn);
+    saveTab.show();
+    activateTab(creationSteps.SAVE)
+    // add logic to enable save tab and redirect to view page?
+    return template
+}
 activateQn(addQuestion())
