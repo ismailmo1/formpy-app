@@ -1,4 +1,3 @@
-import json
 import os
 
 from flask import (
@@ -72,24 +71,27 @@ def upload_template():
 @app.post("/align-template")
 def align_template():
     pts = request.form["pts"]
-    scale_factor = request.form["scale"]
     form_img = request.files["uploadedImg"].read()
     img = read_form_img(form_img)
     # change func to accept bounding rect pts
-    aligned_img = align_img(img, pts, scale_factor)
+    aligned_img = align_img(img, pts)
     aligned_img_str = img_to_str(aligned_img)
     return jsonify({"img": aligned_img_str})
 
 
 @app.post("/define-template/<new_copy>")
 def define_template(new_copy):
-    """parse template definition form and save to db
+    """defines new template and saves to db. if new then new image name created and saved, if creating a copy of old template, img name is retrieved and copied to new template without duplicating image in storage.
+
+    Args:
+        new_copy : new templates defined from create template page, copies are define from edit page
 
     Returns:
-        redirect: redirects to view_templates with success flash
+        json: json response of saved template or error
     """
     template_data = request.json
     img_str = template_data["uploadedImg"].split("data:image/jpeg;base64, ")[1]
+    curr_template_id = template_data.get("currTempId")
     img = str_to_img(img_str)
 
     if current_user.is_authenticated:
@@ -101,13 +103,9 @@ def define_template(new_copy):
     except NotUniqueError as e:
         # flash(f"template save failed: that template name is taken!", "danger")
         # return redirect(request.environ.get("HTTP_REFERER"))
-        return e
+        return jsonify("NotUniqueError")
     if new_copy == "copy":
-        old_img_name = (
-            Template.objects(id=template_data.get("currTempId"))
-            .first()
-            .img_name
-        )
+        old_img_name = Template.objects(id=curr_template_id).first().img_name
         saved_template.img_name = old_img_name
         saved_template.save()
     elif new_copy == "new":
@@ -154,7 +152,6 @@ def edit_template(template_id):
     template = db.get_template(template_id)
     img = get_image(template_id)
     template_img = img_to_str(img)
-    template_pts = template.question_dict
     return render_template(
         "create_template.html",
         template=template,

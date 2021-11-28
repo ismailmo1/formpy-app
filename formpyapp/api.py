@@ -49,7 +49,7 @@ def read_form_img(img_str: str) -> np.array:
     return img
 
 
-def align_img(img: np.array, json_pts: str, scale_factor: str) -> np.array:
+def align_img(img: np.array, json_pts: str) -> np.array:
     """aligns image with bounding box if detected
 
     Args:
@@ -59,7 +59,6 @@ def align_img(img: np.array, json_pts: str, scale_factor: str) -> np.array:
         np.array: aligned image
     """
     pts = np.array(json.loads(json_pts), dtype="float32")
-    pts /= float(scale_factor)
     ordered_pts = np.zeros((4, 2), dtype="float32")
     ordered_pts[0] = pts[np.argmin(pts.sum(axis=1))]
     ordered_pts[2] = pts[np.argmax(pts.sum(axis=1))]

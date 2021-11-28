@@ -21,7 +21,15 @@ const inactiveTabClassList = ["tab-pane", "fade"]
 const answerPopup = document.getElementById("answerPopup")
 const questionName = document.getElementById("questionName")
 const multipleToggle = document.getElementById("multipleToggle")
+const publicToggle = document.getElementById("publicToggle")
+const templateName = document.getElementById("templateName")
+const saveSuccessMsg = document.getElementById("templateSaveStatus")
+const saveSuccessIcon = document.getElementById("saveSuccessIcon")
 
+
+let defineUrl = "/define-template/new"
+
+let saveSuccess = false;
 let alignedImg = ''
 let isTemplateDefined = false
 let scaleFactor = 1
@@ -216,7 +224,7 @@ function resizeCanvas(canvas, imgData) {
     }
     addImageToCanvas(canvas, imgData);
 
-    canvas.renderAll();
+    canvas.requestRenderAll();
 }
 
 
@@ -227,6 +235,8 @@ function addCanvasEventListeners(canvas) {
     let canvasName = canvas.lowerCanvasEl.id
     let submitAlignBtn = document.getElementById(`alignCanvasSubmit`)
     let submitDefineBtn = document.getElementById(`defineCanvasSubmit`)
+    let submitUpdateBtn = document.getElementById(`defineCanvasUpdate`)
+
     let zoomInBtn = document.getElementById(`${canvasName}ZoomIn`)
     let zoomOutBtn = document.getElementById(`${canvasName}ZoomOut`)
     let panModeBtn = document.getElementById(`${canvasName}PanMode`)
@@ -247,8 +257,9 @@ function addCanvasEventListeners(canvas) {
         submitAlignBtn.addEventListener("click", async (e) => {
             alignCanvas._objects.forEach(pt => {
                 let { left, top, radius } = pt
-                left += radius
-                top += radius
+                left = (left + radius) / scaleFactor
+                top = (top + radius) / scaleFactor
+
                 alignPts.push([left, top])
             })
 
@@ -265,17 +276,14 @@ function addCanvasEventListeners(canvas) {
         })
     }
 
+    submitUpdateBtn.addEventListener("click", async (e) => {
+        // abstract out functions in submit define btn and change url to update
+    })
     submitDefineBtn.addEventListener("click", async (e) => {
         if (!isTemplateDefined) {
             isTemplateDefined = true
             submitDefineBtn.classList.add("disabled")
-            const publicToggle = document.getElementById("publicToggle")
-            const templateName = document.getElementById("templateName")
-            // defineData = {}
-            // // create empty array for each question
-            // questionNumbers.forEach((qn) => {
-            //     defineData[qn] = []
-            // })
+
             questions['public'] = publicToggle.checked;
             questions['templateName'] = templateName.value
             questions['uploadedImg'] = alignedImg
@@ -289,21 +297,50 @@ function addCanvasEventListeners(canvas) {
                 questions[question]['answers'].push(answer)
 
             })
-            let res = await fetch("/define-template/new", {
-                method: "POST",
-                headers: {
-                    'X-CSRF-Token': csrf_token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(questions)
-            });
-            let template = await res.json();
+            try {
+                let res = await fetch(defineUrl, {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-Token': csrf_token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(questions)
+                });
+                let template = await res.json();
+                if (template == 'NotUniqueError') {
+                    saveSuccessMsg.innerText = "Template save failed - you must choose a unique name!"
+                    saveSuccessIcon.classList.remove("fa-check-circle")
+                    saveSuccessMsg.classList.add("alert-warning")
+                    saveSuccessIcon.classList.add("fa-times-circle")
+                    saveSuccessIcon.style = "color: red; font-size:500%"
+                    // allow resending define request
+                    isTemplateDefined = false;
+                    submitDefineBtn.classList.remove("disabled");
+                } else {
+                    saveSuccessMsg.innerText = "Template saved successfully!"
+                    saveSuccessMsg.classList.remove("alert-warning")
+                    saveSuccessIcon.classList.remove("fa-times-circle")
+                    saveSuccessIcon.classList.add("fa-check-circle")
+                    saveSuccessIcon.style = "color: green; font-size:500%"
+                    saveSuccessMsg.classList.add("alert-success")
+                    deactivateTab(creationSteps.DEFINE)
+                }
+            } catch (err) {
+                console.log(err);
+                saveSuccessMsg.innerText = "Template save failed"
+                saveSuccessMsg.classList.add("alert-danger")
+                saveSuccessIcon.classList.remove("fa-check-circle")
+                saveSuccessIcon.classList.add("fa-times-circle")
+                saveSuccessIcon.style = "color: red; font-size:500%"
+                // allow resending define request
+                isTemplateDefined = false;
+                submitDefineBtn.classList.remove("disabled")
 
-            // add logic to enable save tab and redirect to view page?
+            }
             let saveTab = new bootstrap.Tab(saveNavBtn);
             saveTab.show();
-            deactivateTab(creationSteps.DEFINE)
             activateTab(creationSteps.SAVE)
+            // add logic to enable save tab and redirect to view page?
         }
     })
 
@@ -346,6 +383,7 @@ function addCanvasEventListeners(canvas) {
         if (opt.target == null) {
             answerPopup.hidden = true;
         }
+        this.requestRenderAll();
     });
 
     canvas.on('mouse:move', function (opt) {
@@ -359,6 +397,8 @@ function addCanvasEventListeners(canvas) {
             this.lastPosX = e.clientX;
             this.lastPosY = e.clientY;
         }
+        this.requestRenderAll();
+
     });
     canvas.on('mouse:up', function (opt) {
         // on mouse up we want to recalculate new interaction
@@ -366,6 +406,8 @@ function addCanvasEventListeners(canvas) {
         this.setViewportTransform(this.viewportTransform);
         this.isDragging = false;
         this.selection = true;
+        this.requestRenderAll();
+
     });
 
 
@@ -388,6 +430,8 @@ function addCircle(canvas, {
     strokeWidth = 3,
     stroke = 'rgba(255,0,0, 0.5)',
     fill = 'rgba(0,0,0, 0.5)',
+    question = '',
+    value = ''
 } = {}) {
     opts = {
         radius: radius,
@@ -399,7 +443,8 @@ function addCircle(canvas, {
     }
     const circle = new fabric.Circle(opts);
     canvas.add(circle);
-    circle.value = `ans${canvas._objects.length}`
+    circle.value = value || `ans${canvas._objects.length}`
+    circle.question = question
     circle.hasControls = false;
     circle.on("selected", (e) => {
         showPopup(circle, canvas)
@@ -407,6 +452,7 @@ function addCircle(canvas, {
     circle.on("moving", () => {
         answerPopup.hidden = true;
     })
+    canvas.requestRenderAll();
     return circle
 }
 

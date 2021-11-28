@@ -70,11 +70,11 @@
   </div>
 
   <div class="tab-pane fade" id="nav-save" role="tabpanel" aria-labelledby="nav-save-tab">
-    <div class="alert alert-success mt-2" role="alert">
-      Template created successfully!
+    <div class="alert mt-2" role="alert" id="templateSaveStatus">
+      Template created?
     </div>
     <div class="row d-flex justify-content-center align-items-center">
-      <i class="col-auto fas fa-check-circle my-5" style="color: green; font-size:500%"></i>
+      <i id = "saveSuccessIcon" class="col-auto fas fa-check-circle my-5" style="color: green; font-size:500%"></i>
       <h3 class="text-center">Click <a href="/view">here</a> to view all templates.</h3>
     </div>
   </div>
@@ -109,7 +109,7 @@
             </ul>
           </div>
           <div class="btn btn-dark col">
-            <input type="text" id="questionName" name="questionName" class="form-control" placeholder="question name">
+            <input hidden type="text" id="questionName" name="questionName" class="form-control" placeholder="question name">
           </div>
           <div class="col btn btn-dark d-flex align-items-center">
             <div class="form-check form-switch">
@@ -121,8 +121,8 @@
       </div>
     </div>
     <div class="d-flex flex-column mx-3" id="defineCanvasControls">
-      <button class="mt-2 col-auto btn btn-dark btn-small" {% if title=="create" %} hidden {% endif%} id="defineCanvasCopy"><i class="fas fa-copy"></i></button>
-      <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasSubmit"><i class="fas fa-save"></i></button>
+      <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasSubmit">{% if title=="create" %} <i class="fas fa-save"></i>{% else %}<i class="fas fa-copy"></i>{% endif%}</button>
+      <button class="mt-2 col-auto btn btn-dark btn-small" {% if title=="create" %} hidden {% endif%} id="defineCanvasUpdate"><i class="fas fa-save"></i></button>
       <button class="mt-2 col-auto btn btn-dark btn-small" id="addCircle"><i class="fas fa-plus-circle"></i></button>
       <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasZoomIn"><i
           class="fas fa-search-plus"></i></button>
@@ -150,12 +150,14 @@
 <script>const csrf_token = " {{ csrf_token() }}"</script>
 
 <script src={{ url_for("static",filename="/scripts/fabric.min.js" ) }}></script>
+<!-- ensure canvasscript loaded first as some variables are overwritten in edit page  -->
 <script src={{ url_for("static",filename="/scripts/canvasScript.js" ) }}></script>
 {% if title=='edit' %}
 <script>
+  const isEdit = true
   const imgData = "{{template_img}}"
   const template = JSON.parse({{template_json|tojson|safe}}) 
-  const tempId = template._id
+  const templateId = template._id.$oid
   
 </script>
 <script src={{ url_for("static",filename="/scripts/templateEdit.js" ) }}></script>
