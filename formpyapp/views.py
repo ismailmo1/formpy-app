@@ -154,11 +154,19 @@ def edit_template(template_id):
     template = db.get_template(template_id)
     img = get_image(template_id)
     template_img = img_to_str(img)
+    is_owner = True if current_user == template.owner else False
+    if not is_owner:
+        flash(
+            "you don't own this template so you must change the name and save a copy!",
+            "warning",
+        )
+
     return render_template(
         "create_template.html",
         template=template,
         template_img=template_img,
         title="edit",
+        is_owner=is_owner,
         template_json=template.to_json(),
     )
 

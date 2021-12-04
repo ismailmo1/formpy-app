@@ -32,6 +32,8 @@ const submitDefineBtn = document.getElementById(`defineCanvasSubmit`)
 
 let defineUrl = "/define-template/new"
 
+// templateId populate in edit_template.html
+let templateId
 let saveSuccess = false;
 let alignedImg = ''
 let isTemplateDefined = false
@@ -480,6 +482,8 @@ async function defineTemplate(update = false) {
 
     })
     templateBody['questions'] = questions
+    let saveTab = new bootstrap.Tab(saveNavBtn);
+
     try {
         let res = await fetch(defineUrl, {
             method: "POST",
@@ -499,6 +503,7 @@ async function defineTemplate(update = false) {
             // allow resending define request
             isTemplateDefined = false;
             submitDefineBtn.classList.remove("disabled");
+
         } else {
             saveSuccessMsg.innerText = `Template ${update ? 'update' : 'save'}d successfully!`
             saveSuccessMsg.classList.remove("alert-warning")
@@ -508,6 +513,10 @@ async function defineTemplate(update = false) {
             saveSuccessMsg.classList.add("alert-success")
             deactivateTab(creationSteps.DEFINE)
         }
+        saveTab.show();
+        activateTab(creationSteps.SAVE)
+        // add logic to enable save tab and redirect to view page?
+        return template
     } catch (err) {
         console.log(err);
         saveSuccessMsg.innerText = `Template ${update ? 'update' : 'save'} failed`
@@ -518,12 +527,9 @@ async function defineTemplate(update = false) {
         // allow resending define request
         isTemplateDefined = false;
         submitDefineBtn.classList.remove("disabled")
-
+        saveTab.show();
+        activateTab(creationSteps.SAVE)
     }
-    let saveTab = new bootstrap.Tab(saveNavBtn);
-    saveTab.show();
-    activateTab(creationSteps.SAVE)
-    // add logic to enable save tab and redirect to view page?
-    return template
+
 }
 activateQn(addQuestion())

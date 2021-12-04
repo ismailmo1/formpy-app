@@ -17,7 +17,7 @@
             {% for template in templates %}
             <div class="col-lg-4 col-md-6 my-2">
                 <div class="card">
-                    <img src={{url_for('static', filename="image_storage/template_images/" )}}{{template.id}}.jpeg
+                    <img src={{url_for('static', filename="image_storage/template_images/" )}}{{template.img_name}}.jpeg
                         alt="template-image" class="card-img-top img-fluid">
                     <div class="card-body">
                         <h5 class="card-title">{{template['name']}}</h5>
