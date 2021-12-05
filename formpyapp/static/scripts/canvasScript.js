@@ -69,28 +69,71 @@ if (creating) {
 };
 
 function addAlignSpots(pts = []) {
+    points = [];
     pts.forEach((pt) => {
-        let radius = 10
-        let x = scaleFactor * pt[0]
-        let y = scaleFactor * pt[1]
-        addCircle(alignCanvas, {
-            top: y,
-            left: x,
-            radius: radius,
-            fill: 'rgba(255,0,0, 0.5)'
-        })
-    }
-    )
+        pt[0] *= scaleFactor
+        pt[1] *= scaleFactor
+        points.push({ x: pt[0], y: pt[1] })
+    })
+
+    let top = pts[0][1];
+    let left = pts[0][0];
+    let width = pts[1][0] - pts[0][0];
+    let height = pts[2][1] - pts[0][1];
+
+
+
+    // create a rectangle object 
+    // TODO change to polygon - fabirc.Polygon 
+    let poly = new fabric.Polygon(points, {
+        left: 0,
+        top: 0,
+        stroke: 'rgba(255,0,0,0)',
+        strokeWidth: 4,
+        fill: 'rgba(0,0,0,0.2)'
+    })
+    alignCanvas.add(poly);
+    // let rect = new fabric.Rect({
+    //     left: left,
+    //     top: top,
+    //     fill: 'rgba(0,0,0,0.1)',
+    //     stroke: 'rgb(255,0,0)',
+    //     strokeWidth: '5',
+    //     width: width,
+    //     height: height
+    // });
+
+    // "add" rectangle onto canvas
+    // alignCanvas.add(rect);
 }
 
 function scaleAlignSpots(canvas, scaleFactor) {
     canvas._objects.map((obj) => {
-        let { top, left, radius } = obj
-        scaledTop = (top * scaleFactor) - radius
-        scaledLeft = (left * scaleFactor) - radius
+        // for circles
+        // let { top, left, radius } = obj
+        // scaledTop = (top * scaleFactor) - radius
+        // scaledLeft = (left * scaleFactor) - radius
+        // obj.top = scaledTop
+        // obj.left = scaledLeft
+
+        //rectangle 
+        let { top, left, width, height } = obj
+        scaledTop = (top * scaleFactor)
+        scaledLeft = (left * scaleFactor)
+        scaledWidth = (width * scaleFactor)
+        scaledHeight = (height * scaleFactor)
         obj.top = scaledTop
         obj.left = scaledLeft
+        obj.width = scaledWidth
+        obj.height = scaledHeight
 
+        // polygon
+        let points = canvas._objects[0].points
+        points.map((point) => {
+            point.x *= scaleFactor
+            point.y *= scaleFactor
+        })
+        console.log("scaled", points);
     })
 
 }
@@ -256,13 +299,20 @@ function addCanvasEventListeners(canvas) {
     if (canvasName == "alignCanvas") {
 
         submitAlignBtn.addEventListener("click", async (e) => {
-            alignCanvas._objects.forEach(pt => {
-                let { left, top, radius } = pt
-                left = (left + radius) / scaleFactor
-                top = (top + radius) / scaleFactor
+            // alignCanvas._objects.forEach(pt => {
+            //     let { left, top, radius } = pt
+            //     left = (left + radius) / scaleFactor
+            //     top = (top + radius) / scaleFactor
 
-                alignPts.push([left, top])
-            })
+            //     alignPts.push([left, top])
+            // })
+            // only one rectangle obj now
+            let { left, top, width, height } = alignCanvas._objects[0]
+            alignPts.push([left / scaleFactor, top / scaleFactor])
+            alignPts.push([left / scaleFactor, (height - top) / scaleFactor])
+            alignPts.push([(width - left) / scaleFactor, top / scaleFactor])
+            alignPts.push([(width - left) / scaleFactor, (height - top) / scaleFactor])
+            console.log(alignPts);
 
             alignedImg = await alignImg(alignPts, imgForm)
             alignedImg = `data:image/jpeg;base64, ${alignedImg}`
