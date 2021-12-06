@@ -27,8 +27,11 @@ const saveSuccessMsg = document.getElementById("templateSaveStatus")
 const saveSuccessIcon = document.getElementById("saveSuccessIcon")
 const deleteAns = document.getElementById("deletePopup")
 const saveAns = document.getElementById("submitPopup")
-const submitAlignBtn = document.getElementById(`alignCanvasSubmit`)
-const submitDefineBtn = document.getElementById(`defineCanvasSubmit`)
+const submitAlignBtn = document.getElementById("alignCanvasSubmit")
+const submitDefineBtn = document.getElementById("defineCanvasSubmit")
+const submitAlignLink = document.getElementById("submitAlignLink")
+const alignStatus = document.getElementById("templateAlignStatus")
+
 
 let defineUrl = "/define-template/new"
 
@@ -256,25 +259,13 @@ function addCanvasEventListeners(canvas) {
     if (canvasName == "alignCanvas") {
 
         submitAlignBtn.addEventListener("click", async (e) => {
-            alignCanvas._objects.forEach(pt => {
-                let { left, top, radius } = pt
-                left = (left + radius) / scaleFactor
-                top = (top + radius) / scaleFactor
-
-                alignPts.push([left, top])
-            })
-
-            alignedImg = await alignImg(alignPts, imgForm)
-            alignedImg = `data:image/jpeg;base64, ${alignedImg}`
-            prepareDefineTab(alignedImg);
-
-            let defineTab = new bootstrap.Tab(defineNavBtn);
-            defineTab.show();
-
-            deactivateTab(creationSteps.ALIGN)
-            activateTab(creationSteps.DEFINE)
-
+            submitAlignHandler();
         })
+
+        submitAlignLink.addEventListener("click", async (e) => {
+            submitAlignHandler();
+        })
+
     }
 
     submitDefineBtn.addEventListener("click", async (e) => {
@@ -533,3 +524,32 @@ async function defineTemplate(update = false) {
 
 }
 activateQn(addQuestion())
+
+function submitAlignHandler() {
+
+    alignCanvas._objects.forEach(pt => {
+        let { left, top, radius } = pt
+        left = (left + radius) / scaleFactor
+        top = (top + radius) / scaleFactor
+
+        alignPts.push([left, top])
+    })
+
+    try {
+        alignedImg = await alignImg(alignPts, imgForm)
+        alignedImg = `data:image/jpeg;base64, ${alignedImg}`
+        alignStatus.classList.add("alert-success")
+
+    } catch {
+        alignStatus.innerText = "Template Alignment failed - reupload with a frame/border around your template"
+        alignStatus.classList.add("alert-danger")
+    } finally {
+        prepareDefineTab(alignedImg);
+
+        let defineTab = new bootstrap.Tab(defineNavBtn);
+        defineTab.show();
+
+        deactivateTab(creationSteps.ALIGN)
+        activateTab(creationSteps.DEFINE)
+    }
+}

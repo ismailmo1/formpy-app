@@ -41,7 +41,8 @@
 </div>
 
 <div class="tab-content" id="nav-tabContent">
-   <div class="tab-pane fade {% if title=="create" %}show active{% endif %}" id="nav-upload" role="tabpanel" aria-labelledby="nav-upload-tab">
+  <div class="tab-pane fade {% if title=="create" %}show active{% endif %}" id="nav-upload" role="tabpanel"
+    aria-labelledby="nav-upload-tab">
     <div class="row" id="formRow">
       <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
         <label class="row m-2" for="photoUpload">Upload an image of your filled template</label>
@@ -54,6 +55,12 @@
     </div>
   </div>
   <div class="tab-pane fade" id="nav-align" role="tabpanel" aria-labelledby="nav-align-tab">
+    <div class="row d-flex justify-content-around my-2">
+      <div class="alert mt-2" role="alert" id="templateAlignStatus">
+        Template alignment feature found - click <a id="submitAlignLink">here</a> to continue if corners of the alignment
+        feature were detected correctly - or <a id="failAlign">here</a> if things didn't work out as expected.
+      </div>
+    </div>
     <div class="d-flex align-items-center flex-column my-2" id="alignCanvasDiv">
       <canvas id="alignCanvas" width="600px" height="400px"></canvas>
       <div class="d-flex flex-column mx-3 canvas-controls" id="alignCanvasControls">
@@ -74,7 +81,7 @@
       Template created?
     </div>
     <div class="row d-flex justify-content-center align-items-center">
-      <i id = "saveSuccessIcon" class="col-auto fas fa-check-circle my-5" style="color: green; font-size:500%"></i>
+      <i id="saveSuccessIcon" class="col-auto fas fa-check-circle my-5" style="color: green; font-size:500%"></i>
       <h3 class="text-center">Click <a href="/view">here</a> to view all templates.</h3>
     </div>
   </div>
@@ -109,7 +116,8 @@
             </ul>
           </div>
           <div class="btn btn-dark col">
-            <input hidden type="text" id="questionName" name="questionName" class="form-control" placeholder="question name">
+            <input hidden type="text" id="questionName" name="questionName" class="form-control"
+              placeholder="question name">
           </div>
           <div class="col btn btn-dark d-flex align-items-center">
             <div class="form-check form-switch">
@@ -121,8 +129,10 @@
       </div>
     </div>
     <div class="d-flex flex-column mx-3" id="defineCanvasControls">
-      <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasSubmit">{% if title=="create" %} <i class="fas fa-save"></i>{% else %}<i class="fas fa-copy"></i>{% endif%}</button>
-      <button class="mt-2 col-auto btn btn-dark btn-small" {% if title=="create" or is_owner %} hidden {% endif%} id="defineCanvasUpdate"><i class="fas fa-save"></i></button>
+      <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasSubmit">{% if title=="create" %} <i
+          class="fas fa-save"></i>{% else %}<i class="fas fa-copy"></i>{% endif%}</button>
+      <button class="mt-2 col-auto btn btn-dark btn-small" {% if title=="create" or is_owner %} hidden {% endif%}
+        id="defineCanvasUpdate"><i class="fas fa-save"></i></button>
       <button class="mt-2 col-auto btn btn-dark btn-small" id="addCircle"><i class="fas fa-plus-circle"></i></button>
       <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasZoomIn"><i
           class="fas fa-search-plus"></i></button>
@@ -156,10 +166,10 @@
 <script>
   const isEdit = true
   const imgData = "{{template_img}}"
-  const template = JSON.parse({{template_json|tojson|safe}}) 
+  const template = JSON.parse({{ template_json| tojson | safe}})
   //template id instantiated in canvasScript
   templateId = template._id.$oid
-  
+
 </script>
 <script src={{ url_for("static",filename="/scripts/templateEdit.js" ) }}></script>
 
