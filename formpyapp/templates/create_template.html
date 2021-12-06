@@ -122,7 +122,7 @@
     </div>
     <div class="d-flex flex-column mx-3" id="defineCanvasControls">
       <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasSubmit">{% if title=="create" %} <i class="fas fa-save"></i>{% else %}<i class="fas fa-copy"></i>{% endif%}</button>
-      <button class="mt-2 col-auto btn btn-dark btn-small" {% if title=="create" or not is_owner %} hidden {% endif%} id="defineCanvasUpdate"><i class="fas fa-save"></i></button>
+      <button class="mt-2 col-auto btn btn-dark btn-small" {% if title=="create" or is_owner %} hidden {% endif%} id="defineCanvasUpdate"><i class="fas fa-save"></i></button>
       <button class="mt-2 col-auto btn btn-dark btn-small" id="addCircle"><i class="fas fa-plus-circle"></i></button>
       <button class="mt-2 col-auto btn btn-dark btn-small" id="defineCanvasZoomIn"><i
           class="fas fa-search-plus"></i></button>
@@ -147,9 +147,7 @@
 </div>
 
 
-<script>const csrf_token = " {{ csrf_token() }}";
-
-</script>
+<script>const csrf_token = " {{ csrf_token() }}"</script>
 
 <script src={{ url_for("static",filename="/scripts/fabric.min.js" ) }}></script>
 <!-- ensure canvasscript loaded first as some variables are overwritten in edit page  -->
