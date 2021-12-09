@@ -17,6 +17,19 @@ from . import models
 IMG_STORAGE_PATH = "image_storage/template_images"
 
 
+def order_pts(pts: np.ndarray):
+    """return ordered points of rectangle ordered from top left clockwise"""
+    ordered_pts = np.zeros((4, 2), dtype="float32")
+    ordered_pts[0] = pts[np.argmin(pts.sum(axis=1))]
+    ordered_pts[2] = pts[np.argmax(pts.sum(axis=1))]
+
+    # smallest difference x-y = top right
+    ordered_pts[1] = pts[np.argmin(np.diff(pts, axis=1))]
+    # largest difference x-y = bottom left
+    ordered_pts[3] = pts[np.argmax(np.diff(pts, axis=1))]
+    return ordered_pts
+
+
 def img_to_str(img: np.array) -> str:
     """writes numpy array img to str
 
@@ -59,14 +72,7 @@ def align_img(img: np.array, json_pts: str) -> np.array:
         np.array: aligned image
     """
     pts = np.array(json.loads(json_pts), dtype="float32")
-    ordered_pts = np.zeros((4, 2), dtype="float32")
-    ordered_pts[0] = pts[np.argmin(pts.sum(axis=1))]
-    ordered_pts[2] = pts[np.argmax(pts.sum(axis=1))]
-
-    # smallest difference x-y = top right
-    ordered_pts[1] = pts[np.argmin(np.diff(pts, axis=1))]
-    # largest difference x-y = bottom left
-    ordered_pts[3] = pts[np.argmax(np.diff(pts, axis=1))]
+    ordered_pts = order_pts(pts)
     aligned_img = ip.align_page(img, corner_pts=ordered_pts)
 
     return aligned_img
@@ -180,3 +186,24 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
         for (qn, answers) in qn_ans.items()
     }
     return form.mark_all_answers(qn_ans, color=(255, 0, 0)), qn_ans_vals
+
+
+def add_align_rectangle(img):
+    """add rectangle to border of image
+
+    Args:
+        img (np.ndarray): aligned
+
+    Returns:
+        img (np.ndarray): aligned image with black border
+    """
+    # add buffer of 2 to ensure border isn't cut off from img
+    cv2.rectangle(
+        img,
+        pt1=(2, 2),
+        pt2=(img.shape[1] - 2, img.shape[0] - 2),
+        color=(0, 0, 0),
+        thickness=2,
+    )
+
+    return img

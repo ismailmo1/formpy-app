@@ -13,6 +13,7 @@ from flask.helpers import url_for
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_login.utils import login_required
 from flask_wtf.csrf import CSRFProtect
+from formpy.utils.img_processing import ImageAlignmentError
 from mongoengine.errors import NotUniqueError
 
 # initialise app and login before import so app is "exported" first
@@ -24,6 +25,7 @@ login.login_view = "login"
 from . import db
 from .api import (
     IMG_STORAGE_PATH,
+    add_align_rectangle,
     align_img,
     delete_image,
     get_bounding_pts,
@@ -61,20 +63,32 @@ def create_template():
 
 @app.post("/upload-template")
 def upload_template():
-    form_img = request.files["uploadedImg"].read()
+    uploaded_template = request.files["uploadedTemplate"]
+    if uploaded_template.content_type == "image/jpeg":
+        form_img = uploaded_template.read()
+    elif uploaded_template.content_type == "pdf":
+        pass
+    else:
+        raise Exception("file upload failed")
     img = read_form_img(form_img)
     # change func to accept bounding rect pts
-    pts = get_bounding_pts(img).tolist()
+    try:
+        pts = get_bounding_pts(img).tolist()
+    except ImageAlignmentError:
+        return {"pts": None}
     return jsonify({"pts": pts})
 
 
 @app.post("/align-template")
 def align_template():
+    is_custom_align = True if request.form["custom"] == "true" else False
     pts = request.form["pts"]
-    form_img = request.files["uploadedImg"].read()
+    form_img = request.files["uploadedTemplate"].read()
     img = read_form_img(form_img)
     # change func to accept bounding rect pts
     aligned_img = align_img(img, pts)
+    if is_custom_align:
+        aligned_img = add_align_rectangle(aligned_img)
     aligned_img_str = img_to_str(aligned_img)
     return jsonify({"img": aligned_img_str})
 
@@ -91,7 +105,7 @@ def define_template(new_copy):
     """
     template_data = request.json
 
-    img_str = template_data.get("uploadedImg").split(
+    img_str = template_data.get("uploadedTemplate").split(
         "data:image/jpeg;base64, "
     )[1]
     img = str_to_img(img_str)

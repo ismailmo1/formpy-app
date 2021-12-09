@@ -34,7 +34,7 @@ const alignStatus = document.getElementById("templateAlignStatus")
 
 
 let defineUrl = "/define-template/new"
-
+let isCustom
 // templateId populate in edit_template.html
 let templateId
 let saveSuccess = false;
@@ -72,18 +72,32 @@ if (creating) {
 };
 
 function addAlignSpots(pts = []) {
-    pts.forEach((pt) => {
-        let radius = 10
-        let x = scaleFactor * pt[0]
-        let y = scaleFactor * pt[1]
-        addCircle(alignCanvas, {
-            top: y,
-            left: x,
-            radius: radius,
-            fill: 'rgba(255,0,0, 0.5)'
-        })
+    if (pts) {
+        isCustom = false
+        pts.forEach((pt) => {
+            let radius = 10
+            let x = scaleFactor * pt[0]
+            let y = scaleFactor * pt[1]
+            addCircle(alignCanvas, {
+                top: y,
+                left: x,
+                radius: radius,
+                fill: 'rgba(255,0,0, 0.5)'
+            })
+        }
+        )
+    } else {
+        isCustom = true
+
+        for (let i = 0; i < 4; i++) {
+            addCircle(alignCanvas, {
+                top: (i + 1) * 10,
+                left: (i + 1) * 10,
+                radius: 10,
+                fill: 'rgba(255,0,0, 0.5)'
+            })
+        }
     }
-    )
 }
 
 function scaleAlignSpots(canvas, scaleFactor) {
@@ -103,8 +117,22 @@ function scaleAlignSpots(canvas, scaleFactor) {
 // ajax form post to find bounding box in template
 async function getBoundingPts(form) {
     let formData = new FormData(form);
-    res = await fetch("/upload-template", { method: "POST", body: formData });
+    try {
+        res = await fetch("/upload-template", { method: "POST", body: formData });
+        alignStatus.classList.add("alert-success")
+    } catch {
+        alignStatus.innerText = "Template Alignment failed - try reuploading or contact support if this problem persists"
+        alignStatus.classList.add("alert-danger")
+    }
     let { img, pts } = await res.json();
+    if (!pts) {
+        alignStatus.innerText = "Template Alignment feature not detected failed -\
+         try reupload with a frame or border around your template, or move the spots \
+         below to the corners and we'll draw one for you"
+        alignStatus.classList.remove("alert-success")
+        alignStatus.classList.add("alert-warning")
+
+    }
     return img, pts;
 }
 
@@ -169,6 +197,8 @@ window.addEventListener("resize", resizeCanvas)
 async function alignImg(alignPts, imgForm) {
     alignImgForm = new FormData(imgForm)
     alignImgForm.append("pts", JSON.stringify(alignPts))
+    // i.e. if image doesnt have a bounding box then custom = true
+    alignImgForm.append("custom", isCustom)
     alignImgForm.append("scale", JSON.stringify(scaleFactor))
     res = await fetch("/align-template", { method: "POST", body: alignImgForm });
     let { img } = await res.json();
@@ -375,15 +405,17 @@ function addCircle(canvas, {
     }
     const circle = new fabric.Circle(opts);
     canvas.add(circle);
-    circle.value = value || `ans${canvas._objects.length}`
-    circle.question = question
     circle.hasControls = false;
-    circle.on("selected", (e) => {
-        showPopup(circle, canvas)
-    })
-    circle.on("moving", () => {
-        answerPopup.hidden = true;
-    })
+    if (canvas.lowerCanvasEl.id == 'defineCanvas') {
+        circle.value = value || `ans${canvas._objects.length}`
+        circle.question = question
+        circle.on("selected", (e) => {
+            showPopup(circle, canvas)
+        })
+        circle.on("moving", () => {
+            answerPopup.hidden = true;
+        })
+    }
     canvas.requestRenderAll();
     return circle
 }
@@ -458,7 +490,7 @@ async function defineTemplate(update = false) {
     templateBody = {}
     templateBody['public'] = publicToggle.checked;
     templateBody['templateName'] = templateName.value
-    templateBody['uploadedImg'] = alignedImg
+    templateBody['uploadedTemplate'] = alignedImg
 
     // add current template id to save old image name in copied template if editing
     templateBody['currTempId'] = templateId || null
@@ -525,7 +557,7 @@ async function defineTemplate(update = false) {
 }
 activateQn(addQuestion())
 
-function submitAlignHandler() {
+async function submitAlignHandler() {
 
     alignCanvas._objects.forEach(pt => {
         let { left, top, radius } = pt
@@ -538,12 +570,6 @@ function submitAlignHandler() {
     try {
         alignedImg = await alignImg(alignPts, imgForm)
         alignedImg = `data:image/jpeg;base64, ${alignedImg}`
-        alignStatus.classList.add("alert-success")
-
-    } catch {
-        alignStatus.innerText = "Template Alignment failed - reupload with a frame/border around your template"
-        alignStatus.classList.add("alert-danger")
-    } finally {
         prepareDefineTab(alignedImg);
 
         let defineTab = new bootstrap.Tab(defineNavBtn);
@@ -551,5 +577,10 @@ function submitAlignHandler() {
 
         deactivateTab(creationSteps.ALIGN)
         activateTab(creationSteps.DEFINE)
+
+    } catch (e) {
+        console.error(e)
+        alignStatus.innerText = "Template Alignment failed - reupload with a frame/border around your template"
+        alignStatus.classList.add("alert-danger")
     }
 }
