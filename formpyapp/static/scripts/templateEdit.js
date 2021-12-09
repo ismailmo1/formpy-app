@@ -8,7 +8,8 @@ defineUrl = "/define-template/copy"
 
 prepareCanvas(defineCanvas, alignedImg);
 activateTab(creationSteps.DEFINE)
-templateName.value = template.name;
+// add random hex to end
+templateName.value = template.name + "_" + ((Math.random() + 1) * 10).toString(16).substring(10);
 publicToggle.checked = template.public;
 
 template.questions.map((qn, idx) => {
