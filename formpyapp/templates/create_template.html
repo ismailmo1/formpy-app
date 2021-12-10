@@ -47,7 +47,7 @@
       <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
         <label class="row m-2" for="photoUpload">Upload an image of your filled template</label>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <input type="file" name="uploadedTemplate" id="photoUpload" accept="image/*" />
+        <input type="file" name="uploadedTemplate" id="photoUpload" accept="image/*, .pdf" />
         <div>
           <input class="btn btn-success mt-1" type="submit" value="Upload" id="uploadImgBtn" />
         </div>

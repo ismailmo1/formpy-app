@@ -31,6 +31,7 @@ from .api import (
     get_bounding_pts,
     get_image,
     img_to_str,
+    pdf_upload_to_img,
     read_form,
     read_form_img,
     save_image,
@@ -66,11 +67,11 @@ def upload_template():
     uploaded_template = request.files["uploadedTemplate"]
     if uploaded_template.content_type == "image/jpeg":
         form_img = uploaded_template.read()
-    elif uploaded_template.content_type == "pdf":
-        pass
+        img = read_form_img(form_img)
+    elif uploaded_template.content_type == "application/pdf":
+        img = pdf_upload_to_img(uploaded_template)
     else:
         raise Exception("file upload failed")
-    img = read_form_img(form_img)
     # change func to accept bounding rect pts
     try:
         pts = get_bounding_pts(img).tolist()

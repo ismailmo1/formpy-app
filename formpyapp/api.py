@@ -10,6 +10,7 @@ import formpy.utils.img_processing as ip
 import numpy as np
 from formpy.questions import Form, Template
 from formpy.utils.template_definition import find_spots
+from pdf2image import convert_from_bytes
 from PIL import Image
 
 from . import models
@@ -207,3 +208,10 @@ def add_align_rectangle(img):
     )
 
     return img
+
+
+def pdf_upload_to_img(pdf) -> np.ndarray:
+    image = convert_from_bytes(pdf.read())[0]
+    np_img = np.array(image)
+    cv_img = cv2.cvtColor(np_img, cv2.COLOR_RGB2BGR)
+    return cv_img
