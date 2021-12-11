@@ -128,6 +128,7 @@ def define_template(new_copy):
         saved_template.save()
     elif new_copy == "new":
         save_image(img, saved_template.img_name)
+        # add error handling for failed image saves
 
     return jsonify(saved_template.to_json())
     # flash(f"template '{saved_template.name}' created successfully!", "info")

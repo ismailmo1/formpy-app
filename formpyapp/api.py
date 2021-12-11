@@ -15,7 +15,7 @@ from PIL import Image
 
 from . import models
 
-IMG_STORAGE_PATH = "image_storage/template_images"
+IMG_STORAGE_PATH = os.environ["IMG_STORAGE_PATH"]
 
 
 def order_pts(pts: np.ndarray):
@@ -123,11 +123,11 @@ def save_image(img: np.ndarray, img_id: str, img_path=IMG_STORAGE_PATH) -> str:
     Returns:
         str: path of saved image
     """
-    save_img_path = os.path.join(
-        f"formpyapp/static/{img_path}", f"{img_id}.jpeg"
-    )
-    cv2.imwrite(save_img_path, img)
-    return save_img_path
+    save_img_path = os.path.join(f"formpyapp/{img_path}", f"{img_id}.jpeg")
+    if cv2.imwrite(save_img_path, img):
+        return save_img_path
+    else:
+        return None
 
 
 def get_image(
@@ -140,7 +140,7 @@ def get_image(
     """
     template = models.Template.objects(id=template_id).first()
     img_path = os.path.join(
-        f"formpyapp/static/{img_path}", f"{template.img_name}.jpeg"
+        f"formpyapp/{img_path}", f"{template.img_name}.jpeg"
     )
 
     img = cv2.imread(img_path)
@@ -154,9 +154,7 @@ def delete_image(template_id: str, img_path: str = IMG_STORAGE_PATH) -> bool:
     Args:
         template_id (str): template id
     """
-    img_path = save_img_path = os.path.join(
-        f"formpyapp/static/{img_path}", f"{template_id}.jpeg"
-    )
+    img_path = os.path.join(f"formpyapp/{img_path}", f"{template_id}.jpeg")
 
     if os.path.isfile(img_path):
         os.remove(img_path)
