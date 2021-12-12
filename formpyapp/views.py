@@ -24,7 +24,6 @@ login.login_view = "login"
 
 from . import db
 from .api import (
-    IMG_STORAGE_PATH,
     add_align_rectangle,
     align_img,
     delete_image,
@@ -54,6 +53,11 @@ app.secret_key = os.environ["FLASK_SECRET"]
 @app.get("/home")
 def home():
     return render_template("index.html")
+
+
+@app.get("/getting-started")
+def start():
+    return render_template("getting_started.html")
 
 
 @app.get("/create")

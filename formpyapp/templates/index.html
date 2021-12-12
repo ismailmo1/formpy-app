@@ -1,21 +1,88 @@
-{% extends "layout.html" %}
-{% set active_link = "home" %}
-{% block content %}
-<div class="mt-5 row">
-    <h1>Welcome to formpy!</h1>
+{% extends "base.html" %}
+{% block main %}
+<nav class="navbar navbar-light">
+    <div class="container-fluid justify-content-end ">
+        <a class="navbar-brand" href="https://github.com/ismailmo1"><i class="fas fa-user-tie"></i></a>
+        <a class="navbar-brand" href="https://github.com/ismailmo1"><i class="fab fa-github"></i></a>
+        <a class="navbar-brand" href="https://linkedin.com/in/ismailmo-chem"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+</nav>
+<div class="m-2 d-flex vh-100 justify-content-center align-items-center flex-column">
+    <div class="row">
+        <h1 class="display-1">Formpy</h1>
+    </div>
+    <div class="row">
+        <h2 class="text-muted">Revolutionising forms*</h2>
+    </div>
+    <div class="row">
+        <a href="/getting-started" class="btn btn-outline-dark btn-lg">Get Started</a>
+    </div>
 </div>
-<div class="row mt-2">
-    <h2>Keep your paper forms - automate the analysis!</h2>
-</div>
-<div class="row mt-5">
-    <p>
-        It's not always possible to completely digitise forms, sometimes you need to stick to the tried and tested
-        paper based forms for various reasons. Let's stop pushing digital to force a solution for your
-        unique problem, instead automate the most time consuming part of forms: reading and analysing the data.
-    </p>
-    <p>With formpy, you can pick a pre-designed template, or completely design your own from scratch. Print and
-        distribute these forms as you would normally, upload the filled in forms and we will take it from there:
-        reading, analysing and presenting the data in a format that suits your needs. </p>
+<div class="container">
+    <div class="col">
+        <div class="row my-5">
+            <div class="col-lg-6 d-flex align-items-center">
+                <p class="">
+                    It's not always possible to completely digitise forms, sometimes you need to stick to the tried and
+                    tested
+                    paper based forms for various reasons. Let's stop pushing digital to force a solution for your
+                    unique problem, instead automate the most time consuming part of forms: reading and analysing the
+                    data.
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <img class="img-fluid rounded mx-auto border" src={{url_for('static',
+                    filename="/images/create_screenshot.png" )}} alt="">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 d-flex align-items-center">
+                <p>With formpy, you can pick a pre-designed template, or completely design your own from scratch. Print
+                    and
+                    distribute these forms as you would normally, upload the filled in forms and we will take it from
+                    there:
+                    reading, analysing and presenting the data in a format that suits your needs. </p>
+            </div>
+            <div class="col-lg-6">
+                <img class="img-fluid rounded mx-auto border" src={{url_for('static',
+                    filename="/images/create_screenshot.png" )}} alt="">
+            </div>
+        </div>
+    </div>
 
 </div>
+<footer class="mt-3 border-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 text-center mx-auto ">
+                <span class="border-0">Developed by <a class="link-dark text-decoration-none"
+                        href="http://www.ismailmo.com">Ismail Mohammed</a></span>
+            </div>
+            <div class="col-lg-4">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href="http://github.com/ismailmo1">Github</a></li>
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href="http://linkedin.com/in/ismailmo-chem">LinkedIn</a></li>
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href="mailto:ismailmo4@gmail.com">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href={{url_for("start")}}>Quick
+                            Start Guide</a></li>
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href=https://www.ismailmo.com/projects/formpy />Development Blog</a></li>
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href="https://github.com/ismailmo1/formpy">Formpy Standalone Library</a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</footer>
 {% endblock %}
