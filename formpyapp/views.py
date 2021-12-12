@@ -77,19 +77,25 @@ def upload_template():
     else:
         raise Exception("file upload failed")
     # change func to accept bounding rect pts
+    res_img = img_to_str(img)
+
     try:
         pts = get_bounding_pts(img).tolist()
     except ImageAlignmentError:
-        return {"pts": None}
-    return jsonify({"pts": pts})
+        return {"pts": None, "img": res_img}
+    return jsonify({"pts": pts, "img": res_img})
 
 
 @app.post("/align-template")
 def align_template():
     is_custom_align = True if request.form["custom"] == "true" else False
     pts = request.form["pts"]
-    form_img = request.files["uploadedTemplate"].read()
-    img = read_form_img(form_img)
+    uploaded_template = request.files["uploadedTemplate"]
+    if uploaded_template.content_type == "application/pdf":
+        img = pdf_upload_to_img(uploaded_template)
+    else:
+        form_img = request.files["uploadedTemplate"].read()
+        img = read_form_img(form_img)
     # change func to accept bounding rect pts
     aligned_img = align_img(img, pts)
     if is_custom_align:

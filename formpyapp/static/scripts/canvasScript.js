@@ -57,13 +57,15 @@ if (creating) {
         // prevent form post request
         e.preventDefault();
         // add image to canvas
-        let preAlignImgSrc = URL.createObjectURL(imgUploadInput.files[0])
-        prepareAlignTab(preAlignImgSrc);
+        // let preAlignImgSrc = URL.createObjectURL(imgUploadInput.files[0])
+        // prepareAlignTab(preAlignImgSrc);
         // save image upload field to add as hidden field to new question definition form
-        boundingPts = await getBoundingPts(imgForm);
+        let { img, pts } = await getBoundingPts(imgForm);
+        console.log(res);
+        prepareAlignTab(`data:image/jpeg;base64, ${img}`);
         let alignTab = new bootstrap.Tab(alignNavBtn);
         alignTab.show();
-        addAlignSpots(boundingPts)
+        addAlignSpots(pts)
         deactivateTab(creationSteps.UPLOAD)
         activateTab(creationSteps.ALIGN)
     })
@@ -133,7 +135,7 @@ async function getBoundingPts(form) {
         alignStatus.classList.add("alert-warning")
 
     }
-    return img, pts;
+    return { img, pts };
 }
 
 function prepareAlignTab(img) {
@@ -390,8 +392,8 @@ function addCircle(canvas, {
     top = 200,
     left = 200,
     strokeWidth = 3,
-    stroke = 'rgba(255,0,0, 0.5)',
-    fill = 'rgba(0,0,0, 0.5)',
+    stroke = 'rgba(255,0,0, 1)',
+    fill = 'rgba(0,0,0, 0)',
     question = '',
     value = ''
 } = {}) {
