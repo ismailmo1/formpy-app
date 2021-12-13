@@ -1,0 +1,4 @@
+{
+    "python.linting.enabled": false,
+    "python.analysis.extraPaths": ["/home/ismail/Projects/web/formpy"]
+}
