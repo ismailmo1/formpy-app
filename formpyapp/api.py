@@ -170,11 +170,15 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
         template_id (str): id of selected template to read form against
         form_img (str): bin64 str of form image
     """
+    template = models.Template.objects(id=template_id).first()
+    template_dict = template.question_dict
+    template_img = get_image(template_id)
     img = read_form_img(form_img)
-    template_dict = (
-        models.Template.objects(id=template_id).first().question_dict
-    )
-    template = Template.from_dict(img, template_dict)
+    # scale image to match template image size
+    # scaled_img = cv2.resize(
+    #     img, template_img.shape, interpolation=cv2.INTER_LINEAR
+    # )
+    template = Template.from_dict(template_img, template_dict)
     form = Form(img, template)
     qn_ans = {}
     for qn in form.questions:
