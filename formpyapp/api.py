@@ -63,7 +63,7 @@ def read_form_img(img_str: str) -> np.array:
     return img
 
 
-def align_img(img: np.array, json_pts: str) -> np.array:
+def align_img(img: np.array, json_pts: str = None) -> np.array:
     """aligns image with bounding box if detected
 
     Args:
@@ -72,8 +72,11 @@ def align_img(img: np.array, json_pts: str) -> np.array:
     Returns:
         np.array: aligned image
     """
-    pts = np.array(json.loads(json_pts), dtype="float32")
-    ordered_pts = order_pts(pts)
+    if json_pts is not None:
+        pts = np.array(json.loads(json_pts), dtype="float32")
+        ordered_pts = order_pts(pts)
+    else:
+        ordered_pts = None
     aligned_img = ip.align_page(img, corner_pts=ordered_pts)
 
     return aligned_img
@@ -113,8 +116,10 @@ def parse_template_form(form: dict) -> dict:
     return questions
 
 
-def save_image(img: np.ndarray, img_id: str, img_path=IMG_STORAGE_PATH) -> str:
-    """save image in location storage
+def save_template_image(
+    img: np.ndarray, img_id: str, img_path=IMG_STORAGE_PATH
+) -> str:
+    """add 5% padding and save image in location storage
 
     Args:
         img (np.ndarray): image to save
@@ -124,7 +129,21 @@ def save_image(img: np.ndarray, img_id: str, img_path=IMG_STORAGE_PATH) -> str:
         str: path of saved image
     """
     save_img_path = os.path.join(f"formpyapp/{img_path}", f"{img_id}.jpeg")
-    if cv2.imwrite(save_img_path, img):
+    # add 5% padding
+    horizontal_border = int(img.shape[0] * 0.05)
+    vertical_border = int(img.shape[1] * 0.05)
+
+    padded_img = cv2.copyMakeBorder(
+        img,
+        horizontal_border,
+        horizontal_border,
+        vertical_border,
+        vertical_border,
+        cv2.BORDER_CONSTANT,
+        None,
+        (255, 255, 255),
+    )
+    if cv2.imwrite(save_img_path, padded_img):
         return save_img_path
     else:
         return None

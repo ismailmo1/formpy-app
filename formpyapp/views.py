@@ -33,7 +33,7 @@ from .api import (
     pdf_upload_to_img,
     read_form,
     read_form_img,
-    save_image,
+    save_template_image,
     str_to_img,
 )
 from .forms import (
@@ -137,7 +137,7 @@ def define_template(new_copy):
         saved_template.img_name = old_img_name
         saved_template.save()
     elif new_copy == "new":
-        save_image(img, saved_template.img_name)
+        save_template_image(img, saved_template.img_name)
         # add error handling for failed image saves
 
     return jsonify(saved_template.to_json())
@@ -179,7 +179,8 @@ def delete_template(template_id: str):
 def edit_template(template_id):
     template = db.get_template(template_id)
     img = get_image(template_id)
-    template_img = img_to_str(img)
+    aligned_img = align_img(img)
+    template_img = img_to_str(aligned_img)
     is_owner = True if current_user == template.owner else False
     if not is_owner:
         flash(
