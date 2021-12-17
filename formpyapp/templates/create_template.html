@@ -43,14 +43,24 @@
 <div class="tab-content" id="nav-tabContent">
   <div class="tab-pane fade {% if title=="create" %}show active{% endif %}" id="nav-upload" role="tabpanel"
     aria-labelledby="nav-upload-tab">
-    <div class="row" id="formRow">
+    <div class="mt-5 row" id="formRow">
       <form method="POST" enctype="multipart/form-data" id="uploadImgForm">
-        <label class="row m-2" for="photoUpload">Upload an image of your filled template</label>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <legend>Upload your template file (pdf or image)</legend>
+        <label class="row mx-auto my-3" for="photoUpload"><span>Add a border to your template so we can use it for alignment, otherwise we'll add one for you.</span>
+          <a data-bs-toggle="collapse" href="#exampleUpload">(Show me an example)</a>
+        </label> 
+        <div class="collapse row justify-items-center" id="exampleUpload">
+          <figure class="figure">
+            <img src={{ url_for("static",filename="/images/example_upload.jpeg" ) }} alt="" class="figure-img img-fluid rounded">
+          </figure>
+        </div>
         <input type="file" name="uploadedTemplate" id="photoUpload" accept="image/*, .pdf" />
         <div>
           <input class="btn btn-success mt-1" type="submit" value="Upload" id="uploadImgBtn" />
         </div>
+        <div class="col">
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       </form>
     </div>
   </div>

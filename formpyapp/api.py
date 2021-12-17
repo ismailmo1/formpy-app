@@ -207,6 +207,8 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
         qn.question_id: [ans.value for ans in answers]
         for (qn, answers) in qn_ans.items()
     }
+
+    # cv2.destroyAllWindows()
     return form.mark_all_answers(qn_ans, color=(255, 0, 0)), qn_ans_vals
 
 

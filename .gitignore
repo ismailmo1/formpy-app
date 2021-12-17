@@ -2,5 +2,6 @@ venv/
 .env
 *__pycache__
 *.jpeg
+*.jpg
 *.webm
 impromptu_tests*

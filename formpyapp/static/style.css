@@ -12,3 +12,7 @@
 .dropdown-menu > li {
   display: inline-flex;
 }
+
+.lib-icon {
+  width: 10%;
+}
