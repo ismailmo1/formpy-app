@@ -15,8 +15,8 @@
         <div class="row justify-content-center">
 
             {% for template in templates %}
-            <div class="col-lg-4 col-md-6 my-2">
-                <div class="card">
+            <div class="col-12 col-md-6 col-xl-4 my-2">
+                <div class="card shadow">
                     <img src={{url_for('static', filename="image_storage/template_images/" )}}{{template.img_name}}.jpeg
                         alt="template-image" class="card-img-top img-fluid">
                     <div class="card-body">
@@ -36,7 +36,9 @@
                 <input type="file" name="formImg" id="formImg" class="form-control" multiple>
             </div>
         </div>
-        <button class="btn btn-info" id="readFormBtn">Read Form</button>
+        <div id="readButtons" class="row justify-content-between mb-5 mx-2">
+            <button class="col-md-2 btn btn-info" id="readFormBtn">Read Forms</button>
+        </div>
     </form>
     <div hidden id="loadingSpinner" class="row justify-content-center">
         Reading Forms

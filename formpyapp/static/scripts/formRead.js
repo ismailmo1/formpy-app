@@ -1,6 +1,7 @@
 let readBtn = document.querySelector("#readFormBtn");
 let formsUploadFrm = document.querySelector("form");
 let container = document.querySelector("#mainContainer")
+let buttons = document.getElementById("readButtons")
 let imageModal = document.querySelector("#formImgModal")
 let modalTitle = document.querySelector(".modal-title")
 let modalBody = document.querySelector(".modal-body")
@@ -28,10 +29,10 @@ readBtn.addEventListener("click", async (e) => {
 
     // add csv download button
     let csvDlBtn = document.createElement("a")
-    csvDlBtn.classList.add("btn", "btn-success")
+    csvDlBtn.classList.add("btn", "btn-success", "col-md-2")
     csvDlBtn.addEventListener("click", (e) => { download_table_as_csv("formResultsTable") })
     csvDlBtn.innerText = "Export as CSV"
-    container.appendChild(csvDlBtn);
+    buttons.appendChild(csvDlBtn);
 
     // add results table
     let resultsTable = createResultsTable(formResults['answers']);

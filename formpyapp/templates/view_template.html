@@ -10,8 +10,8 @@
 <div class="row row-cols-sm-2 row-cols-md-3">
 
   {% for template in templates %}
-  <div class="col my-2">
-    <div class="card">
+  <div class="col-12 col-md-6 col-xl-4 my-2">
+    <div class="card shadow">
       <img src={{url_for('static', filename="image_storage/template_images/" )}}{{template.img_name}}.jpeg
         alt="template-image" class="card-img-top img-fluid">
       <div class="card-body">
@@ -32,6 +32,8 @@
         </p>
         <div class="btn-group d-flex justify-content-center mx-3">
           <a class="btn btn-outline-info" id="editTemplateButton" href="edit/{{template.id}}">Edit</a>
+          <a class="btn btn-outline-success" id="printTemplateButton" onclick="printPage(this)">Print</a>
+
           {% if template.owner ==current_user %}
           <button class="btn btn-outline-danger " id="deleteTemplateButton" data-bs-toggle="modal"
             data-bs-target="#delete{{template.id}}Modal">Delete</button>
@@ -61,5 +63,6 @@
   </div>
   {% endfor %}
 </div>
+<script src={{ url_for("static",filename="/scripts/printTemplate.js" ) }}></script>
 
 {% endblock %}
