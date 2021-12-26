@@ -13,8 +13,8 @@
                 "FLASK_APP": "run.py",
                 "FLASK_ENV": "development",
                 "FLASK_SECRET":"secret",
-                "IMG_STORAGE_PATH": "/static/image_storage/template_images"                
-
+                "IMG_STORAGE_PATH": "/static/image_storage/template_images",                
+                "DOCS_FOLDER_PATH": "static/docs"
             },
             "args": [
                 "run",

@@ -9,7 +9,7 @@ from flask import (
     render_template,
     request,
 )
-from flask.helpers import url_for
+from flask.helpers import send_from_directory, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_login.utils import login_required
 from flask_wtf.csrf import CSRFProtect
@@ -58,6 +58,13 @@ def home():
 @app.get("/getting-started")
 def start():
     return render_template("getting_started.html")
+
+
+@app.get("/starter-doc")
+def starter_doc():
+    return send_from_directory(
+        directory=os.environ["DOCS_FOLDER_PATH"], path="formpy-starter-doc.odt"
+    )
 
 
 @app.get("/create")
