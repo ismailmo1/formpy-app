@@ -1,0 +1,22 @@
+body {
+  font-family: "Gayathri", sans-serif;
+}
+
+#canvas {
+  width: 100%;
+  height: auto;
+}
+
+#defineCanvasControls,
+#alignCanvasControls,
+#defineCanvasQnControls {
+  position: absolute;
+}
+
+.dropdown-menu > li {
+  display: inline-flex;
+}
+
+.lib-icon {
+  width: 10%;
+}

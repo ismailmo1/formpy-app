@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% set active_link = 'login' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center h-100">
+
+    <form action="login" method="post">
+        {{form.csrf_token}}
+        <div class="row mt-5">
+            <h1>{{title}}</h1>
+        </div>
+        <div class="row mb-3">
+            {{ form.username.label(class='form-label')}}<br>
+            {{ form.username (class ='form-control')}}<br>
+            {% for error in form.username.errors %}
+            <div class="form-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="row mb-3">
+            {{ form.password.label(class='form-label')}}<br>
+            {{ form.password(class ='form-control') }}<br>
+            {% for error in form.password.errors %}
+            <div class="form-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="row mb-3">
+            {{ form.login(class='btn btn-success') }}<br>
+            {% for error in form.password.errors %}
+            <div class="form-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+    </form>
+</div>
+{% endblock %}

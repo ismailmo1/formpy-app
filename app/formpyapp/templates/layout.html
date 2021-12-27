@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+    <main class="d-flex min-vh-100">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi me-2" width="40" height="32">
+                </svg>
+                <span class="fs-4">Formpy</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="/getting-started" class="nav-link {% if "start"==active_link %} active {% else %} text-white {%endif%}"
+                        aria-current="page">
+                        Quick Start Guide
+                    </a>
+                </li>
+                <li>
+                    <a href="/create" class="nav-link {% if active_link=="create" %} active {% else %} text-white
+                        {%endif%}">
+                        Create template
+                    </a>
+                </li>
+                <li>
+                    <a href="/view" class="nav-link {% if "view"==active_link %} active {% else %} text-white
+                        {%endif%}">
+                        View templates
+                    </a>
+                </li>
+                <li>
+                    <a href="/read" class="nav-link {% if "read"==active_link %} active {% else %} text-white
+                        {%endif%}">
+                        Read Forms
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav nav-pills flex-column mt-auto">
+                {% if not current_user.is_anonymous %}
+                <li>
+                    <a href="/user/edit" class='nav-link text-white'> Hi {{current_user.first_name}}</a>
+                </li>
+                <li>
+                    <a href="/logout" class="nav-link text-white">
+                        Logout
+                    </a>
+                </li>
+                {%else%}
+                <li>
+                    <a href="/login" class="nav-link {% if "login"==active_link %} active {% else %} text-white
+                        {%endif%}">
+                        Login
+                    </a>
+                </li>
+                <li>
+                    <a href="/register" class="nav-link {% if "register"==active_link %} active {% else %} text-white
+                        {%endif%}">
+                        Register
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="container" id="mainContainer">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="mt-2 alert alert-{{category}} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                </button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    {% endblock %}

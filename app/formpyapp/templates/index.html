@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block main %}
+<nav class="navbar navbar-light">
+    <div class="container-fluid justify-content-end ">
+        <a class="navbar-brand" href="https://www.ismailmo.com"><i class="fas fa-user-tie"></i></a>
+        <a class="navbar-brand" href="https://github.com/ismailmo1"><i class="fab fa-github"></i></a>
+        <a class="navbar-brand" href="https://linkedin.com/in/ismailmo-chem"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+</nav>
+<div class="vh-100 container">
+    <div class="mx-auto h-75 row justify-content-between align-items-center">
+        <div class="col-lg-6">
+            <h1 class="display-1 text-end">Formpy</h1>
+            <div class="row text-end">
+                <h2 class="text-muted">Automating paper forms</h2>
+            </div>
+            <div class="row justify-content-end">
+                <div class="col-4 mt-5">
+                    <a href="/getting-started" class="btn btn-outline-dark btn-lg">Get Started</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="ratio ratio-16x9" id="demo-video">
+                <video controls preload="auto" src={{url_for('static', filename="videos/promo.webm" )}}
+                    type="video/webm"></video>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer class="mt-5 p-5 border-top">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-4 text-center mx-auto ">
+                <div class="border-0">Developed by <a class="link-dark text-decoration-none"
+                        href="http://www.ismailmo.com">Ismail 👨‍💻</a></div>
+                <div class="border-0 my-2">Powered by:</div>
+                <div class="row my-1 align-items-center justify-content-center">
+                    <div class="col-12"><a href="https://flask.palletsprojects.com/en/2.0.x/">
+                            <img class="lib-icon p-1" src={{url_for('static', filename="images/flask.png" )}}
+                                alt="flask"></a>
+                        <a href="https://www.mongodb.com/">
+                            <img class="lib-icon p-1" src={{url_for('static', filename="images/mongodb.png" )}}
+                                alt="mongodb"></a>
+                        <a href="https://opencv.org/">
+                            <img class="lib-icon p-1" src={{url_for('static', filename="images/opencv.png" )}}
+                                alt="opencv"></a>
+                        <a href="http://fabricjs.com/">
+                            <img class="lib-icon p-1 m-0" src={{url_for('static', filename="images/fabricjs.png" )}}
+                                alt="fabricjs"></a>
+                        <a href="https://getbootstrap.com/">
+                            <img class="lib-icon p-1 m-0" src={{url_for('static', filename="images/bootstrap.png" )}}
+                                alt="bootstrap"></a>
+                        ☕
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href="http://github.com/ismailmo1">Github</a>
+                    </li>
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href="http://linkedin.com/in/ismailmo-chem">LinkedIn</a></li>
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href="mailto:ismailmo4@gmail.com">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-4">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href={{url_for("start")}}>Quick
+                            Start Guide</a></li>
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href=https://www.ismailmo.com/projects/formpy />Development Blog</a></li>
+                    <li class="list-group-item text-center mx-auto border-0"><a class="link-dark text-decoration-none"
+                            href="https://github.com/ismailmo1/formpy">Formpy
+                            Standalone Library</a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</footer>
+{% endblock %}
