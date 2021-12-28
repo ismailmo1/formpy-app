@@ -10,10 +10,10 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "run.py",
+                "FLASK_APP": "app/app.py",
                 "FLASK_ENV": "development",
-                "FLASK_SECRET":"secret",
-                "IMG_STORAGE_PATH": "/static/image_storage/template_images",                
+                "FLASK_SECRET": "secret",
+                "IMG_STORAGE_PATH": "/static/image_storage/template_images",
                 "DOCS_FOLDER_PATH": "static/docs"
             },
             "args": [
@@ -21,6 +21,21 @@
                 "--no-debugger"
             ],
             "jinja": true
+        },
+        {
+            "name": "Docker: Python - Flask",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "python": {
+                "pathMappings": [
+                    {
+                        "localRoot": "${workspaceFolder}",
+                        "remoteRoot": "/app"
+                    }
+                ],
+                "projectType": "flask"
+            }
         }
     ]
 }
