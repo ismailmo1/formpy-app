@@ -1,10 +1,93 @@
 version: '3.4'
 
 services:
-  formpyapp:
-    image: formpyapp
+  flask:
+    image: flask
+    container_name: formpyapp
+    restart: unless-stopped
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: app
+      dockerfile: Dockerfile
     ports:
       - 5000:5000
+    environment:
+      FLASK_DEBUG: "False"
+      FLASK_PORT: 5000
+      FLASK_ENV: "production"
+      FLASK_SECRET: "/run/secrets/flask_secret"
+      IMG_STORAGE_PATH: /static/image_storage/template_images
+      DOCS_FOLDER_PATH: static/docs
+      MONGODB_HOSTNAME: mongodb
+      MONGODB_DATABASE: formpydb
+      MONGODB_USERNAME: flaskuser
+      MONGODB_PASSWORD: "/run/secrets/mongo_pwd"
+    volumes:
+      - appdata:/var/www
+    depends_on:
+      - mongodb
+    networks:
+      - frontend
+      - backend
+  
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    command: mongod --auth
+    environment:      
+      MONGO_INITDB_ROOT_USERNAME: mongodbuser
+      MONGO_INITDB_ROOT_PASSWORD_FILE: "/run/secrets/mongo_root_pwd"
+      MONGO_INITDB_DATABASE: formpydb
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - backend
+
+  webserver:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    image: nginx
+    container_name: webserver
+    restart: unless-stopped
+    environment:
+      APP_ENV: "prod"
+      APP_NAME: "webserver"
+      APP_DEBUG: "false"
+      SERVICE_NAME: "webserver"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginxdata:/var/log/nginx
+    depends_on:
+      - flask
+    networks:
+      - frontend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  mongodbdata:
+    driver: local
+  userimages:
+    driver: local
+  appdata:
+    driver: local
+  nginxdata:
+    driver: local
+
+secrets:
+  mongo_root_pwd:
+    file: ./secrets/mongo_root_pwd.txt
+  mongo_pwd:
+    file: ./secrets/mongo_pwd.txt
+  flask_secret:
+    file: ./secrets/flask_secret.txt
+

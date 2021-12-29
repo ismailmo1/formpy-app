@@ -1,4 +1,5 @@
 import json
+import os
 
 import mongoengine as me
 from flask_login import current_user
@@ -8,7 +9,16 @@ from .api import parse_template_form
 from .models import Answer, Coordinate2D, Question, Template, User
 from .views import app
 
-me.connect(host="mongodb://127.0.0.1:27017/formpyapp")
+me.connect(
+    host="mongodb://"
+    + os.environ["MONGODB_USERNAME"]
+    + ":"
+    + os.environ["MONGODB_PASSWORD"]
+    + "@"
+    + os.environ["MONGODB_HOSTNAME"]
+    + ":27017/"
+    + os.environ["MONGODB_DATABASE"]
+)
 
 
 def create_template_coords(template_coords: str):
@@ -34,9 +44,7 @@ def create_template_questions(template_questions: dict) -> Template:
             answers.append(answer)
 
         question = Question(
-            question_value=qn_name,
-            multiple_choice=qn_mult,
-            answers=answers,
+            question_value=qn_name, multiple_choice=qn_mult, answers=answers
         )
         questions.append(question)
 

@@ -1,7 +1,8 @@
-import sys
+import os
 
-print(sys.path)
 from formpyapp import app
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, port=80)
+    ENVIRONMENT_DEBUG = os.environ.get("FLASK_DEBUG", True)
+    ENVIRONMENT_PORT = os.environ.get("FLASK_PORT", 5000)
+    app.run(host="0.0.0.0", port=ENVIRONMENT_PORT, debug=ENVIRONMENT_DEBUG)

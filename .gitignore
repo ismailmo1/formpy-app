@@ -1,7 +1,6 @@
 venv/
 .env
 *__pycache__
-*.jpeg
-*.jpg
-*.webm
 impromptu_tests*
+secrets/
+app/formpyapp/static/image_storage/
