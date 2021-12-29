@@ -8,8 +8,11 @@ EXPOSE 5000
 WORKDIR /var/www/
 
 # Install pip requirements
-COPY . /var/www/
+COPY requirements.txt /var/www/
 RUN python -m pip install -r requirements.txt
+
+# copy rest of files
+COPY . /var/www/
 
 # Keeps Python from generating .pyc  files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
