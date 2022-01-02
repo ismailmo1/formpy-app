@@ -7,6 +7,9 @@ EXPOSE 5000
 # standard place to keep web server files
 WORKDIR /var/www/
 
+#install poppler
+RUN apt update && apt install poppler-utils
+
 # Install pip requirements
 COPY requirements.txt /var/www/
 RUN python -m pip install -r requirements.txt
