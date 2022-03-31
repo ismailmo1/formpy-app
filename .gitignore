@@ -4,3 +4,4 @@ venv/
 impromptu_tests*
 secrets/
 app/formpyapp/static/image_storage/
+*.mongodb

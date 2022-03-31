@@ -8,7 +8,7 @@ EXPOSE 5000
 WORKDIR /var/www/
 
 #install poppler
-RUN apt update && apt install poppler-utils
+RUN apt update -y && apt install -y poppler-utils
 
 # Install pip requirements
 COPY requirements.txt /var/www/
