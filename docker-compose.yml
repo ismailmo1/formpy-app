@@ -41,7 +41,7 @@ services:
       MONGODB_DATA_DIR: /data/db
       MONDODB_LOG_DIR: /dev/null
     volumes:
-      - ./home/mongodb:/home/mongodb
+      - .mongodb/home/mongodb:/home/mongodb
       - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
       - mongodbdata:/data/db
     networks:
