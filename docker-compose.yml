@@ -17,7 +17,8 @@ services:
       DOCS_FOLDER_PATH: static/docs
       MONGODB_HOSTNAME: mongodb
       MONGODB_DATABASE: formpydb
-      VIRTUAL_HOST: formpy.localhost
+      VIRTUAL_HOST: formpy.ismailmo.com
+      LETSENCRYPT_HOST: formpy.ismailmo.com
     volumes:
       - appdata:/var/www
     depends_on:
