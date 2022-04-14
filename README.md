@@ -3,6 +3,7 @@
 Checkout the live website [here](https://formpy.ismailmo.com)!
 
 ---
+https://user-images.githubusercontent.com/15056360/163415852-6ff43820-e7b3-470b-a002-e87f0a54a264.mp4
 
 Formpy started out as a bunch of scripts sitting on local machine to help speed up the processing of hand-filled paper forms in a manufacturing plant to track productivity. Using openCV to process the scanned documents (aligning the pages and detecting filled in answers) - the data was easily digitised at scale which opened up a whole range of possibilities for data analysis and insights to improve operational efficiency.
 
