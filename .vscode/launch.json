@@ -10,9 +10,7 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "app/app.py",
-                "FLASK_ENV": "development",
-                "FLASK_SECRET": "secret",
+                "FLASK_APP": "app/wsgi.py",
                 "IMG_STORAGE_PATH": "/static/image_storage/template_images",
                 "DOCS_FOLDER_PATH": "static/docs"
             },

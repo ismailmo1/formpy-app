@@ -9,12 +9,15 @@ from .api import parse_template_form
 from .models import Answer, Coordinate2D, Question, Template, User
 from .views import app
 
+#dev db doesn't require credentials
+if os.environ["FLASK_ENV"] == 'development':
+    credentials =""
+else:
+    credentials =  os.environ["MONGODB_USERNAME"]+ ":"+ os.environ["MONGODB_PASSWORD"]+ "@"
+
 me.connect(
     host="mongodb://"
-    + os.environ["MONGODB_USERNAME"]
-    + ":"
-    + os.environ["MONGODB_PASSWORD"]
-    + "@"
+    + credentials
     + os.environ["MONGODB_HOSTNAME"]
     + ":27017/"
     + os.environ["MONGODB_DATABASE"]

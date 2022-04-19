@@ -10,7 +10,7 @@ services:
     expose:
       - 5000
     environment:
-      FLASK_DEBUG: "True"
+      FLASK_DEBUG: "False"
       FLASK_PORT: 5000
       FLASK_ENV: "production"
       IMG_STORAGE_PATH: /static/image_storage/template_images
