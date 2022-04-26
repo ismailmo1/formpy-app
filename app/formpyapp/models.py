@@ -59,7 +59,6 @@ class Template(Document):
     owner = ReferenceField(User, reverse_delete_rule=NULLIFY)
     # i.e. what category the template belongs to: school quiz, manufacturing, public survey etc
     category_tags = ListField(StringField(max_length=10))
-    public = BooleanField(default=False)
     img_name = StringField(default=str(uuid4()))
 
     @property
