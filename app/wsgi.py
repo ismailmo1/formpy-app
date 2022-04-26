@@ -1,8 +1,6 @@
-from dotenv import load_dotenv
+from formpyapp import create_app
 
-# load env before importing app
-load_dotenv()
-from app import app as application
+app = create_app("config.py")
 
 if __name__ == "__main__":
-    application.run()
+    app.run()
