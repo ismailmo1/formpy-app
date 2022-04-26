@@ -2,7 +2,6 @@ from collections import defaultdict
 from uuid import uuid4
 
 from flask_login import UserMixin
-from formpyapp.views import login
 from mongoengine import Document
 from mongoengine.document import EmbeddedDocument
 from mongoengine.fields import (
@@ -85,8 +84,3 @@ class Template(Document):
                 ] = ans_dict
 
         return question_dict
-
-
-@login.user_loader
-def load_user(id):
-    return User.objects(id=id).first()

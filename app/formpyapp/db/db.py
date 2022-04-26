@@ -5,30 +5,13 @@ import cv2
 import mongoengine as me
 import numpy as np
 from flask_login import current_user
+from flask_mongoengine import MongoEngine
 from mongoengine.queryset.visitor import Q
 
+mongo = MongoEngine()
 from formpyapp.db.models import Answer, Coordinate2D, Question, Template, User
 
 IMG_STORAGE_PATH = os.environ["IMG_STORAGE_PATH"]
-
-# dev db doesn't require credentials
-if os.environ["FLASK_ENV"] == "development":
-    credentials = ""
-else:
-    credentials = (
-        os.environ["MONGODB_USERNAME"]
-        + ":"
-        + os.environ["MONGODB_PASSWORD"]
-        + "@"
-    )
-
-me.connect(
-    host="mongodb://"
-    + credentials
-    + os.environ["MONGODB_HOSTNAME"]
-    + ":27017/"
-    + os.environ["MONGODB_DATABASE"]
-)
 
 
 def create_template_coords(template_coords: str):
