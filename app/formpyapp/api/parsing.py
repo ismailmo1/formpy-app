@@ -3,11 +3,10 @@ from collections import defaultdict
 from typing import Tuple
 
 import numpy as np
-from app.formpy.questions import Form, Template
-from formpyapp import models
-from formpyapp.db import get_image
-
-from api.img_proc import read_form_img
+from formpy.questions import Form, Template
+from formpyapp.api.img_proc import read_form_img
+from formpyapp.db import models
+from formpyapp.db.db import get_image
 
 IMG_STORAGE_PATH = os.environ["IMG_STORAGE_PATH"]
 
