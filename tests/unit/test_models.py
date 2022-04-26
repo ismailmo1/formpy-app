@@ -3,7 +3,7 @@ import json
 
 def test_new_user():
     # need to load inside func to allow fixture env vars to be set first
-    from app.formpyapp.models import User
+    from app.formpyapp.db.models import User
 
     user = User(
         username="ismailmo",
@@ -21,7 +21,7 @@ def test_new_user():
 
 
 def test_new_coordinate():
-    from app.formpyapp.models import Coordinate2D
+    from app.formpyapp.db.models import Coordinate2D
 
     coordinate = Coordinate2D(x_coordinate=100, y_coordinate=42)
 
@@ -30,7 +30,7 @@ def test_new_coordinate():
 
 
 def test_new_answer():
-    from app.formpyapp.models import Answer, Coordinate2D
+    from formpyapp.db.models import Answer, Coordinate2D
 
     coordinates = Coordinate2D(x_coordinate=200, y_coordinate=300)
     answer = Answer(coordinates=coordinates, value="test answer")
@@ -41,7 +41,7 @@ def test_new_answer():
 
 
 def test_new_question():
-    from app.formpyapp.models import Answer, Coordinate2D, Question
+    from formpyapp.db.models import Answer, Coordinate2D, Question
 
     # create a bunch of answers
     answers = []
@@ -66,7 +66,7 @@ def test_new_question():
 
 
 def test_new_template():
-    from app.formpyapp.models import (
+    from formpyapp.db.models import (
         Answer,
         Coordinate2D,
         Question,

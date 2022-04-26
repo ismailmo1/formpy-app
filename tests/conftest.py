@@ -12,7 +12,7 @@ def set_environment_vars():
 
 @pytest.fixture()
 def create_question(create_answer):
-    from app.formpyapp.models import Question
+    from app.formpyapp.db.models import Question
 
     question = Question(
         answers=create_answer,
