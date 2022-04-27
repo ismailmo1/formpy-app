@@ -1,13 +1,22 @@
-import os
-from unittest import mock
-
 import pytest
+from app.formpyapp import create_app
 
 
-@pytest.fixture(scope="session", autouse=True)
-def set_environment_vars():
-    with mock.patch.dict(os.environ, {"IMG_STORAGE_PATH": "/"}):
-        yield
+@pytest.fixture()
+def app():
+    app = create_app("config/test_config.py")
+    app.config.update(
+        {
+            "TESTING": True,
+        }
+    )
+
+    yield app
+
+
+@pytest.fixture(app)
+def client():
+    return app.test_client()
 
 
 @pytest.fixture()
