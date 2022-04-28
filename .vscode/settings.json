@@ -1,4 +1,11 @@
 {
     "python.linting.enabled": false,
-    "python.analysis.extraPaths": ["/home/ismail/Projects/web/formpy"]
+    "python.analysis.extraPaths": [
+        "/home/ismail/Projects/web/formpy"
+    ],
+    "python.testing.pytestArgs": [
+        "."
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }

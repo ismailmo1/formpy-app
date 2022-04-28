@@ -5,11 +5,10 @@ import os
 from collections import defaultdict
 from typing import Tuple
 
+import app.formpy.utils.img_processing as ip
 import cv2
-import formpy.utils.img_processing as ip
 import numpy as np
-from formpy.questions import Form, Template
-from formpy.utils.template_definition import find_spots
+from app.formpy.questions import Form, Template
 from pdf2image import convert_from_bytes
 from PIL import Image
 
@@ -191,12 +190,18 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
     """
     template = models.Template.objects(id=template_id).first()
     template_dict = template.question_dict
+
+    # TODO uncomment below when formpy is added as pip dependency
+    # question_dict = template.question_dict
+    # template_dict = {'questions':question_dict}
     template_img = get_image(template_id)
     img = read_form_img(form_img)
+
     # scale image to match template image size
     # scaled_img = cv2.resize(
     #     img, template_img.shape, interpolation=cv2.INTER_LINEAR
     # )
+
     template = Template.from_dict(template_img, template_dict)
     form = Form(img, template)
     qn_ans = {}

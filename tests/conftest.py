@@ -1,23 +1,67 @@
-import os
-from unittest import mock
+from unittest.mock import patch
 
 import pytest
+from mongoengine import connect
+from mongomock import MongoClient
 
 
-@pytest.fixture(scope="session", autouse=True)
-def set_environment_vars():
-    with mock.patch.dict(os.environ, {"IMG_STORAGE_PATH": "/"}):
-        yield
+class MongoMockClient(MongoClient):
+    def init_app(self, app):
+        return super().__init__()
 
 
 @pytest.fixture()
-def create_question(create_answer):
-    from app.formpyapp.models import Question
+def mongo():
+    connect("test", "mongomock://localhost/")
+
+
+@pytest.fixture()
+def app():
+    from app.formpyapp import create_app
+
+    test_app = create_app("config/test_config.py")
+    test_app.config.update(
+        {
+            "TESTING": True,
+        }
+    )
+
+    yield test_app
+
+
+@pytest.fixture()
+def client(app):
+    return app.test_client()
+
+
+@pytest.fixture()
+def answer():
+    pass
+
+
+@pytest.fixture()
+def question(answer):
+    from app.formpyapp.db.models import Question
 
     question = Question(
-        answers=create_answer,
+        answers=answer,
         question_value="question test",
         multiple_choice=False,
     )
 
     return question
+
+
+@pytest.fixture()
+def template(question):
+    from app.formpyapp.db.models import Template
+
+
+@pytest.fixture()
+def user(app):
+    import app.formpyapp.db.utils as utils
+    from app.formpyapp.db.models import User
+
+    user = User(username="test_user", email="test@test.com")
+    user.set_password("test")
+    return user.save()

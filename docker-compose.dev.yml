@@ -5,7 +5,7 @@ services:
     container_name: formpyapp
     restart: unless-stopped
     build:
-      context: .
+      context: app
       dockerfile: dev.Dockerfile
     expose:
       - 5000

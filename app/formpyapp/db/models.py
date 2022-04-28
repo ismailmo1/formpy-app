@@ -17,8 +17,6 @@ from mongoengine.fields import (
 from mongoengine.queryset.base import NULLIFY
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from .views import login
-
 
 class User(UserMixin, Document):
     username = StringField(
@@ -86,8 +84,3 @@ class Template(Document):
                 ] = ans_dict
 
         return question_dict
-
-
-@login.user_loader
-def load_user(id):
-    return User.objects(id=id).first()
