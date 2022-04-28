@@ -1,0 +1,41 @@
+{
+    "public": true,
+    "templateName": "updated test template",
+    "uploadedTemplate": "data:image/jpeg;base64",
+    "questions": {
+        "1": {
+            "multiple": false,
+            "answers": [
+                {
+                    "answer_coords": "100,200",
+                    "answer_val": "updated_ans1"
+                },
+                {
+                    "answer_coords": "300,400",
+                    "answer_val": "updated_ans2"
+                },
+                {
+                    "answer_coords": "500,600",
+                    "answer_val": "updated_ans3"
+                }
+            ]
+        },
+        "2": {
+            "multiple": true,
+            "answers": [
+                {
+                    "answer_coords": "100,200",
+                    "answer_val": "updated_ans1"
+                },
+                {
+                    "answer_coords": "300,400",
+                    "answer_val": "updated_ans2"
+                },
+                {
+                    "answer_coords": "500,600",
+                    "answer_val": "updated_ans3"
+                }
+            ]
+        }
+    }
+}
