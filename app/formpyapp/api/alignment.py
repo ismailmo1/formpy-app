@@ -1,6 +1,6 @@
 import json
 
-import formpy.utils.img_processing as ip
+import app.formpy.utils.img_processing as ip
 import cv2
 import numpy as np
 
