@@ -11,7 +11,7 @@ WORKDIR /workspace
 RUN apt update -y && apt install -y poppler-utils
 
 # Install pip requirements
-COPY app/requirements.txt .
+COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
 # copy rest of files
