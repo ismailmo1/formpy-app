@@ -1,21 +1,10 @@
+import time
 from unittest.mock import patch
 
 import pytest
-from mongoengine import connect
-from mongomock import MongoClient
 
 
-class MongoMockClient(MongoClient):
-    def init_app(self, app):
-        return super().__init__()
-
-
-@pytest.fixture()
-def mongo():
-    connect("test", "mongomock://localhost/")
-
-
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def app():
     from app.formpyapp import create_app
 
@@ -35,16 +24,21 @@ def client(app):
 
 
 @pytest.fixture()
-def answer():
-    pass
+def answer_model():
+    from app.formpyapp.db.models import Answer, Coordinate2D
+
+    coord = Coordinate2D(x_coordinate=200, y_coordinate=500)
+    answer = Answer(coordinates=coord, value="test answer")
+
+    return answer
 
 
 @pytest.fixture()
-def question(answer):
+def question_model(answer_model):
     from app.formpyapp.db.models import Question
 
     question = Question(
-        answers=answer,
+        answers=[answer_model],
         question_value="question test",
         multiple_choice=False,
     )
@@ -53,15 +47,37 @@ def question(answer):
 
 
 @pytest.fixture()
-def template(question):
+def template_model(question_model, db_user):
     from app.formpyapp.db.models import Template
+
+    template = Template(
+        name="test template",
+        questions=[question_model],
+        owner=db_user,
+        category_tags=["testing"],
+        public=True,
+    )
+
+    return template
+
+
+@pytest.fixture(scope="function")
+def db_user(app):
+    from app.formpyapp.db.models import User
+
+    user = User(
+        username=f"test_user{str(time.time())[-6:]}",
+        email=f"test{time.time()}@test.com",
+    )
+    user.set_password("test")
+    user.save()
+    yield user
+    user.delete()
 
 
 @pytest.fixture()
-def user(app):
-    import app.formpyapp.db.utils as utils
-    from app.formpyapp.db.models import User
+def db_template(template_model, db_user):
+    yield template_model.save()
 
-    user = User(username="test_user", email="test@test.com")
-    user.set_password("test")
-    return user.save()
+    with patch("app.formpyapp.db.utils.current_user", db_user):
+        template_model.delete()
