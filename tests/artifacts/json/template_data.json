@@ -1,11 +1,11 @@
 {
-    "public": true,
+    "public": "True",
     "templateName": "test template",
     "uploadedTemplate": "data:image/jpeg;base64",
     "currTempId": null,
     "questions": {
         "1": {
-            "multiple": true,
+            "multiple": "True",
             "answers": [
                 {
                     "answer_coords": "553,461",
