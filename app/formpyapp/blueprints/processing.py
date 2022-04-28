@@ -1,3 +1,4 @@
+from app.formpy.utils.img_processing import ImageAlignmentError
 from app.formpyapp.api.alignment import (
     add_align_rectangle,
     align_img,
@@ -14,7 +15,6 @@ from app.formpyapp.db import utils
 from app.formpyapp.db.models import Template
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user
-from app.formpy.utils.img_processing import ImageAlignmentError
 from mongoengine.errors import NotUniqueError
 
 bp = Blueprint("processing", __name__)
@@ -96,7 +96,7 @@ def define_template(new_copy):
 
     return jsonify(saved_template.to_json())
     # flash(f"template '{saved_template.name}' created successfully!", "info")
-    # return redirect(url_for("view_template"))
+    # return redirect(url_for("crud.view_template"))
 
 
 @bp.route("/read", methods=["POST", "GET"])

@@ -31,7 +31,7 @@ def register():
         user.set_password(form.password.data)
         user.save()
         flash("user created successfully! please login", "success")
-        return redirect(url_for("login"))
+        return redirect(url_for("auth.login"))
     return render_template("register.html", title="Register", edit_form=form)
 
 
@@ -46,7 +46,7 @@ def login():
         user = User.objects(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash("Invalid username or password", "danger")
-            return redirect(url_for("login"))
+            return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
         flash(f"welcome back {current_user.username}!", "success")
         return redirect(url_for("home"))
