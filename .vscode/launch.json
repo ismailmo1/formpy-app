@@ -11,6 +11,7 @@
             "module": "flask",
             "env": {
                 "FLASK_APP": "app/wsgi.py",
+                "FLASK_CONFIG_FILE": "config/dev_config.py"
             },
             "args": [
                 "run",
