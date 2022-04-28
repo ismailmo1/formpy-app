@@ -1,0 +1,19 @@
+{
+    "1": {
+        "multiple": true,
+        "answers": [
+            {
+                "answer_coords": "553,461",
+                "answer_val": "ans1"
+            },
+            {
+                "answer_coords": "608,460",
+                "answer_val": "ans2"
+            },
+            {
+                "answer_coords": "661,461",
+                "answer_val": "ans3"
+            }
+        ]
+    }
+}
