@@ -1,20 +1,20 @@
-from formpy.utils.img_processing import ImageAlignmentError
-from formpyapp.api.alignment import (
+from app.formpyapp.api.alignment import (
     add_align_rectangle,
     align_img,
     get_bounding_pts,
 )
-from formpyapp.api.img_proc import (
+from app.formpyapp.api.img_proc import (
     img_to_str,
     pdf_upload_to_img,
     read_form_img,
     str_to_img,
 )
-from formpyapp.api.parsing import read_form, read_form_img
-from formpyapp.db import db
+from app.formpyapp.api.parsing import read_form, read_form_img
+from app.formpyapp.db import utils
+from app.formpyapp.db.models import Template
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user
-from formpyapp.db.models import Template
+from app.formpy.utils.img_processing import ImageAlignmentError
 from mongoengine.errors import NotUniqueError
 
 bp = Blueprint("processing", __name__)
@@ -80,7 +80,7 @@ def define_template(new_copy):
     else:
         owner = None
     try:
-        saved_template = db.save_template(template_data, owner)
+        saved_template = utils.save_template(template_data, owner)
     except NotUniqueError as e:
         # flash(f"template save failed: that template name is taken!", "danger")
         # return redirect(request.environ.get("HTTP_REFERER"))
@@ -91,7 +91,7 @@ def define_template(new_copy):
         saved_template.img_name = old_img_name
         saved_template.save()
     elif new_copy == "new":
-        db.save_template_image(img, saved_template.img_name)
+        utils.save_template_image(img, saved_template.img_name)
         # add error handling for failed image saves
 
     return jsonify(saved_template.to_json())
@@ -102,7 +102,7 @@ def define_template(new_copy):
 @bp.route("/read", methods=["POST", "GET"])
 def read_forms():
     if request.method == "GET":
-        templates = db.get_all_templates(current_user)
+        templates = utils.get_all_templates(current_user)
         return render_template("read_forms.html", templates=templates)
     elif request.method == "POST":
         template_id = request.form.get("templateId")

@@ -1,8 +1,6 @@
-import os
-
-from flask import Blueprint, render_template
+from app.formpyapp.forms.template_forms import DefineTemplateForm
+from flask import Blueprint, current_app, render_template
 from flask.helpers import send_from_directory
-from formpyapp.forms.template_forms import DefineTemplateForm
 
 bp = Blueprint("home", __name__)
 
@@ -21,7 +19,8 @@ def start():
 @bp.get("/starter-doc")
 def starter_doc():
     return send_from_directory(
-        directory=os.environ["DOCS_FOLDER_PATH"], path="formpy-starter-doc.odt"
+        directory=current_app.config["DOCS_FOLDER_PATH"],
+        path="formpy-starter-doc.odt",
     )
 
 

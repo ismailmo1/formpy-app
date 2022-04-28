@@ -2,16 +2,20 @@ import json
 import os
 
 import cv2
-import mongoengine as me
 import numpy as np
+from flask import current_app
 from flask_login import current_user
 from flask_mongoengine import MongoEngine
 from mongoengine.queryset.visitor import Q
 
 mongo = MongoEngine()
-from formpyapp.db.models import Answer, Coordinate2D, Question, Template, User
-
-IMG_STORAGE_PATH = os.environ["IMG_STORAGE_PATH"]
+from app.formpyapp.db.models import (
+    Answer,
+    Coordinate2D,
+    Question,
+    Template,
+    User,
+)
 
 
 def create_template_coords(template_coords: str):
@@ -139,14 +143,14 @@ def get_all_templates(current_user):
     return templates
 
 
-def get_image(
-    template_id: str, img_path: str = IMG_STORAGE_PATH
-) -> np.ndarray:
+def get_image(template_id: str, img_path: str | None = None) -> np.ndarray:
     """get image from template id
 
     Args:
         template_id (str): template id
     """
+    if img_path == None:
+        img_path = current_app.config["IMG_STORAGE_PATH"]
     template = Template.objects(id=template_id).first()
     img_path = os.path.join(
         f"formpyapp/{img_path}", f"{template.img_name}.jpeg"
@@ -157,12 +161,14 @@ def get_image(
     return img
 
 
-def delete_image(template_id: str, img_path: str = IMG_STORAGE_PATH) -> bool:
+def delete_image(template_id: str, img_path: str | None = None) -> bool:
     """delete image from template id, return true if deleted
 
     Args:
         template_id (str): template id
     """
+    if img_path == None:
+        img_path = current_app.config["IMG_STORAGE_PATH"]
     img_path = os.path.join(f"formpyapp/{img_path}", f"{template_id}.jpeg")
 
     if os.path.isfile(img_path):
@@ -173,7 +179,9 @@ def delete_image(template_id: str, img_path: str = IMG_STORAGE_PATH) -> bool:
 
 
 def save_template_image(
-    img: np.ndarray, img_id: str, img_path=IMG_STORAGE_PATH
+    img: np.ndarray,
+    img_id: str,
+    img_path: str | None = None,
 ) -> str:
     """add 5% padding and save image in location storage
 
@@ -184,7 +192,10 @@ def save_template_image(
     Returns:
         str: path of saved image
     """
-    save_img_path = os.path.join(f"formpyapp/{img_path}", f"{img_id}.jpeg")
+    if img_path == None:
+        img_path = current_app.config["IMG_STORAGE_PATH"]
+
+    save_img_path = os.path.join(f"{img_path}", f"{img_id}.jpeg")
     # add 5% padding
     horizontal_border = int(img.shape[0] * 0.05)
     vertical_border = int(img.shape[1] * 0.05)

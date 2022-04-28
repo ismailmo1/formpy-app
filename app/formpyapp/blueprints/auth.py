@@ -1,15 +1,15 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import current_user, login_user, logout_user
-from flask_login.utils import login_required
-from formpyapp import login_mgr
-from formpyapp.db import db
-from formpyapp.db.models import User
-from formpyapp.forms.auth_forms import (
+from app.formpyapp import login_mgr
+from app.formpyapp.db import utils
+from app.formpyapp.db.models import User
+from app.formpyapp.forms.auth_forms import (
     DeleteUserForm,
     EditUserForm,
     LoginForm,
     RegistrationForm,
 )
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_user, logout_user
+from flask_login.utils import login_required
 
 bp = Blueprint("auth", __name__)
 
@@ -91,11 +91,11 @@ def delete_user():
         template_delete = request.form.get("delete_options")
 
         if template_delete == "all":
-            db.remove_user_templates(current_user, private_only=False)
+            utils.remove_user_templates(current_user, private_only=False)
         elif template_delete == "private":
-            db.remove_user_templates(current_user, private_only=True)
+            utils.remove_user_templates(current_user, private_only=True)
         elif template_delete == "none":
-            db.make_templates_public(current_user)
+            utils.make_templates_public(current_user)
 
         name = current_user.username
         current_user.delete()
