@@ -16,11 +16,10 @@ from __future__ import annotations
 import json
 from typing import Tuple
 
+import app.formpy.utils.img_processing as ip
 import cv2
 import numpy as np
-
-import formpy.utils.img_processing as ip
-from formpy.utils.template_definition import find_spots
+from app.formpy.utils.template_definition import find_spots
 
 CIRCLE_RADIUS = 30
 
