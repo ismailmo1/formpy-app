@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from formpyapp.db.models import User
+from app.formpyapp.db.models import User
 from wtforms.fields.core import RadioField, StringField
 from wtforms.fields.simple import BooleanField, PasswordField, SubmitField
 from wtforms.validators import (
