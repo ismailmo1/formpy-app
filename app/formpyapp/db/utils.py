@@ -1,51 +1,12 @@
-import json
 import os
 
 import cv2
 import numpy as np
+from app.formpyapp.api.parsing import create_template_questions
+from app.formpyapp.db.models import Template, User
 from flask import current_app
 from flask_login import current_user
-from flask_mongoengine import MongoEngine
 from mongoengine.queryset.visitor import Q
-
-mongo = MongoEngine()
-from app.formpyapp.db.models import (
-    Answer,
-    Coordinate2D,
-    Question,
-    Template,
-    User,
-)
-
-
-def create_template_coords(template_coords: str):
-    all_coords = []
-    for coords in json.loads(template_coords):
-        x, y = coords
-        coordinate = Coordinate2D(x_coordinate=x, y_coordinate=y)
-        all_coords.append(coordinate)
-    return all_coords
-
-
-def create_template_questions(template_questions: dict) -> Template:
-
-    questions = []
-    for qn in template_questions.items():
-        answers = []
-        qn_name = qn[0]
-        qn_mult = True if qn[1]["multiple"] == "True" else False
-        for ans in qn[1]["answers"]:
-            x, y = (int(coord) for coord in ans["answer_coords"].split(","))
-            coordinates = Coordinate2D(x_coordinate=x, y_coordinate=y)
-            answer = Answer(coordinates=coordinates, value=ans["answer_val"])
-            answers.append(answer)
-
-        question = Question(
-            question_value=qn_name, multiple_choice=qn_mult, answers=answers
-        )
-        questions.append(question)
-
-    return questions
 
 
 def save_template(request_form, owner: User = None):
