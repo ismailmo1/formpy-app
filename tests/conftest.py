@@ -1,3 +1,4 @@
+import json
 import time
 from unittest.mock import patch
 
@@ -15,7 +16,8 @@ def app():
         }
     )
 
-    yield test_app
+    with test_app.app_context():
+        yield
 
 
 @pytest.fixture()
@@ -81,3 +83,18 @@ def db_template(template_model, db_user):
 
     with patch("app.formpyapp.db.utils.current_user", db_user):
         template_model.delete()
+
+
+@pytest.fixture()
+def db_simple_template(db_user):
+    from app.formpyapp.db.models import Template
+
+    with open("/workspace/tests/artifacts/json/simple_qna.json") as f:
+        template_data = json.load(f)
+
+    template = Template(**template_data)
+    template.owner = db_user
+    yield template.save()
+
+    with patch("app.formpyapp.db.utils.current_user", db_user):
+        template.delete()
