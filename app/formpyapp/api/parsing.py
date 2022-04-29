@@ -4,7 +4,8 @@ from typing import Tuple
 import numpy as np
 from app.formpy.questions import Form, Template
 from app.formpyapp.api.img_proc import read_form_img
-from app.formpyapp.db import models, utils
+from app.formpyapp.db import models
+from app.formpyapp.db.utils import get_image
 
 
 def parse_template_form(form: dict) -> dict:
@@ -49,7 +50,7 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
     # TODO uncomment below when formpy is added as pip dependency
     # question_dict = template.question_dict
     # template_dict = {'questions':question_dict}
-    template_img = utils.get_image(template_id)
+    template_img = get_image(template_id)
     img = read_form_img(form_img)
 
     # scale image to match template image size
@@ -69,27 +70,4 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
     }
 
     # cv2.destroyAllWindows()
-    return form.mark_all_answers(qn_ans, color=(255, 0, 0)), qn_ans_vals
-
-
-def create_template_questions(template_questions: dict) -> Template:
-
-    questions = []
-    for qn in template_questions.items():
-        answers = []
-        qn_name = qn[0]
-        qn_mult = True if qn[1]["multiple"] == "True" else False
-        for ans in qn[1]["answers"]:
-            x, y = (int(coord) for coord in ans["answer_coords"].split(","))
-            coordinates = models.Coordinate2D(x_coordinate=x, y_coordinate=y)
-            answer = models.Answer(
-                coordinates=coordinates, value=ans["answer_val"]
-            )
-            answers.append(answer)
-
-        question = models.Question(
-            question_value=qn_name, multiple_choice=qn_mult, answers=answers
-        )
-        questions.append(question)
-
-    return questions
+    return form.mark_all_answers(qn_ans, color=(0, 0, 255)), qn_ans_vals

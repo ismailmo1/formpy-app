@@ -2,8 +2,13 @@ import os
 
 import cv2
 import numpy as np
-from app.formpyapp.api.parsing import create_template_questions
-from app.formpyapp.db.models import Template, User
+from app.formpyapp.db.models import (
+    Answer,
+    Coordinate2D,
+    Question,
+    Template,
+    User,
+)
 from flask import current_app
 from flask_login import current_user
 from mongoengine.queryset.visitor import Q
@@ -113,9 +118,7 @@ def get_image(template_id: str, img_path: str | None = None) -> np.ndarray:
     if img_path == None:
         img_path = current_app.config["IMG_STORAGE_PATH"]
     template = Template.objects(id=template_id).first()
-    img_path = os.path.join(
-        f"formpyapp/{img_path}", f"{template.img_name}.jpeg"
-    )
+    img_path = os.path.join(img_path, f"{template.img_name}.jpeg")
 
     img = cv2.imread(img_path)
 
@@ -130,7 +133,7 @@ def delete_image(template_id: str, img_path: str | None = None) -> bool:
     """
     if img_path == None:
         img_path = current_app.config["IMG_STORAGE_PATH"]
-    img_path = os.path.join(f"formpyapp/{img_path}", f"{template_id}.jpeg")
+    img_path = os.path.join(img_path, f"{template_id}.jpeg")
 
     if os.path.isfile(img_path):
         os.remove(img_path)
@@ -156,7 +159,7 @@ def save_template_image(
     if img_path == None:
         img_path = current_app.config["IMG_STORAGE_PATH"]
 
-    save_img_path = os.path.join(f"{img_path}", f"{img_id}.jpeg")
+    save_img_path = os.path.join(img_path, f"{img_id}.jpeg")
     # add 5% padding
     horizontal_border = int(img.shape[0] * 0.05)
     vertical_border = int(img.shape[1] * 0.05)
@@ -175,3 +178,24 @@ def save_template_image(
         return save_img_path
     else:
         return None
+
+
+def create_template_questions(template_questions: dict) -> Template:
+
+    questions = []
+    for qn in template_questions.items():
+        answers = []
+        qn_name = qn[0]
+        qn_mult = True if qn[1]["multiple"] == "True" else False
+        for ans in qn[1]["answers"]:
+            x, y = (int(coord) for coord in ans["answer_coords"].split(","))
+            coordinates = Coordinate2D(x_coordinate=x, y_coordinate=y)
+            answer = Answer(coordinates=coordinates, value=ans["answer_val"])
+            answers.append(answer)
+
+        question = Question(
+            question_value=qn_name, multiple_choice=qn_mult, answers=answers
+        )
+        questions.append(question)
+
+    return questions
