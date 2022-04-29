@@ -1,12 +1,10 @@
 import json
 from unittest.mock import patch
 
-from app.formpyapp.db.utils import remove_template
-
 
 def test_save_template(db_user):
     from app.formpyapp.db.models import Template
-    from app.formpyapp.db.utils import save_template
+    from app.formpyapp.db.utils import remove_template, save_template
 
     with open("tests/artifacts/json/template_data.json") as f:
         template = json.load(f)
@@ -24,7 +22,7 @@ def test_save_template(db_user):
 def test_update_template(db_user, db_template):
     # create template
     from app.formpyapp.db.models import Template
-    from app.formpyapp.db.utils import update_template
+    from app.formpyapp.db.utils import remove_template, update_template
 
     template_id = db_template.id
 
@@ -34,8 +32,6 @@ def test_update_template(db_user, db_template):
     updated_template_id = update_template(template_id, update_data).id
 
     updated_template = Template.objects(id=updated_template_id).first()
-    with patch("app.formpyapp.db.utils.current_user", db_user):
-        remove_template(template_id)
 
     assert updated_template.name == "updated test template"
     assert len(updated_template.questions) == 2
