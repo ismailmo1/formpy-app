@@ -1,0 +1,256 @@
+{
+    "name": "Simple Starter Form",
+    "questions": [
+        {
+            "question_value": "1",
+            "multiple_choice": false,
+            "answers": [
+                {
+                    "coordinates": {
+                        "x_coordinate": 796,
+                        "y_coordinate": 379
+                    },
+                    "value": "a"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1093,
+                        "y_coordinate": 381
+                    },
+                    "value": "b"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1383,
+                        "y_coordinate": 382
+                    },
+                    "value": "c"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1677,
+                        "y_coordinate": 379
+                    },
+                    "value": "d"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1976,
+                        "y_coordinate": 384
+                    },
+                    "value": "e"
+                }
+            ]
+        },
+        {
+            "question_value": "2",
+            "multiple_choice": false,
+            "answers": [
+                {
+                    "coordinates": {
+                        "x_coordinate": 1682,
+                        "y_coordinate": 580
+                    },
+                    "value": "d"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1384,
+                        "y_coordinate": 580
+                    },
+                    "value": "c"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1097,
+                        "y_coordinate": 578
+                    },
+                    "value": "b"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 793,
+                        "y_coordinate": 577
+                    },
+                    "value": "a"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1972,
+                        "y_coordinate": 582
+                    },
+                    "value": "e"
+                }
+            ]
+        },
+        {
+            "question_value": "3",
+            "multiple_choice": false,
+            "answers": [
+                {
+                    "coordinates": {
+                        "x_coordinate": 1974,
+                        "y_coordinate": 776
+                    },
+                    "value": "e"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1679,
+                        "y_coordinate": 774
+                    },
+                    "value": "d"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1382,
+                        "y_coordinate": 773
+                    },
+                    "value": "c"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1092,
+                        "y_coordinate": 771
+                    },
+                    "value": "b"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 797,
+                        "y_coordinate": 773
+                    },
+                    "value": "a"
+                }
+            ]
+        },
+        {
+            "question_value": "4",
+            "multiple_choice": false,
+            "answers": [
+                {
+                    "coordinates": {
+                        "x_coordinate": 1972,
+                        "y_coordinate": 970
+                    },
+                    "value": "e"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1679,
+                        "y_coordinate": 967
+                    },
+                    "value": "d"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1384,
+                        "y_coordinate": 967
+                    },
+                    "value": "c"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1087,
+                        "y_coordinate": 967
+                    },
+                    "value": "b"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 797,
+                        "y_coordinate": 967
+                    },
+                    "value": "a"
+                }
+            ]
+        },
+        {
+            "question_value": "5",
+            "multiple_choice": false,
+            "answers": [
+                {
+                    "coordinates": {
+                        "x_coordinate": 1972,
+                        "y_coordinate": 1163
+                    },
+                    "value": "e"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1677,
+                        "y_coordinate": 1165
+                    },
+                    "value": "d"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1384,
+                        "y_coordinate": 1163
+                    },
+                    "value": "c"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1090,
+                        "y_coordinate": 1163
+                    },
+                    "value": "b"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 793,
+                        "y_coordinate": 1163
+                    },
+                    "value": "a"
+                }
+            ]
+        },
+        {
+            "question_value": "6",
+            "multiple_choice": false,
+            "answers": [
+                {
+                    "coordinates": {
+                        "x_coordinate": 1972,
+                        "y_coordinate": 1363
+                    },
+                    "value": "e"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1679,
+                        "y_coordinate": 1359
+                    },
+                    "value": "d"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1384,
+                        "y_coordinate": 1361
+                    },
+                    "value": "c"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 1092,
+                        "y_coordinate": 1358
+                    },
+                    "value": "b"
+                },
+                {
+                    "coordinates": {
+                        "x_coordinate": 795,
+                        "y_coordinate": 1361
+                    },
+                    "value": "a"
+                }
+            ]
+        }
+    ],
+    "category_tags": [
+        "testing"
+    ],
+    "public": true,
+    "img_name": "simple_qna"
+}
