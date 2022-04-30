@@ -1,5 +1,6 @@
-from flask_wtf import FlaskForm
 from app.formpyapp.db.models import User
+from flask_login import current_user
+from flask_wtf import FlaskForm
 from wtforms.fields.core import RadioField, StringField
 from wtforms.fields.simple import BooleanField, PasswordField, SubmitField
 from wtforms.validators import (
@@ -35,12 +36,12 @@ class RegistrationForm(FlaskForm):
     # custom validators automatically called by form.validate()
     def validate_username(self, username):
         user = User.objects(username=username.data).first()
-        if user is not None:
+        if user is not None and user.id != current_user.id:
             raise ValidationError("Please use a different username.")
 
     def validate_email(self, email):
         user = User.objects(email=email.data).first()
-        if user is not None:
+        if user is not None and user.id != current_user.id:
             raise ValidationError("Please use a different email address.")
 
 
