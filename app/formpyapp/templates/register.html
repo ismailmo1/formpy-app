@@ -7,7 +7,7 @@
 {% block content %}
 <div class="container d-flex justify-content-center h-100">
 
-    <form action="register" method="post">
+    <form action="{{ action }}" method="post">
         {{edit_form.csrf_token}}
         <div class="row mt-5">
             <h1>{{title}}</h1>
