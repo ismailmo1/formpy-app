@@ -1,6 +1,7 @@
-from app.formpyapp.forms.template_forms import DefineTemplateForm
+from app.formpyapp.db import utils
 from flask import Blueprint, current_app, render_template
 from flask.helpers import send_from_directory
+from flask_login import current_user
 
 bp = Blueprint("home", __name__)
 
@@ -24,7 +25,9 @@ def starter_doc():
     )
 
 
-@bp.get("/create")
-def create_template():
-    form = DefineTemplateForm()
-    return render_template("create_template.html", form=form, title="create")
+@bp.get("/view")
+def view_template():
+    # show all public templates and user's private templates if logged in
+    templates = utils.get_all_templates(current_user)
+
+    return render_template("view_template.html", templates=templates)

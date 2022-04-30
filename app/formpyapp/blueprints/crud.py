@@ -1,6 +1,7 @@
 from app.formpyapp.api.alignment import align_img
 from app.formpyapp.api.img_proc import img_to_str
 from app.formpyapp.db import utils
+from app.formpyapp.forms.template_forms import DefineTemplateForm
 from flask import Blueprint, flash, jsonify, redirect, render_template, request
 from flask.helpers import url_for
 from flask_login import current_user
@@ -9,12 +10,10 @@ from flask_login.utils import login_required
 bp = Blueprint("crud", __name__)
 
 
-@bp.get("/view")
-def view_template():
-    # show all public templates and user's private templates if logged in
-    templates = utils.get_all_templates(current_user)
-
-    return render_template("view_template.html", templates=templates)
+@bp.get("/create")
+def create_template():
+    form = DefineTemplateForm()
+    return render_template("create_template.html", form=form, title="create")
 
 
 @bp.get("/delete/<template_id>")
