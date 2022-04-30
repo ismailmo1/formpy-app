@@ -18,7 +18,7 @@ bp = Blueprint("auth", __name__)
 def register():
     if current_user.is_authenticated:
         flash("you're already logged in!", "warning")
-        return redirect(url_for("home"))
+        return redirect(url_for("home.view_template"))
     form = RegistrationForm()
 
     if form.validate_on_submit():
@@ -32,7 +32,9 @@ def register():
         user.save()
         flash("user created successfully! please login", "success")
         return redirect(url_for("auth.login"))
-    return render_template("register.html", title="Register", edit_form=form)
+    return render_template(
+        "register.html", action="/register", title="Register", edit_form=form
+    )
 
 
 @bp.route("/login", methods=["GET", "POST"])
@@ -40,7 +42,7 @@ def login():
     form = LoginForm()
     if current_user.is_authenticated:
         flash("you're already logged in!", "warning")
-        return redirect(url_for("home"))
+        return redirect(url_for("home.view_template"))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.objects(username=form.username.data).first()
@@ -49,7 +51,7 @@ def login():
             return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
         flash(f"welcome back {current_user.username}!", "success")
-        return redirect(url_for("home"))
+        return redirect(url_for("home.view_template"))
     return render_template("login.html", title="Sign In", form=form)
 
 
@@ -57,7 +59,7 @@ def login():
 def logout():
     logout_user()
     flash("bye!", "success")
-    return redirect(url_for("home"))
+    return redirect(url_for("home.view_template"))
 
 
 @bp.route("/user/edit", methods=["GET", "POST"])
@@ -73,9 +75,10 @@ def edit_user():
         current_user.set_password(edit_form.password.data)
         current_user.save()
         flash("user changed successfully!", "success")
-        return redirect(url_for("home"))
+        return redirect(url_for("home.view_template"))
     return render_template(
         "register.html",
+        action="/user/edit",
         title="Edit User",
         edit_form=edit_form,
         delete_form=delete_form,
@@ -101,7 +104,7 @@ def delete_user():
         current_user.delete()
         flash(f"user deleted, sorry to see you go {name}!")
 
-    return redirect(url_for("home"))
+    return redirect(url_for("home.view_template"))
 
 
 @login_mgr.user_loader
