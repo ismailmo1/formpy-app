@@ -8,7 +8,6 @@ def test_read_form(db_simple_template):
     form_img = cv2.imread("tests/artifacts/images/simple_qna_straight.jpeg")
     _, form_img_request = cv2.imencode(".jpg", form_img)
     marked_img, results = read_form(db_simple_template.id, form_img_request)
-    cv2.imwrite("marked_img.jpg", marked_img)
 
     assert results == {
         "1": ["b"],
