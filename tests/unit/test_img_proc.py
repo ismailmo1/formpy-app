@@ -3,37 +3,33 @@ from numpy.testing import assert_array_equal
 from werkzeug.datastructures import FileStorage
 
 
-def test_img_to_str():
+def test_img_to_str(simple_qna_img):
     from app.formpyapp.api.img_proc import img_to_str
 
-    img = cv2.imread("tests/artifacts/images/simple_qna.jpeg")
     with open("tests/artifacts/img_to_str.txt") as f:
         str_img = f.read()
 
-    assert img_to_str(img) == str_img
+    assert img_to_str(simple_qna_img) == str_img
 
 
-def test_str_to_img():
+def test_str_to_img(simple_qna_img):
     from app.formpyapp.api.img_proc import str_to_img
 
-    img = cv2.imread("tests/artifacts/images/simple_qna.jpeg")
     with open("tests/artifacts/img_to_str.txt") as f:
         str_img = f.read()
 
-    assert_array_equal(str_to_img(str_img), img)
+    assert_array_equal(str_to_img(str_img), simple_qna_img)
 
 
-def test_read_form_img():
+def test_read_form_img(simple_qna_img):
     from app.formpyapp.api.img_proc import read_form_img
-
-    img = cv2.imread("tests/artifacts/images/simple_qna.jpeg")
 
     with open("tests/artifacts/images/simple_qna.jpeg", "rb") as f:
         img_bytes = f.read()
 
     img_from_bytes = read_form_img(img_bytes)
 
-    assert_array_equal(img, img_from_bytes)
+    assert_array_equal(simple_qna_img, img_from_bytes)
 
 
 def test_pdf_to_jpeg():
