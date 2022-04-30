@@ -33,7 +33,7 @@ def str_to_img(img_str: str) -> np.array:
 
 
 def read_form_img(img_data: bytes) -> np.array:
-    """reads image from web form"""
+    """reads image from web form FileStorage.read()"""
     img_arr = np.fromstring(img_data, np.uint8)
     img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
     return img
