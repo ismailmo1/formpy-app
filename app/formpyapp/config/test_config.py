@@ -6,3 +6,4 @@ DOCS_FOLDER_PATH = "static/docs"
 MONGODB_SETTINGS = {
     "host": "mongomock://localhost/",
 }
+WTF_CSRF_ENABLED = False
