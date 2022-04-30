@@ -2,6 +2,7 @@ import json
 import time
 from unittest.mock import patch
 
+import cv2
 import pytest
 
 
@@ -98,3 +99,8 @@ def db_simple_template(db_user):
 
     with patch("app.formpyapp.db.utils.current_user", db_user):
         template.delete()
+
+
+@pytest.fixture()
+def simple_qna_img():
+    return cv2.imread("tests/artifacts/images/simple_qna.jpeg")
