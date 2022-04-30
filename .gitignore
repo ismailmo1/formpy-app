@@ -6,3 +6,4 @@ secrets/
 app/formpyapp/static/image_storage/
 *.mongodb
 *:Zone.Identifier
+.pytest_cache
