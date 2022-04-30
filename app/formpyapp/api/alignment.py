@@ -54,10 +54,10 @@ def add_align_rectangle(img):
     # add buffer of 2 to ensure border isn't cut off from img
     cv2.rectangle(
         img,
-        pt1=(2, 2),
-        pt2=(img.shape[1] - 2, img.shape[0] - 2),
+        pt1=(20, 20),
+        pt2=(img.shape[1] - 20, img.shape[0] - 20),
         color=(0, 0, 0),
-        thickness=2,
+        thickness=20,
     )
 
     return img
