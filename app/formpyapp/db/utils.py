@@ -66,7 +66,10 @@ def remove_template(template_id: str) -> bool:
     """delete template from db by owner only"""
     template = Template.objects(id=template_id).first()
     if template.owner == current_user:
-        return template.delete()
+        template.delete()
+        return True
+    else:
+        return False
 
 
 def make_templates_public(owner):
