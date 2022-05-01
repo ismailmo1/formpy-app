@@ -57,16 +57,14 @@ def test_remove_template(db_user, db_template):
     assert deleted_template is None
 
 
-def test_get_template(db_user):
-    from app.formpyapp.db.utils import get_template, save_template
+def test_get_template(db_user, db_template):
+    from app.formpyapp.db.utils import get_template
 
-    with open("tests/artifacts/json/template_data.json") as f:
-        template = json.load(f)
-
-    template_id = save_template(template, db_user).id
-
-    found_template = get_template(template_id)
+    found_template = get_template(db_template.id)
 
     assert found_template.name == "test template"
-    assert found_template.questions[0].multiple_choice == True
-    assert len(found_template.questions[0].answers) == 3
+    assert found_template.questions[0].multiple_choice == False
+    assert found_template.questions[0].answers[0].value == "test answer"
+    assert (
+        found_template.questions[0].answers[0].coordinates.y_coordinate == 500
+    )
