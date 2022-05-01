@@ -1,5 +1,4 @@
 import json
-import time
 from unittest.mock import patch
 
 import cv2
@@ -18,12 +17,24 @@ def app():
     )
 
     with test_app.app_context():
-        yield
+        yield test_app
 
 
 @pytest.fixture()
 def client(app):
     return app.test_client()
+
+
+@pytest.fixture()
+def logged_in_client(client, db_user):
+
+    with client:
+        client.post(
+            "/login",
+            data={"username": "test_user", "password": "test"},
+            follow_redirects=True,
+        )
+        yield client
 
 
 @pytest.fixture()
@@ -59,6 +70,7 @@ def template_model(question_model, db_user):
         owner=db_user,
         category_tags=["testing"],
         public=True,
+        img_name="simple_qna",
     )
 
     return template
@@ -69,8 +81,8 @@ def db_user(app):
     from app.formpyapp.db.models import User
 
     user = User(
-        username=f"test_user{str(time.time())[-6:]}",
-        email=f"test{time.time()}@test.com",
+        username="test_user",
+        email=f"test@test.com",
     )
     user.set_password("test")
     user.save()
