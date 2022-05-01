@@ -26,7 +26,7 @@ def delete_template(template_id: str):
         flash("template deleted!", "info")
     else:
         flash("unable to delete template", "danger")
-    return redirect(url_for("crud.view_template"))
+    return redirect(url_for("home.view_template"))
 
 
 @bp.get("/edit/<template_id>")
