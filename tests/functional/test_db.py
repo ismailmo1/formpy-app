@@ -41,7 +41,7 @@ def test_update_template(db_user, db_template):
 
 def test_remove_template(db_user, db_template):
     from app.formpyapp.db.models import Template
-    from app.formpyapp.db.utils import remove_template, save_template
+    from app.formpyapp.db.utils import remove_template
 
     template_id = db_template.id
     remove_template(template_id)
