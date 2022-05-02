@@ -1,6 +1,6 @@
 import os
 
-from app.formpyapp import create_app
+from app import create_app
 
 config_file = os.environ["FLASK_CONFIG_FILE"]
 app = create_app(config_file)

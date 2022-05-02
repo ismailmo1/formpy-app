@@ -1,7 +1,7 @@
-from app.formpyapp import login_mgr
-from app.formpyapp.db import utils
-from app.formpyapp.db.models import User
-from app.formpyapp.forms.auth_forms import (
+from app import login_mgr
+from app.db import utils
+from app.db.models import User
+from app.forms.auth_forms import (
     DeleteUserForm,
     EditUserForm,
     LoginForm,

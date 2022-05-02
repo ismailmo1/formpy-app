@@ -1,4 +1,4 @@
-from app.formpyapp.db.models import User
+from app.db.models import User
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms.fields.core import RadioField, StringField

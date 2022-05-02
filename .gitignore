@@ -3,7 +3,7 @@ venv/
 *__pycache__
 impromptu_tests*
 secrets/
-app/formpyapp/static/image_storage/
+app/app/static/image_storage/
 *.mongodb
 *:Zone.Identifier
 .pytest_cache

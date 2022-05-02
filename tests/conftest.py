@@ -7,7 +7,7 @@ import pytest
 
 @pytest.fixture(scope="module")
 def app():
-    from app.formpyapp import create_app
+    from app import create_app
 
     test_app = create_app("config/test_config.py")
     test_app.config.update(
@@ -39,7 +39,7 @@ def logged_in_client(client, db_user):
 
 @pytest.fixture()
 def answer_model():
-    from app.formpyapp.db.models import Answer, Coordinate2D
+    from app.db.models import Answer, Coordinate2D
 
     coord = Coordinate2D(x_coordinate=200, y_coordinate=500)
     answer = Answer(coordinates=coord, value="test answer")
@@ -49,7 +49,7 @@ def answer_model():
 
 @pytest.fixture()
 def question_model(answer_model):
-    from app.formpyapp.db.models import Question
+    from app.db.models import Question
 
     question = Question(
         answers=[answer_model],
@@ -62,7 +62,7 @@ def question_model(answer_model):
 
 @pytest.fixture()
 def template_model(question_model, db_user):
-    from app.formpyapp.db.models import Template
+    from app.db.models import Template
 
     template = Template(
         name="test template",
@@ -78,7 +78,7 @@ def template_model(question_model, db_user):
 
 @pytest.fixture(scope="function")
 def db_user(app):
-    from app.formpyapp.db.models import User
+    from app.db.models import User
 
     user = User(
         username="test_user",
@@ -94,13 +94,13 @@ def db_user(app):
 def db_template(template_model, db_user):
     yield template_model.save()
 
-    with patch("app.formpyapp.db.utils.current_user", db_user):
+    with patch("app.db.utils.current_user", db_user):
         template_model.delete()
 
 
 @pytest.fixture()
 def db_simple_template(db_user):
-    from app.formpyapp.db.models import Template
+    from app.db.models import Template
 
     with open("/workspace/tests/artifacts/json/simple_qna.json") as f:
         template_data = json.load(f)
@@ -110,7 +110,7 @@ def db_simple_template(db_user):
     template.owner = db_user
     yield template.save()
 
-    with patch("app.formpyapp.db.utils.current_user", db_user):
+    with patch("app.db.utils.current_user", db_user):
         template.delete()
 
 

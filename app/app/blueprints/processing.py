@@ -1,18 +1,18 @@
 from formpy.utils.img_processing import ImageAlignmentError
-from app.formpyapp.api.alignment import (
+from app.api.alignment import (
     add_align_rectangle,
     align_img,
     get_bounding_pts,
 )
-from app.formpyapp.api.img_proc import (
+from app.api.img_proc import (
     img_to_str,
     pdf_upload_to_img,
     read_form_img,
     str_to_img,
 )
-from app.formpyapp.api.parsing import read_form, read_form_img
-from app.formpyapp.db import utils
-from app.formpyapp.db.models import Template
+from app.api.parsing import read_form, read_form_img
+from app.db import utils
+from app.db.models import Template
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user
 from mongoengine.errors import NotUniqueError

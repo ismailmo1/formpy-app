@@ -4,7 +4,7 @@ from werkzeug.datastructures import FileStorage
 
 
 def test_img_to_str(simple_qna_img):
-    from app.formpyapp.api.img_proc import img_to_str
+    from app.api.img_proc import img_to_str
 
     with open("tests/artifacts/img_to_str.txt") as f:
         str_img = f.read()
@@ -13,7 +13,7 @@ def test_img_to_str(simple_qna_img):
 
 
 def test_str_to_img(simple_qna_img):
-    from app.formpyapp.api.img_proc import str_to_img
+    from app.api.img_proc import str_to_img
 
     with open("tests/artifacts/img_to_str.txt") as f:
         str_img = f.read()
@@ -22,7 +22,7 @@ def test_str_to_img(simple_qna_img):
 
 
 def test_read_form_img(simple_qna_img):
-    from app.formpyapp.api.img_proc import read_form_img
+    from app.api.img_proc import read_form_img
 
     with open("tests/artifacts/images/simple_qna.jpeg", "rb") as f:
         img_bytes = f.read()
@@ -33,7 +33,7 @@ def test_read_form_img(simple_qna_img):
 
 
 def test_pdf_to_jpeg():
-    from app.formpyapp.api.img_proc import pdf_upload_to_img
+    from app.api.img_proc import pdf_upload_to_img
 
     with open("tests/artifacts/pdf/simple_qna.pdf", "rb") as f:
         pdf_file = FileStorage(f)

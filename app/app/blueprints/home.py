@@ -1,4 +1,4 @@
-from app.formpyapp.db import utils
+from app.db import utils
 from flask import Blueprint, current_app, render_template
 from flask.helpers import send_from_directory
 from flask_login import current_user

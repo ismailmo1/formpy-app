@@ -3,7 +3,7 @@ import json
 
 def test_read_form(db_simple_template):
     import cv2
-    from app.formpyapp.api.parsing import read_form
+    from app.api.parsing import read_form
 
     form_img = cv2.imread("tests/artifacts/images/simple_qna_straight.jpeg")
     _, form_img_request = cv2.imencode(".jpg", form_img)
@@ -27,7 +27,7 @@ def test_read_form(db_simple_template):
 
 
 def test_create_template_question():
-    from app.formpyapp.db.utils import create_template_questions
+    from app.db.utils import create_template_questions
 
     with open("tests/artifacts/json/question_data.json", "r") as f:
         question_data = json.load(f)

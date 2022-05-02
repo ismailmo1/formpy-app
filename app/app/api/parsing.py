@@ -3,9 +3,9 @@ from typing import Tuple
 
 import cv2
 import numpy as np
-from app.formpyapp.api.img_proc import read_form_img
-from app.formpyapp.db import models
-from app.formpyapp.db.utils import get_image_path
+from app.api.img_proc import read_form_img
+from app.db import models
+from app.db.utils import get_image_path
 from formpy.form import Form
 from formpy.template import Template
 

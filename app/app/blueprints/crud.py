@@ -1,8 +1,8 @@
 import cv2
-from app.formpyapp.api.alignment import align_img
-from app.formpyapp.api.img_proc import img_to_str
-from app.formpyapp.db import utils
-from app.formpyapp.forms.template_forms import DefineTemplateForm
+from app.api.alignment import align_img
+from app.api.img_proc import img_to_str
+from app.db import utils
+from app.forms.template_forms import DefineTemplateForm
 from flask import Blueprint, flash, jsonify, redirect, render_template, request
 from flask.helpers import url_for
 from flask_login import current_user

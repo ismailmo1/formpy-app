@@ -12,8 +12,8 @@ def create_app(config_filepath):
 
     app.config.from_pyfile(config_filepath)
 
-    from app.formpyapp.blueprints import auth, crud, home, processing
-    from app.formpyapp.db import mongo
+    from app.blueprints import auth, crud, home, processing
+    from app.db import mongo
 
     mongo.init_app(app)
     csrf.init_app(app)

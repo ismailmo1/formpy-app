@@ -2,7 +2,7 @@ import os
 
 import cv2
 import numpy as np
-from app.formpyapp.db.models import (
+from app.db.models import (
     Answer,
     Coordinate2D,
     Question,

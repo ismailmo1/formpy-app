@@ -4,7 +4,7 @@ from numpy.testing import assert_array_equal
 
 
 def test_order_pts():
-    from app.formpyapp.api.alignment import order_pts
+    from app.api.alignment import order_pts
 
     unordered_pts = np.array(
         [
@@ -23,7 +23,7 @@ def test_order_pts():
 
 
 def test_align_img():
-    from app.formpyapp.api.alignment import align_img
+    from app.api.alignment import align_img
 
     # use png for lossless save
     test_img = cv2.imread("tests/artifacts/images/simple_qna_aligned.png")
@@ -37,7 +37,7 @@ def test_align_img():
 
 
 def test_get_bounding_pts(simple_qna_img):
-    from app.formpyapp.api.alignment import get_bounding_pts
+    from app.api.alignment import get_bounding_pts
 
     pts = get_bounding_pts(simple_qna_img)
 
@@ -47,7 +47,7 @@ def test_get_bounding_pts(simple_qna_img):
 
 
 def test_add_align_rectangle(simple_qna_img):
-    from app.formpyapp.api.alignment import add_align_rectangle
+    from app.api.alignment import add_align_rectangle
 
     test_img = cv2.imread("tests/artifacts/images/align_border.png")
 

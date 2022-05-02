@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 
 def test_save_template(db_user):
-    from app.formpyapp.db.models import Template
-    from app.formpyapp.db.utils import remove_template, save_template
+    from app.db.models import Template
+    from app.db.utils import remove_template, save_template
 
     with open("tests/artifacts/json/template_data.json") as f:
         template = json.load(f)
@@ -12,7 +12,7 @@ def test_save_template(db_user):
     template_id = save_template(template, db_user).id
     found_template = Template.objects(id=template_id).first()
 
-    with patch("app.formpyapp.db.utils.current_user", db_user):
+    with patch("app.db.utils.current_user", db_user):
         remove_template(template_id)
 
     assert found_template.name == "test template"
@@ -21,8 +21,8 @@ def test_save_template(db_user):
 
 def test_update_template(db_user, db_template):
     # create template
-    from app.formpyapp.db.models import Template
-    from app.formpyapp.db.utils import update_template
+    from app.db.models import Template
+    from app.db.utils import update_template
 
     template_id = db_template.id
 
@@ -40,8 +40,8 @@ def test_update_template(db_user, db_template):
 
 
 def test_remove_template(db_user, db_template):
-    from app.formpyapp.db.models import Template
-    from app.formpyapp.db.utils import remove_template
+    from app.db.models import Template
+    from app.db.utils import remove_template
 
     template_id = db_template.id
     remove_template(template_id)
@@ -49,7 +49,7 @@ def test_remove_template(db_user, db_template):
 
     assert undeleted_template is not None
 
-    with patch("app.formpyapp.db.utils.current_user", db_user):
+    with patch("app.db.utils.current_user", db_user):
         remove_template(template_id)
 
     deleted_template = Template.objects(id=template_id).first()
@@ -58,7 +58,7 @@ def test_remove_template(db_user, db_template):
 
 
 def test_get_template(db_user, db_template):
-    from app.formpyapp.db.utils import get_template
+    from app.db.utils import get_template
 
     found_template = get_template(db_template.id)
 

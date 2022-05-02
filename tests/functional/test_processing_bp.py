@@ -37,7 +37,7 @@ def test_upload_template_pdf(client):
 
 
 def test_align_template(client):
-    from app.formpyapp.api.img_proc import img_to_str
+    from app.api.img_proc import img_to_str
 
     test_img_str = img_to_str(
         cv2.imread("tests/artifacts/images/simple_qna_aligned.png")
@@ -58,7 +58,7 @@ def test_align_template(client):
 
 
 def test_define_template(logged_in_client, db_user):
-    from app.formpyapp.db.utils import delete_image, remove_template
+    from app.db.utils import delete_image, remove_template
 
     with open("tests/artifacts/json/template_data.json") as f:
         template_data = json.load(f)
@@ -86,7 +86,7 @@ def test_define_template(logged_in_client, db_user):
     template_id = res_dict["_id"]["$oid"]
     img_name = res_dict["img_name"]
     assert delete_image(img_name)
-    with patch("app.formpyapp.db.utils.current_user", db_user):
+    with patch("app.db.utils.current_user", db_user):
         assert remove_template(template_id)
 
 
