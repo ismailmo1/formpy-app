@@ -1,5 +1,8 @@
 {
     "name": "Simple Starter Form",
+    "config": {
+        "radius": 30
+    },
     "questions": [
         {
             "question_value": "1",

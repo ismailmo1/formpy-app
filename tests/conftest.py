@@ -104,7 +104,8 @@ def db_simple_template(db_user):
 
     with open("/workspace/tests/artifacts/json/simple_qna.json") as f:
         template_data = json.load(f)
-
+        radius = template_data.pop("config")["radius"]
+        template_data["circle_radius"] = radius
     template = Template(**template_data)
     template.owner = db_user
     yield template.save()

@@ -58,12 +58,15 @@ class Template(Document):
     # i.e. what category the template belongs to: school quiz, manufacturing, public survey etc
     category_tags = ListField(StringField(max_length=10))
     img_name = StringField(default=str(uuid4()))
+    circle_radius = IntField(min_value=10, max_value=100, default=15)
 
-    @property
-    def question_dict(self):
+    def to_dict(self):
         """return dictionary than can be read by formpy template.fromdict method
         question_config in form
-        {question_id:{multiple:bool, answers:list[answer]}, question_id2}
+        {config:{circle_radius:15},
+            questions:{
+                question_id:{multiple:bool, answers:list[answer]},
+                question_id2: {...}}
         """
         question_dict = defaultdict(
             lambda: defaultdict(lambda: defaultdict(dict))
@@ -73,14 +76,23 @@ class Template(Document):
             question_dict[question.question_value][
                 "multiple"
             ] = question.multiple_choice
-            for idx, ans in enumerate(question.answers):
-                ans_dict = {
-                    "answer_coords": f"{ans.coordinates.x_coordinate}, {ans.coordinates.y_coordinate}",
-                    "answer_val": ans.value,
-                }
+            ans_list = []
+            for ans in question.answers:
 
-                question_dict[question.question_value]["answers"][
-                    f"answer{idx}"
-                ] = ans_dict
+                ans_list.append(
+                    {
+                        "answer_coords": [
+                            ans.coordinates.x_coordinate,
+                            ans.coordinates.y_coordinate,
+                        ],
+                        "answer_val": ans.value,
+                    }
+                )
 
-        return question_dict
+                question_dict[question.question_value]["answers"] = ans_list
+
+        template_dict = {
+            "config": {"radius": self.circle_radius},
+            "questions": question_dict,
+        }
+        return template_dict
