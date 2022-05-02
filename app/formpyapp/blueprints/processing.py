@@ -1,4 +1,4 @@
-from app.formpy.utils.img_processing import ImageAlignmentError
+from formpy.utils.img_processing import ImageAlignmentError
 from app.formpyapp.api.alignment import (
     add_align_rectangle,
     align_img,

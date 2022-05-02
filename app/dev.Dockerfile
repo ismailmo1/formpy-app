@@ -8,8 +8,7 @@ EXPOSE 5000
 WORKDIR /workspace
 
 #install poppler
-RUN apt update -y && apt install -y poppler-utils
-
+RUN apt update -y && apt install -y poppler-utils ffmpeg libsm6 libxext6
 # Install pip requirements
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
