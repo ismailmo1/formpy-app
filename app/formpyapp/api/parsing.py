@@ -1,11 +1,13 @@
 from collections import defaultdict
 from typing import Tuple
 
+import cv2
 import numpy as np
-from app.formpy.questions import Form, Template
 from app.formpyapp.api.img_proc import read_form_img
 from app.formpyapp.db import models
-from app.formpyapp.db.utils import get_image
+from app.formpyapp.db.utils import get_image_path
+from formpy.form import Form
+from formpy.template import Template
 
 
 def parse_template_form(form: dict) -> dict:
@@ -45,12 +47,9 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
         form_img (str): bin64 str of form image
     """
     template = models.Template.objects(id=template_id).first()
-    template_dict = template.question_dict
+    template_dict = template.to_dict()
 
-    # TODO uncomment below when formpy is added as pip dependency
-    # question_dict = template.question_dict
-    # template_dict = {'questions':question_dict}
-    template_img = get_image(template_id)
+    template_img_path = get_image_path(template_id)
     img = read_form_img(form_img)
 
     # scale image to match template image size
@@ -58,7 +57,10 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
     #     img, template_img.shape, interpolation=cv2.INTER_LINEAR
     # )
 
-    template = Template.from_dict(template_img, template_dict)
+    template = Template.from_dict(
+        template=template_dict,
+        img_path=template_img_path,
+    )
     form = Form(img, template)
     qn_ans = {}
     for qn in form.questions:
@@ -70,4 +72,4 @@ def read_form(template_id: str, form_img: str) -> Tuple[np.ndarray, dict]:
     }
 
     # cv2.destroyAllWindows()
-    return form.mark_all_answers(qn_ans, color=(0, 0, 255)), qn_ans_vals
+    return form.mark_all_answers(), qn_ans_vals

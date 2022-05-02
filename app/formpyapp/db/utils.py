@@ -112,7 +112,7 @@ def get_all_templates(current_user):
     return templates
 
 
-def get_image(template_id: str, img_path: str | None = None) -> np.ndarray:
+def get_image_path(template_id: str, img_path: str | None = None) -> str:
     """get image from template id
 
     Args:
@@ -123,9 +123,7 @@ def get_image(template_id: str, img_path: str | None = None) -> np.ndarray:
     template = Template.objects(id=template_id).first()
     img_path = os.path.join(img_path, f"{template.img_name}.jpeg")
 
-    img = cv2.imread(img_path)
-
-    return img
+    return img_path
 
 
 def delete_image(template_id: str, img_path: str | None = None) -> bool:

@@ -1,3 +1,4 @@
+import cv2
 from app.formpyapp.api.alignment import align_img
 from app.formpyapp.api.img_proc import img_to_str
 from app.formpyapp.db import utils
@@ -32,7 +33,8 @@ def delete_template(template_id: str):
 @bp.get("/edit/<template_id>")
 def edit_template(template_id):
     template = utils.get_template(template_id)
-    img = utils.get_image(template_id)
+    img_path = utils.get_image_path(template_id)
+    img = cv2.imread(img_path)
     aligned_img = align_img(img)
     template_img = img_to_str(aligned_img)
     is_owner = True if current_user == template.owner else False

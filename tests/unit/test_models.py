@@ -97,8 +97,7 @@ def test_new_template():
     assert template.category_tags == ["cat_1", "cat_2"]
     assert template.questions == [question]
     assert template.public == True
-    assert json.dumps(template.question_dict) == (
+    assert json.dumps(template.to_dict()["questions"]) == (
         '{"question test": {"multiple": false, "answers": '
-        '{"answer0": {"answer_coords": "100, 200", "answer_val": '
-        '"test answer"}}}}'
+        '[{"answer_coords": [100, 200], "answer_val": "test answer"}]}}'
     )
