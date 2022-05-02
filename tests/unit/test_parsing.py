@@ -10,12 +10,12 @@ def test_read_form(db_simple_template):
     marked_img, results = read_form(db_simple_template.id, form_img_request)
 
     assert results == {
-        "1": ["b"],
-        "2": ["a"],
-        "3": ["b"],
-        "4": ["d"],
-        "5": ["c"],
-        "6": ["a"],
+        1: ["b"],
+        2: ["a"],
+        3: ["b"],
+        4: ["d"],
+        5: ["c"],
+        6: ["a"],
     }
 
     assert list(marked_img[381, 1093]) == [0, 0, 255]
