@@ -1,6 +1,9 @@
-# formpy-app
+<div align="center" style="margin-bottom:15px;">
+  <img align="center" alt="ci/cd workflow status" src="https://github.com/ismailmo1/formpy-app/actions/workflows/.github/workflows/deploy.yml/badge.svg" />
+</div>
 
-Checkout the live website [here](https://formpy.ismailmo.com)!
+ <div align="center"><h1><a href="https://formpy.ismailmo.com">formpy.ismailmo.com</a></h1>
+ </div>
 
 ---
 https://user-images.githubusercontent.com/15056360/163415852-6ff43820-e7b3-470b-a002-e87f0a54a264.mp4
