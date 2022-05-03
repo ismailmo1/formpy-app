@@ -102,7 +102,7 @@ def db_template(template_model, db_user):
 def db_simple_template(db_user):
     from app.db.models import Template
 
-    with open("/workspace/tests/artifacts/json/simple_qna.json") as f:
+    with open("tests/artifacts/json/simple_qna.json") as f:
         template_data = json.load(f)
         radius = template_data.pop("config")["radius"]
         template_data["circle_radius"] = radius
