@@ -1,0 +1,75 @@
+name: Deploy flask docker image
+env:
+  IMAGE_NAME: ismailmo1/formpy-flask
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y poppler-utils ffmpeg libsm6 libxext6
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        pip install -r app/requirements.txt
+    - name: Test with pytest
+      run: |
+        pytest
+
+  update-docker-image:
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PWD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: app
+          push: true
+
+  
+  deploy:
+    needs: "update-docker-image"
+    runs-on: ubuntu-latest
+    steps:
+    - name: restart container
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.LINODE_HOST }}
+        username: ${{ secrets.LINODE_USERNAME }}
+        password: ${{ secrets.LINODE_PASSWORD }}
+        port: ${{ secrets.LINODE_PORT }}
+        script: |
+          docker pull ismailmo1/formpy-flask
+          docker stop formpy-flask && docker rm formpy-flask
+          docker run -d --network linode-config_default --name formpy-flask --env FLASK_DEBUG=False --env FLASK_PORT=5000 --env FLASK_ENV=production --env FLASK_CONFIG_FILE=config/prod_config.py --env IMG_STORAGE_PATH=/var/www/app/static/image_storage/template_images --env DOCS_FOLDER_PATH=/static/docs --env MONGODB_HOSTNAME=mongodb --env MONGODB_DATABASE=formpydb --env VIRTUAL_HOST=formpy.ismailmo.com --env LETSENCRYPT_HOST=formpy.ismailmo.com -v appdata:/var/www -v userimages:/var/www/app/static/image_storage/template_images --env-file /home/ismail/formpy-app/app/.env ismailmo1/formpy-flask
+          docker network connect formpy-flask formpy-app_backend
+          
