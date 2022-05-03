@@ -1,4 +1,4 @@
-name: Python application
+name: Deploy flask docker image
 env:
   IMAGE_NAME: ismailmo1/formpy-flask
 
